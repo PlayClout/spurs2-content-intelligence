@@ -1,0 +1,42 @@
+/* Clout — Motion tokens (v02)
+   Confident and quick. Never bouncy, never over the center read zone. */
+:root {
+  /* Durations — instant: state flips · fast: hover/press · base: transitions/tabs
+     slow: sheets/modals/page · slower: celebratory reveals (prize won), use sparingly */
+  --motion-instant: 80ms; /* @kind other */
+  --motion-fast: 120ms; /* @kind other */
+  --motion-base: 200ms; /* @kind other */
+  --motion-slow: 360ms; /* @kind other */
+  --motion-slower: 560ms; /* @kind other */
+
+  /* Easings — standard: default · out: entrances · in: exits · linear: spinners/progress */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --ease-in: cubic-bezier(0.5, 0, 0.85, 0.4); /* @kind other */
+  --ease-linear: linear; /* @kind other */
+
+  /* Named transitions — prefer these over hand-written values */
+  --transition-colors: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard); /* @kind other */
+  --transition-transform: transform var(--motion-fast) var(--ease-standard); /* @kind other */
+  --transition-opacity: opacity var(--motion-base) var(--ease-standard); /* @kind other */
+  --transition-shadow: box-shadow var(--motion-base) var(--ease-standard); /* @kind other */
+  --transition-all: all var(--motion-base) var(--ease-standard); /* @kind other */
+
+  /* Press feedback — large cards compress less than buttons */
+  --press-scale: 0.975; /* @kind other */
+  --press-scale-tile: 0.99; /* @kind other */
+
+  /* Skeleton shimmer */
+  --skeleton-duration: 1400ms; /* @kind other */
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-instant: 0ms; /* @kind other */
+    --motion-fast: 0ms; /* @kind other */
+    --motion-base: 0ms; /* @kind other */
+    --motion-slow: 0ms; /* @kind other */
+    --motion-slower: 0ms; /* @kind other */
+    --press-scale: 1; /* @kind other */
+    --press-scale-tile: 1; /* @kind other */
+  }
+}

@@ -1,0 +1,123 @@
+<!-- @dsCard group="Product UI" viewport="1280x820" name="Web — Responsive Dashboard" subtitle="Desktop composition of the same components; mobile-first rules scaled up" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body)}
+  .shell{display:grid;grid-template-columns:240px 1fr;min-height:820px}
+  .side{border-right:1px solid var(--border-default);background:var(--bg-surface);padding:20px 14px;display:flex;flex-direction:column;gap:6px}
+  .brand{padding:6px 10px 18px}
+  .navitem{display:flex;align-items:center;gap:12px;min-height:44px;padding:0 12px;border-radius:var(--radius-md);color:var(--fg-muted);font-size:var(--text-md);font-weight:600;cursor:pointer}
+  .navitem.on{background:var(--interactive-bg-selected);color:var(--fg-default)}
+  .main{min-width:0;display:flex;flex-direction:column}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 32px;border-bottom:1px solid var(--border-default);position:sticky;top:0;background:rgba(5,8,17,.85);backdrop-filter:blur(18px);z-index:200}
+  .content{padding:28px 32px;display:flex;flex-direction:column;gap:24px;max-width:var(--content-max-full)}
+  /* Column flex children must not compress — let content define height and the page scroll. */
+  .content>*,.grid2>*{flex-shrink:0;min-height:0}
+  .side>*{flex-shrink:0}
+  .h1{font-family:var(--font-display);font-style:italic;font-weight:700;font-size:var(--text-4xl);text-transform:uppercase;line-height:1}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .grid2{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+  .sect{font-family:var(--font-display);font-style:italic;font-weight:700;font-size:var(--text-xl);text-transform:uppercase}
+  .note{font-size:12px;color:var(--fg-muted);padding:0 32px 24px;max-width:900px;line-height:1.6}
+</style></head><body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Button, Icon, Surface, Chip, Avatar, StatBlock, DataTable, Tabs, SegmentedControl,
+  PassCard, ChallengeCard, RewardCard, PickemCard, Progress, InlineAlert, Menu } = window.CloutDesignSystem_49ec9a;
+
+const NAV = [['home','Home','bolt'],['picks','Picks','target'],['contests','Contests','trophy'],['rewards','Rewards','gift'],['shop','Shop','coin'],['profile','Profile','user']];
+
+function Web(){
+  const [nav,setNav]=React.useState('home');
+  const [range,setRange]=React.useState('w');
+  return (<div className="shell">
+    <aside className="side">
+      <div className="brand"><img src="../../assets/logo/clout_wordmark_white.svg" alt="Clout" style={{height:20}}/></div>
+      {NAV.map(([id,label,icon])=>(
+        <div key={id} className={'navitem'+(nav===id?' on':'')} onClick={()=>setNav(id)}>
+          <Icon name={icon} size={20} color="currentColor" />{label}
+        </div>
+      ))}
+      <div style={{marginTop:'auto'}}>
+        <Surface variant="sunken" padding="sm">
+          <Progress label="Season pass" valueLabel="62%" value={62} size="sm" />
+        </Surface>
+      </div>
+    </aside>
+
+    <div className="main">
+      <div className="topbar">
+        <Tabs active="live" onChange={()=>{}} scrollable={false}
+          items={[{id:'live',label:'Live',count:3},{id:'upcoming',label:'Upcoming'},{id:'settled',label:'Settled',count:12}]} style={{border:'none',width:'auto'}} />
+        <div style={{display:'flex',alignItems:'center',gap:14}}>
+          <Chip tone="value">8,420 coins</Chip>
+          <Avatar name="Jordan M" size="sm" ring="action" />
+        </div>
+      </div>
+
+      <div className="content">
+        <InlineAlert status="warning" title="Picks lock in 12 minutes">Lock them in to stay eligible for the Sunday Slate.</InlineAlert>
+
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:20}}>
+          <div className="h1">Sunday Slate</div>
+          <div style={{display:'flex',gap:12,alignItems:'center'}}>
+            <SegmentedControl fullWidth={false} value={range} onChange={setRange} items={[{id:'d',label:'Daily'},{id:'w',label:'Weekly'},{id:'s',label:'Season'}]} />
+            <Button size="small">Enter contest</Button>
+          </div>
+        </div>
+
+        <Surface padding="lg">
+          <div style={{display:'flex',justifyContent:'space-between',gap:24,flexWrap:'wrap'}}>
+            <StatBlock value="$2.4M" label="Prizes awarded" delta="+12%" tone="value" />
+            <StatBlock value="480K" label="Active players" delta="+4%" />
+            <StatBlock value="92%" label="Weekly retention" tone="accent" />
+            <StatBlock value="38" label="Sports & leagues" />
+            <StatBlock value="1,240" label="Your XP" tone="success" delta="+180" />
+          </div>
+        </Surface>
+
+        <div className="grid2">
+          <div style={{display:'flex',flexDirection:'column',gap:16,minWidth:0}}>
+            <div className="sect">Open picks</div>
+            <div className="grid3" style={{gridTemplateColumns:'1fr 1fr'}}>
+              <PickemCard subject="P. Mahomes" meta="KC @ BUF · 4:25pm" line="Passing yards 274.5" xpValue="120 XP"
+                options={[{id:'o',label:'Over',detail:'120 XP'},{id:'u',label:'Under',detail:'120 XP'}]} selected="o" lockLabel="Locks 4:25pm" />
+              <PickemCard subject="J. Jefferson" meta="MIN @ GB · 1:00pm" line="Receiving yards 88.5" xpValue="150 XP"
+                options={[{id:'o',label:'Over',detail:'150 XP'},{id:'u',label:'Under',detail:'150 XP'}]} lockLabel="Locks 1:00pm" />
+            </div>
+            <div className="sect">Leaderboard</div>
+            <DataTable highlightRow="me" columns={[
+              {key:'rank',label:'#',width:56,emphasis:true},
+              {key:'player',label:'Player'},
+              {key:'streak',label:'Streak'},
+              {key:'prize',label:'Prize',align:'right'},
+              {key:'pts',label:'Points',align:'right',emphasis:true,numeric:true}]}
+              rows={[
+                {id:1,rank:'1',player:'Alex R.',streak:'18 weeks',prize:'$500',pts:'1,480'},
+                {id:'me',rank:'2',player:'Jordan M. · You',streak:'14 weeks',prize:'$250',pts:'1,240'},
+                {id:3,rank:'3',player:'Sam K.',streak:'9 weeks',prize:'$100',pts:'1,105'},
+                {id:4,rank:'4',player:'Casey T.',streak:'6 weeks',prize:'—',pts:'980'}]} />
+          </div>
+
+          <div style={{display:'flex',flexDirection:'column',gap:16,minWidth:0}}>
+            <div className="sect">Your pass</div>
+            <PassCard name="Open Pass" sport="NFL · Week 12" tier="upgrade" prizes="$50K" actionsLeft="3" progress={62} progressLabel="4 / 7 actions" />
+            <div className="sect">Challenges</div>
+            <ChallengeCard title="Pick 5 games" icon="target" reward="250" state="in-progress" progress={60} progressLabel="3 of 5" timeLeft="6h left" />
+            <ChallengeCard title="Weekend streak" icon="fire" reward="500" rewardType="coins" state="complete" onAction={()=>{}} />
+            <div className="sect">Ready to redeem</div>
+            <RewardCard compact title="PGA Gift Card" value="$500" state="unlocked" requiresEligibility onRedeem={()=>{}} />
+          </div>
+        </div>
+      </div>
+      <div className="note"><b>Responsive rule:</b> this desktop composition uses the same components as the 390px mobile screens. At &lt;768px the sidebar becomes a bottom <code>TabBar</code>, <code>grid2</code>/<code>grid3</code> collapse to one column, the <code>DataTable</code> is replaced by a <code>LeaderboardRow</code> stack, and dialogs switch from <code>modal</code> to <code>sheet</code>. Nothing is redesigned — only re-laid out.</div>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Web/>);
+</script>
+</body></html>

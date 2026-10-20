@@ -1,0 +1,43 @@
+<!-- @dsCard group="Product UI" viewport="1240x900" name="Mobile App — Screens" subtitle="Home, Pick'em, Rewards, Profile, Onboarding, loading & empty states" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:#07090f;color:var(--fg-default);font-family:var(--font-body);padding:28px}
+  .rail{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;justify-content:center}
+  .item{display:flex;flex-direction:column;gap:12px;align-items:center}
+  .phone{width:390px;height:844px;border-radius:44px;padding:10px;background:#15181f;box-shadow:0 30px 80px rgba(0,0,0,.65),inset 0 0 0 1px rgba(245,245,243,.08);flex:none}
+  .viewport{width:100%;height:100%;border-radius:34px;overflow:hidden;position:relative;background:var(--bg-canvas)}
+  .cap{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-muted)}
+  .cap b{color:var(--fg-default);letter-spacing:.05em}
+  .note{max-width:900px;margin:0 auto 26px;font-size:13px;line-height:1.6;color:var(--fg-secondary);border-left:3px solid var(--accent-default);padding:6px 0 6px 16px}
+  .note b{color:var(--fg-default)}
+</style></head><body>
+<div class="note"><b>Mobile app — canonical 390×844 screens.</b> Every screen is composed only from design-system components; no bespoke styling. The same compositions drive iOS and Android — platform differences are limited to safe-area insets, the 44/48px touch minimum, and dialog presentation (bottom sheet on mobile, centered modal at ≥768px). The Home and Pick'em screens are interactive: tap the tab bar, choose picks, submit to open the confirm sheet. Clout is free to play — no stakes, no wagering; eligibility is checked only at prize redemption.</div>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel">
+function Phone({ label, children }){
+  return (<div className="item">
+    <div className="phone"><div className="viewport">{children}</div></div>
+    <span className="cap">{label}</span>
+  </div>);
+}
+function App(){
+  const [route,setRoute] = React.useState('home');
+  const Live = { home: window.HomeScreen, picks: window.PicksScreen, rewards: window.RewardsScreen, profile: window.ProfileScreen }[route] || window.HomeScreen;
+  return (<div className="rail">
+    <Phone label={<><b>Interactive</b> · tap to navigate</>}><Live nav={setRoute} /></Phone>
+    <Phone label={<><b>Onboarding</b> · first run</>}><window.OnboardingScreen nav={()=>{}} /></Phone>
+    <Phone label={<><b>Rewards</b> · redeem & shop</>}><window.RewardsScreen nav={()=>{}} /></Phone>
+    <Phone label={<><b>Profile</b> · identity & standings</>}><window.ProfileScreen nav={()=>{}} /></Phone>
+    <Phone label={<><b>Loading</b> · skeleton state</>}><window.LoadingScreen /></Phone>
+    <Phone label={<><b>Empty</b> · zero data</>}><window.EmptyScreen nav={()=>{}} /></Phone>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

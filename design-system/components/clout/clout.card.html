@@ -1,0 +1,73 @@
+<!-- @dsCard group="Components" viewport="700x1000" name="Clout Patterns" subtitle="Pass, Pick'em, Challenge, Reward, Marketplace, Profile, Leaderboard, Eligibility" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:26px 30px}
+  h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin:24px 0 12px}
+  h3:first-child{margin-top:0}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+  .col{display:flex;flex-direction:column;gap:12px}
+</style></head><body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { PassCard, PickemCard, ChallengeCard, RewardCard, MarketplaceItem, ProfileHeader, LeaderboardRow, EligibilityGate, Surface } = window.CloutDesignSystem_49ec9a;
+function Demo(){
+  const [pick,setPick]=React.useState('o');
+  return (<div>
+    <h3>Passes</h3>
+    <div className="two">
+      <PassCard name="Open Pass" sport="NFL · Week 12" tier="upgrade" prizes="$50K" actionsLeft="3" progress={62} progressLabel="4 / 7 actions" />
+      <PassCard name="World Cup Pass" sport="Soccer" tier="locked" locked expiresIn="Soon" status="Locked" />
+    </div>
+    <h3>Pick'em · states</h3>
+    <div className="two">
+      <PickemCard subject="P. Mahomes" meta="KC @ BUF · Sun 4:25pm" line="Passing yards 274.5" xpValue="120 XP"
+        options={[{id:'o',label:'Over',detail:'120 XP'},{id:'u',label:'Under',detail:'120 XP'}]} selected={pick} onSelect={setPick} lockLabel="Locks 4:25pm" />
+      <PickemCard subject="J. Allen" meta="BUF @ KC · Settled" line="Rushing yards 38.5"
+        options={[{id:'o',label:'Over'},{id:'u',label:'Under'}]} selected="o" state="correct" />
+    </div>
+    <h3>Challenges</h3>
+    <div className="col">
+      <ChallengeCard title="Make 5 predictions" description="Any sport counts toward this." icon="target" reward="250" state="in-progress" progress={60} progressLabel="3 of 5 predictions" timeLeft="6h left" />
+      <ChallengeCard title="Weekend streak" description="Get 3 predictions correct in a row." icon="fire" reward="500" rewardType="coins" state="complete" onAction={()=>{}} timeLeft="2d left" />
+      <ChallengeCard title="First action of the week" icon="bolt" reward="100" state="claimed" />
+    </div>
+    <h3>Rewards</h3>
+    <div className="col">
+      <RewardCard title="PGA Superstore Gift Card" value="$500" state="unlocked" requiresEligibility onRedeem={()=>{}} />
+      <RewardCard compact title="Team Jersey" state="locked" requirement="Reach Tier 3 to unlock" />
+    </div>
+    <h3>Marketplace</h3>
+    <div className="three">
+      <MarketplaceItem brand="Nike" name="Dri-FIT Training Tee" cost="2,500" currency="coin" stock="12 left" />
+      <MarketplaceItem brand="Clout" name="Signature Hoodie" cost="6,000" currency="coin" state="low-stock" stock="3 left" />
+      <MarketplaceItem brand="Beats" name="Studio Pro Headphones" cost="18,000" currency="coin" state="sold-out" />
+    </div>
+    <h3>Profile · leaderboard</h3>
+    <div className="two">
+      <ProfileHeader name="Jordan M." handle="@jmvp" tier="Gold" rank="#1,204" xp={1240} xpMax={2000} level={7}
+        stats={[{value:'62%',label:'Win rate'},{value:'14',label:'Streak',tone:'value'},{value:'$1.2K',label:'Won',tone:'value'}]} />
+      <Surface padding="sm">
+        <LeaderboardRow rank={1} name="Alex R." meta="18-week streak" score="1,480" delta={1} prize="$500" />
+        <LeaderboardRow rank={2} name="Jordan M." meta="14-week streak" score="1,240" delta={2} prize="$250" isCurrentUser />
+        <LeaderboardRow rank={3} name="Sam K." score="1,105" delta={-1} prize="$100" />
+        <LeaderboardRow rank={4} name="Casey T." score="980" delta={0} />
+      </Surface>
+    </div>
+    <h3>Eligibility · gates redemption, never play</h3>
+    <Surface padding="lg">
+      <EligibilityGate prizeName="$500 PGA Superstore Gift Card" steps={[
+        {id:'age',label:"Confirm you're 18+",detail:'Completed at first redemption',state:'complete'},
+        {id:'geo',label:'Verify your location',detail:'Required in your region',state:'active'},
+        {id:'kyc',label:'Verify identity',detail:'Needed to ship physical prizes',state:'pending'}]} />
+    </Surface>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body></html>

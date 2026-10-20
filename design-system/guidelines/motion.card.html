@@ -1,0 +1,34 @@
+<!-- @dsCard group="Brand" viewport="700x170" name="Motion" subtitle="Durations, easings & press feedback — confident, never bouncy" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:20px 26px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .hd{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin-bottom:10px}
+  .r{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:11px}
+  .lbl{width:72px;color:var(--fg-muted);flex:none}
+  .track{flex:1;height:8px;border-radius:4px;background:var(--interactive-bg-active);overflow:hidden;position:relative}
+  .dot{position:absolute;top:0;left:0;height:100%;width:22px;border-radius:4px;background:var(--action-default)}
+  .use{color:var(--fg-secondary);font-size:10px;width:96px;flex:none}
+  @keyframes slide{0%{left:0}50%{left:calc(100% - 22px)}100%{left:0}}
+</style></head><body>
+<div>
+  <div class="hd">Durations</div>
+  <div class="r"><span class="lbl">instant 80</span><span class="track"><span class="dot" style="animation:slide 1.6s cubic-bezier(.2,.7,.2,1) infinite"></span></span><span class="use">state flips</span></div>
+  <div class="r"><span class="lbl">fast 120</span><span class="track"><span class="dot" style="animation:slide 2s cubic-bezier(.2,.7,.2,1) infinite"></span></span><span class="use">hover · press</span></div>
+  <div class="r"><span class="lbl">base 200</span><span class="track"><span class="dot" style="animation:slide 2.6s cubic-bezier(.2,.7,.2,1) infinite"></span></span><span class="use">tabs · color</span></div>
+  <div class="r"><span class="lbl">slow 360</span><span class="track"><span class="dot" style="animation:slide 3.4s cubic-bezier(.16,1,.3,1) infinite"></span></span><span class="use">sheets · modals</span></div>
+  <div class="r"><span class="lbl">slower 560</span><span class="track"><span class="dot" style="animation:slide 4.4s cubic-bezier(.16,1,.3,1) infinite"></span></span><span class="use">prize reveal</span></div>
+</div>
+<div>
+  <div class="hd">Easings & feedback</div>
+  <div style="font-size:11px;color:var(--fg-secondary);line-height:1.9">
+    <div><b style="color:var(--fg-default)">standard</b> · cubic-bezier(0.2, 0.7, 0.2, 1) — default</div>
+    <div><b style="color:var(--fg-default)">out</b> · cubic-bezier(0.16, 1, 0.3, 1) — entrances</div>
+    <div><b style="color:var(--fg-default)">in</b> · cubic-bezier(0.5, 0, 0.85, 0.4) — exits</div>
+    <div><b style="color:var(--fg-default)">linear</b> — spinners, progress</div>
+    <div style="margin-top:8px">press <b style="color:var(--fg-default)">0.975</b> buttons · <b style="color:var(--fg-default)">0.99</b> cards</div>
+    <div style="color:var(--warning-fg)">No bounce. No overshoot. Transform + opacity only.</div>
+    <div style="color:var(--fg-muted)">prefers-reduced-motion zeroes all durations.</div>
+  </div>
+</div>
+</body></html>

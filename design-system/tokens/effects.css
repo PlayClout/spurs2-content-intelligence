@@ -1,0 +1,35 @@
+/* Clout — Effects: borders, shadows, glow, motion (v01)
+   ONE glow only, localized to a source — never stacked, never full-frame. Cards sit on
+   Carbon with a low-opacity blue/white hairline. Depth = three planes: atmosphere / lit product / type+CTA. */
+:root {
+  /* Borders */
+  --border-width: 1.5px; /* @kind spacing */
+  --border-hairline-style: 1.5px solid var(--border-hairline);
+  --border-blue-style: 2px solid var(--border-blue);
+
+  /* Elevation shadows (dark UI) */
+  --shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.40);
+  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --shadow-float: 0 30px 80px rgba(0, 0, 0, 0.65);
+
+  /* Signature glows (single, localized) */
+  --glow-blue: 0 0 40px rgba(18, 107, 255, 0.45);
+  --glow-pink: 0 0 40px rgba(255, 0, 107, 0.45);
+  --glow-action: 0 8px 30px rgba(255, 49, 87, 0.38);
+  --glow-hyper: 0 0 32px rgba(0, 163, 255, 0.50);
+
+  /* Focus */
+  --focus-ring-style: 0 0 0 3px rgba(18, 107, 255, 0.55);
+
+  /* Motion — confident, quick, never bouncy */
+  --ease-standard: cubic-bezier(0.2, 0.7, 0.2, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 200ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+
+  /* Atmospheric background washes (edge texture, clean center) */
+  --wash-blue: radial-gradient(80% 80% at 20% 15%, rgba(18,107,255,0.28) 0%, rgba(18,107,255,0) 55%); /* @kind color */
+  --wash-warm: radial-gradient(70% 70% at 85% 90%, rgba(255,49,87,0.22) 0%, rgba(255,49,87,0) 55%); /* @kind color */
+  --vignette: radial-gradient(120% 100% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%); /* @kind color */
+}
