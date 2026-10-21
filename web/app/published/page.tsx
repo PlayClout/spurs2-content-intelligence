@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import Image from "next/image";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { listOrgs, listPublished } from "@/lib/actions";
@@ -12,6 +13,7 @@ export default async function PublishedPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
+  await connection();
   const sp = await searchParams;
   const orgs = await listOrgs();
   const orgId = sp.org && orgs.some((o) => o.id === sp.org) ? sp.org : orgs[0]?.id;

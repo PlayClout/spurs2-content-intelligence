@@ -71,18 +71,16 @@ async function main() {
     })),
   ]).returning();
 
-  // Backdate signal times so "surfaced Ns after the play" timers are believable.
-  const recentTimes = [42, 38, 55, 47, 61, 50, 44, 58, 39, 65, 52, 46]; // seconds before opp creation
-  for (let i = 0; i < insertedSignals.length; i++) {
-    await db.update(s.signals)
-      .set({ occurredAt: minsAgo(8 + i * 11) })
-      .where(sql`id = ${insertedSignals[i].id}`);
-    insertedSignals[i].occurredAt = minsAgo(8 + i * 11);
-  }
-  void recentTimes;
-
-  const sigsFor = (sport: string, n: number) =>
-    insertedSignals.filter((x) => x.sport === sport).slice(0, n);
+  // Disjoint signal slices per opportunity so each card's "surfaced Ns after the play"
+  // timer is computed from its OWN signals (overlapping slices previously corrupted timers).
+  const sportCursors: Record<string, number> = {};
+  const sigsFor = (sport: string, n: number) => {
+    const pool = insertedSignals.filter((x) => x.sport === sport);
+    const start = sportCursors[sport] ?? 0;
+    const out = pool.slice(start, start + n);
+    sportCursors[sport] = start + n;
+    return out.length ? out : pool.slice(0, n);
+  };
 
   // ── Fixture assets + moments ──
   const [spursAsset, thfcAsset] = await db.insert(s.assets).values([
@@ -214,7 +212,7 @@ async function main() {
 
   for (const o of oppDefs) {
     const posterPath = writePoster(o.poster[0], o.poster[1], o.poster[2], o.poster[3]);
-    const sigs = sigsFor(o.sport, 3);
+    const sigs = sigsFor(o.sport, 2);
     const createdAt = minsAgo(o.createdMinsAgo);
     // Make contributing signals precede opportunity creation by a believable 35–70s
     for (let i = 0; i < sigs.length; i++) {

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { Inbox } from "lucide-react";
 import {
   listOrgs,
@@ -20,6 +21,7 @@ export default async function Home({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
+  await connection(); // always render at request time — live queue, no prerender
   const sp = await searchParams;
   const [orgs, engine, jobs] = await Promise.all([listOrgs(), engineStatus(), listJobs()]);
   const orgId = sp.org && orgs.some((o) => o.id === sp.org) ? sp.org : orgs[0]?.id;

@@ -205,9 +205,9 @@ export async function listJobs(limit = 30): Promise<JobRow[]> {
 /** Lightweight health probe for the live-engine status dot / connection indicator. */
 export async function engineStatus() {
   try {
-    const t0 = Date.now();
+    const t0 = performance.now();
     await db.execute(sql`select 1`);
-    return { ok: true as const, latencyMs: Date.now() - t0 };
+    return { ok: true as const, latencyMs: Math.round(performance.now() - t0) };
   } catch {
     return { ok: false as const, latencyMs: null };
   }
