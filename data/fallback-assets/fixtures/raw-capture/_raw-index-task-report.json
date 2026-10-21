@@ -1,0 +1,74 @@
+{
+  "basketball": {
+    "assetId": "6ad81fcb030b76724d10e3c5",
+    "indexedAssetId": "6ad81fd0968fe117efe47d16",
+    "indexId": "6ad81a01030b76724d10dc67",
+    "status": "ready",
+    "videoId": null,
+    "timings": {
+      "assetReadyMs": 6786,
+      "indexingMs": 8669,
+      "totalMs": 15456
+    },
+    "rawIndexedAsset": {
+      "hls": {
+        "videoUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/hlses/playlist.m3u8",
+        "thumbnailUrls": [
+          "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/thumbnails/5.jpeg"
+        ],
+        "status": "COMPLETE",
+        "updatedAt": "2026-10-21T02:13:44.566485929Z"
+      },
+      "id": "6ad81fd0968fe117efe47d16",
+      "assetId": "6ad81fcb030b76724d10e3c5",
+      "createdAt": "2026-10-21T02:13:36Z",
+      "updatedAt": "2026-10-21T02:13:41Z",
+      "indexedAt": "2026-10-21T02:13:41Z",
+      "systemMetadata": {
+        "duration": 13.972331,
+        "filename": "basketball-broll.mp4",
+        "fps": 23.976023976023978,
+        "height": 720,
+        "size": 4314210,
+        "width": 1280
+      },
+      "status": "ready"
+    }
+  },
+  "soccer": {
+    "assetId": "6ad81fdb960d8ea7bdcdc32b",
+    "indexedAssetId": "6ad81fdf5411fa6e602cba9f",
+    "indexId": "6ad81a01030b76724d10dc67",
+    "status": "ready",
+    "videoId": null,
+    "timings": {
+      "assetReadyMs": 6914,
+      "indexingMs": 12749,
+      "totalMs": 19663
+    },
+    "rawIndexedAsset": {
+      "hls": {
+        "videoUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/hlses/playlist.m3u8",
+        "thumbnailUrls": [
+          "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/5.jpeg"
+        ],
+        "status": "COMPLETE",
+        "updatedAt": "2026-10-21T02:14:04.232054155Z"
+      },
+      "id": "6ad81fdf5411fa6e602cba9f",
+      "assetId": "6ad81fdb960d8ea7bdcdc32b",
+      "createdAt": "2026-10-21T02:13:51Z",
+      "updatedAt": "2026-10-21T02:14:00Z",
+      "indexedAt": "2026-10-21T02:14:00Z",
+      "systemMetadata": {
+        "duration": 17.519987,
+        "filename": "soccer-broll.mp4",
+        "fps": 25,
+        "height": 720,
+        "size": 5379988,
+        "width": 1280
+      },
+      "status": "ready"
+    }
+  }
+}

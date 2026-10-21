@@ -1,0 +1,35 @@
+{
+  "search_pool": {
+    "total_count": 2,
+    "total_duration": 31,
+    "index_id": "6ad81a01030b76724d10dc67"
+  },
+  "data": [
+    {
+      "rank": 1,
+      "start": 0,
+      "end": 13.99899959564209,
+      "video_id": "6ad81fd0968fe117efe47d16",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/thumbnails/0.jpeg"
+    },
+    {
+      "rank": 2,
+      "start": 0,
+      "end": 8.799833297729492,
+      "video_id": "6ad81fdf5411fa6e602cba9f",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/0.jpeg"
+    },
+    {
+      "rank": 3,
+      "start": 8.799833297729492,
+      "end": 17.533000946044922,
+      "video_id": "6ad81fdf5411fa6e602cba9f",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/10.jpeg"
+    }
+  ],
+  "page_info": {
+    "limit_per_page": 10,
+    "total_results": 3,
+    "page_expires_at": "2026-10-21T02:33:53Z"
+  }
+}
