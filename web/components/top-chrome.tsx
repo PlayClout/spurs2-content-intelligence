@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Activity, Send } from "lucide-react";
+import { BrandIcon } from "@/components/brand-icon";
 import { cn } from "@/lib/utils";
 import type { OrgRow } from "@/lib/actions";
 import { LatencyDrawer } from "@/components/latency-drawer";
@@ -69,13 +69,13 @@ export function TopChrome({
 
         <LatencyDrawer jobs={jobs}>
           <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs text-muted-foreground">
-            <Activity size={14} /> latency
+            <BrandIcon name="bolt" size={14} /> latency
           </Button>
         </LatencyDrawer>
 
         <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 text-xs">
           <Link href={`/published?org=${orgId}`}>
-            <Send size={13} /> Published
+            <BrandIcon name="share" size={13} /> Published
           </Link>
         </Button>
       </div>

@@ -24,8 +24,10 @@ import { paddedWindow, probeDuration } from "./render-local";
 import type { Channel } from "../shared/schemas";
 import type { CaptionText } from "./overlay";
 
-export const OUT_ROOT = process.env.RENDER_OUT_DIR ?? "web/public/renders";
-const PUBLIC_PREFIX = "/renders"; // OUT_ROOT is served by Next from web/public
+/** Render output lives OUTSIDE web/public: Next production only serves public/ files present at startup, so
+ * renders made during the demo would 404. web/app/renders/[...path]/route.ts serves this dir at request time. */
+export const OUT_ROOT = process.env.RENDER_OUT_DIR ?? "out/renders";
+const PUBLIC_PREFIX = "/renders"; // URL prefix served by the route handler
 const REPO_ROOT = fileURLToPath(new URL("../", import.meta.url));
 /** absolute directory for a moment's renders: the ONE place drafts and finals for a slug live */
 export const renderDir = (slug: string) => join(OUT_ROOT.startsWith("/") ? OUT_ROOT : join(REPO_ROOT, OUT_ROOT), slug);

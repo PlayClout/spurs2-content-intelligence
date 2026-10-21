@@ -9,7 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Check, X, Save, Send, Loader2 } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
+import { BrandIcon } from "@/components/brand-icon";
 import { ComplianceBadge } from "@/components/compliance-badge";
 import { channelProfiles } from "@/lib/channels";
 import { cn } from "@/lib/utils";
@@ -318,35 +319,40 @@ export function ReviewPane({
         {flash && <span className="text-xs text-[var(--clout-blue-tint)]">{flash}</span>}
 
         <div className="ml-auto flex items-center gap-2">
-          {/* LIVE/SIM publish toggle */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center overflow-hidden rounded-md border border-border text-[10px] font-semibold">
-                  <button
-                    className={cn("px-2 py-1", !liveMode ? "bg-[rgba(0,163,255,0.2)] text-[var(--clout-hyper-blue)]" : "text-muted-foreground")}
-                    onClick={() => setLiveMode(false)}
-                  >
-                    SIM
-                  </button>
-                  <button className="cursor-not-allowed px-2 py-1 text-muted-foreground opacity-50" aria-disabled>
-                    LIVE
-                  </button>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>arms real @playclout post — enable in demo</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
+          {/* Publish group: only once approved/rendered. The SIM/LIVE switch is part of PUBLISH, not approval,
+              so it sits with the Publish button and is labeled as a destination, not a standalone action. */}
           {(status === "approved" || status === "rendered") && (
-            <Button
-              size="sm"
-              className="h-8 bg-[var(--clout-violet)] text-xs text-white hover:bg-[var(--clout-violet)]/90"
-              disabled={pending || isBlocked}
-              onClick={() => run(() => publishOpportunity(opp.id, activeChannel, liveMode ? "live" : "simulated"), "Published (simulated)")}
-            >
-              <Send size={13} /> Publish {channelProfiles[activeChannel]?.label}
-            </Button>
+            <div className="flex items-center gap-2 rounded-lg border border-border px-2 py-1">
+              <span className="kicker">Destination</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div role="radiogroup" aria-label="publish destination" className="flex items-center overflow-hidden rounded-md border border-border text-[10px] font-semibold">
+                      <button
+                        role="radio"
+                        aria-checked={!liveMode}
+                        className={cn("px-2 py-1", !liveMode ? "bg-[rgba(0,163,255,0.2)] text-[var(--clout-hyper-blue)]" : "text-muted-foreground")}
+                        onClick={() => setLiveMode(false)}
+                      >
+                        SIMULATED
+                      </button>
+                      <button role="radio" aria-checked={false} className="cursor-not-allowed px-2 py-1 text-muted-foreground opacity-50" aria-disabled>
+                        LIVE @playclout
+                      </button>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>LIVE posts to the real @playclout X account; armed for the demo only</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <Button
+                size="sm"
+                className="h-8 bg-[var(--clout-violet)] text-xs text-white hover:bg-[var(--clout-violet)]/90"
+                disabled={pending || isBlocked}
+                onClick={() => run(() => publishOpportunity(opp.id, activeChannel, liveMode ? "live" : "simulated"), liveMode ? "Published to @playclout" : "Published (simulated)")}
+              >
+                <BrandIcon name="share" size={13} /> Publish {channelProfiles[activeChannel]?.label}
+              </Button>
+            </div>
           )}
 
           {rejectMode ? (
@@ -378,7 +384,7 @@ export function ReviewPane({
           ) : (
             <>
               <Button size="sm" variant="outline" className="h-8 text-xs" disabled={pending || status === "rejected"} onClick={() => setRejectMode(true)}>
-                <X size={13} /> Reject
+                <BrandIcon name="close" size={13} /> Reject
               </Button>
               <TooltipProvider>
                 <Tooltip>
@@ -394,7 +400,7 @@ export function ReviewPane({
                           run(() => approveOpportunity(opp.id), "Approved — final render queued");
                         }}
                       >
-                        <Check size={14} /> Approve
+                        <BrandIcon name="check" size={14} /> Approve
                       </Button>
                     </span>
                   </TooltipTrigger>

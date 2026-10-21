@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Timer } from "lucide-react";
+import { BrandIcon } from "@/components/brand-icon";
 import { ScoreRing } from "@/components/score-ring";
 import { ChannelIcons } from "@/components/channel-icons";
 import { ComplianceBadge } from "@/components/compliance-badge";
@@ -58,7 +58,7 @@ export function OpportunityCard({
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
-            <p className="display truncate text-[15px] leading-tight">{opp.headline}</p>
+            <p className="display line-clamp-2 pb-px text-[15px]" style={{ lineHeight: 1.12 }} title={opp.headline}>{opp.headline}</p>
             {opp.score > 0 && <ScoreRing score={opp.score} size={40} />}
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -78,7 +78,7 @@ export function OpportunityCard({
         <span className="capitalize">{opp.status.replace(/_/g, " ")}{opp.rejectReason ? ` · ${opp.rejectReason}` : ""}</span>
         {opp.surfacedAfterSec !== null && (
           <span className="flex items-center gap-1 text-[var(--clout-blue-tint)]">
-            <Timer size={11} />
+            <BrandIcon name="clock" size={11} />
             surfaced {opp.surfacedAfterSec}s after the play
           </span>
         )}

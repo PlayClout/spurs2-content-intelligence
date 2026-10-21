@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import Image from "next/image";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { BrandIcon } from "@/components/brand-icon";
 import { listOrgs, listPublished } from "@/lib/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ export default async function PublishedPage({
       <div className="mb-6 flex items-center gap-3">
         <Button asChild variant="ghost" size="sm" className="h-8 text-xs">
           <Link href={`/?org=${orgId ?? ""}`}>
-            <ArrowLeft size={14} /> Queue
+            <BrandIcon name="arrow-left" size={14} /> Queue
           </Link>
         </Button>
         <h1 className="display text-2xl">Published — {org?.name ?? "…"}</h1>
@@ -39,10 +39,14 @@ export default async function PublishedPage({
 
       <div className="space-y-3">
         {rows.map(({ pub, opp }) => {
-          const poster =
-            (opp.finalPaths as Record<string, string>)[pub.channel] ??
-            (opp.draftPaths as Record<string, string>)[pub.channel] ??
-            Object.values(opp.draftPaths as Record<string, string>)[0];
+          // thumbnails must be stills: a rendered reel's finalPaths is an .mp4, so prefer the draft poster
+          const isStill = (p?: string) => !!p && /\.(jpe?g|png|webp|svg)$/i.test(p);
+          const candidates = [
+            (opp.finalPaths as Record<string, string>)[pub.channel],
+            (opp.draftPaths as Record<string, string>)[pub.channel],
+            ...Object.values(opp.draftPaths as Record<string, string>),
+          ];
+          const poster = candidates.find(isStill);
           const copy = (opp.generatedCopy as Record<string, string>)[pub.channel] ?? opp.headline;
           return (
             <div key={pub.id} className="flex gap-4 rounded-lg border border-border bg-card p-4">
@@ -62,7 +66,7 @@ export default async function PublishedPage({
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] text-[var(--clout-blue-tint)] hover:underline"
                     >
-                      live <ExternalLink size={11} />
+                      live <BrandIcon name="external" size={11} />
                     </a>
                   ) : (
                     <span className="rounded-full border border-[rgba(0,163,255,0.45)] bg-[rgba(0,163,255,0.14)] px-2 py-0.5 text-[10px] font-semibold text-[var(--clout-hyper-blue)]">
