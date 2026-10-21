@@ -96,6 +96,21 @@ try {
   const [r3] = await db.select().from(s.opportunities).where(eq(s.opportunities.id, reel!.id));
   check((r3.delivery as typeof del).scoreplayWriteBack.created === false, "re-approve: ScorePlay write-back idempotent (no duplicate log)");
 
+  // ── 3b. Merge: a second trigger for the SAME play adds corroboration to the existing cards, no new analysis ──
+  const before = await db.select().from(s.opportunities).where(eq(s.opportunities.orgId, orgSpurs.id));
+  const momentsBefore = (await db.select().from(s.moments)).length;
+  const [jm] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgSpurs.id, input: { ...input, startSec: 7, endSec: 12, trigger: { kind: "social_reaction", text: "Castle mentions spiking", simulated: true } } }, status: "queued" }).returning();
+  jobIds.push(jm.id);
+  await w.runOnce();
+  const after = await db.select().from(s.opportunities).where(eq(s.opportunities.orgId, orgSpurs.id));
+  const momentsAfter = (await db.select().from(s.moments)).length;
+  check(after.length === before.length && momentsAfter === momentsBefore, `same-play trigger merged: no new cards or moments (${before.length} cards)`);
+  const draftCard = after.find((o) => o.contentType === "milestone_graphic")!;
+  const dr = draftCard.delivery as { triggers: unknown[]; ranking: { score: number; triggers: number } };
+  const prevScore = before.find((o) => o.id === draftCard.id)!.score;
+  check(dr.triggers.length === 2 && dr.ranking.triggers === 2 && draftCard.score > prevScore && (draftCard.signalIds as string[]).length === 2, `merge adds corroboration: rank ${prevScore} -> ${draftCard.score}, 2 signals`);
+  check(typeof (before[0].generatedCopy as Record<string, string>).instagram_reel === "string" || typeof (before[0].generatedCopy as Record<string, string>).instagram_feed === "string", "cards carry generated copy");
+
   // ── 4. Tenant isolation: the SAME moment for two orgs must create separate rows, never touch each other ──
   const [j6] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgThfc.id, input, slug: `${tag}-iso` }, status: "queued" }).returning();
   jobIds.push(j6.id);

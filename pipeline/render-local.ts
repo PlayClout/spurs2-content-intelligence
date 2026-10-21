@@ -44,7 +44,8 @@ export async function probeSize(path: string): Promise<[number, number]> {
 export function paddedWindow(startSec: number, endSec: number, sourceDuration: number, pad = PAD_SEC) {
   const s = Math.max(0, startSec - pad);
   const e = Math.min(sourceDuration, endSec + pad);
-  return { start: Number(s.toFixed(3)), end: Number(e.toFixed(3)) };
+  // round end DOWN: toFixed rounds half-up, and 17.519987 -> 17.520 exceeds the true duration (TwelveLabs 400s on it)
+  return { start: Number(s.toFixed(3)), end: Math.floor(e * 1000) / 1000 };
 }
 
 type Profile = { kind?: string; width: number; height: number; encode: { crf: number; abitrate: string } };

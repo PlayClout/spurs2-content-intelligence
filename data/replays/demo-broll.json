@@ -1,0 +1,16 @@
+{
+  "$comment": "Demo replay over the fallback b-roll (swap footage + clock + events for real match footage when organizers supply it). Game/social feeds are SIMULATED and labeled; the watch-list runs a real TwelveLabs search. Event at 15s re-reports the 5s play: it MERGES into the existing cards (no new analysis). Watch-list at 45s skips the hit that overlaps the 30s spike and surfaces a moment no feed logged.",
+  "name": "Spurs² demo replay (b-roll)",
+  "indexId": "6ad81a01030b76724d10dc67",
+  "manifestFixture": "data/fallback-assets/fixtures/twelvelabs-manifest.json",
+  "footage": {
+    "spurs-okc": { "orgKey": "san-antonio-spurs", "competition": "NBA Regular Season", "scorePlayMediaId": 46000301, "twelvelabsAssetId": "6ad81fcb030b76724d10e3c5", "twelvelabsVideoId": "6ad81fd0968fe117efe47d16" },
+    "thfc-ars": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 46000302, "twelvelabsAssetId": "6ad81fdb960d8ea7bdcdc32b", "twelvelabsVideoId": "6ad81fdf5411fa6e602cba9f" }
+  },
+  "events": [
+    { "at": 5, "clock": "Q4 0:00.3", "kind": "game_event", "footage": "spurs-okc", "start": 6, "end": 12, "text": "Game-winning dunk at the buzzer, Castle", "headline": "Castle at the buzzer", "kicker": "Spurs 112 · Thunder 110 · Q4 0:00.3", "statLine": "Game-winning dunk with 0.3 left · SIMULATED game data" },
+    { "at": 15, "clock": "Q4 FINAL", "kind": "social_reaction", "footage": "spurs-okc", "start": 7, "end": 12, "text": "Mentions of Castle up 9x in 2 minutes", "headline": "Castle at the buzzer" },
+    { "at": 30, "clock": "88'", "kind": "social_reaction", "footage": "thfc-ars", "start": 4, "end": 12, "text": "Derby winner trending in London", "headline": "North London is white", "kicker": "Spurs 2 · Arsenal 1 · 88'", "statLine": "Late winner in the derby · SIMULATED game data" },
+    { "at": 45, "clock": "90+2'", "kind": "ai_watchlist", "footage": ["thfc-ars", "spurs-okc"], "query": "ball in motion", "headline": "The move nobody logged", "kicker": "Spurs 2 · Arsenal 1 · 90+2'", "statLine": "Found by TwelveLabs, not in the match feed" }
+  ]
+}

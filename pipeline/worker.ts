@@ -24,6 +24,9 @@ import { evaluate } from "../shared/compliance";
 import type { Channel, Compliance } from "../shared/schemas";
 import { processMoment, renderDir, publicPathFor, type MomentInput, type ProcessedMoment, type Variant } from "./moment";
 import { getRenderBackend } from "./render-backend";
+import { overlapRatio, SAME_PLAY } from "./watchlist";
+import { scoreFit } from "../shared/clients/decisions";
+import { generateCopy } from "../shared/copy";
 
 const client = postgres(process.env.DATABASE_URL!, { prepare: false, max: 3 });
 export const db = drizzle(client, { schema: s });
@@ -70,11 +73,67 @@ function complianceStamp(p: ProcessedMoment, channels: Channel[], source: string
   };
 }
 
+/** A trigger for a play that already has cards MERGES into them: new signal + corroboration, no new analysis/render.
+ * Same play = same org + same ScorePlay media + windows overlapping >= SAME_PLAY. Cheap filter before the expensive path. */
+async function mergeIntoExisting(job: JobRow, orgId: string, sport: string, input: MomentInput) {
+  const rows = await db.select().from(s.opportunities).where(sql`${s.opportunities.orgId} = ${orgId}
+    and ${s.opportunities.status} not in ('rejected','expired')
+    and (${s.opportunities.delivery}->'scoreplay'->>'mediaId')::bigint = ${input.scorePlayMediaId}`);
+  const w = { start: input.startSec, end: input.endSec };
+  // compare TRIGGER windows (what pickNew compares), never the padded analysis window: padding swallows neighbours
+  const same = rows.filter((o) => {
+    const d = o.delivery as { triggerWindows?: { start: number; end: number }[]; tightWindow?: { start: number; end: number } };
+    const ws = d?.triggerWindows ?? (d?.tightWindow ? [d.tightWindow] : []);
+    return ws.some((t) => overlapRatio(t, w) >= SAME_PLAY);
+  });
+  if (!same.length) return null;
+  const [signal] = await db.insert(s.signals).values({
+    orgId, kind: input.trigger.kind === "ai_watchlist" ? "context" : input.trigger.kind, simulated: input.trigger.simulated, sport,
+    payload: input.trigger, eventText: input.trigger.text, weight: 1, occurredAt: new Date(job.queuedAt), momentId: same[0].momentId,
+  }).returning();
+  for (const o of same) {
+    const d = (o.delivery ?? {}) as Record<string, unknown> & { triggers?: unknown[]; triggerWindows?: unknown[]; ranking?: Ranking };
+    const triggers = [...(d.triggers ?? []), input.trigger];
+    const triggerWindows = [...(d.triggerWindows ?? []), w];
+    const ranking = d.ranking ? rank(d.ranking.eventWeight, d.ranking.audienceFit, triggers as MomentInput["trigger"][], d.ranking.backend, d.ranking.confidence) : undefined;
+    await db.update(s.opportunities).set({
+      signalIds: [...((o.signalIds as string[]) ?? []), signal.id],
+      delivery: { ...d, triggers, triggerWindows, ...(ranking ? { ranking } : {}) },
+      ...(ranking ? { score: ranking.score, scoreBreakdown: ranking.breakdown } : {}),
+    }).where(eq(s.opportunities.id, o.id));
+  }
+  return same.map((o) => o.id);
+}
+
+export interface Ranking {
+  score: number; eventWeight: number; audienceFit: number; corroboration: number; triggers: number;
+  backend: string; confidence: number; lowConfidence: boolean; breakdown: Record<string, number>;
+}
+/** Nova's calibration: Jev answers below 0.7 confidence are not trustworthy on their own. We keep the score (it still
+ * orders sensibly) but flag it so the UI never presents it as settled. Floor policy itself lives in decisions.ts (Nova). */
+export const CONFIDENCE_FLOOR = 0.7;
+/** 0-100. Significance and audience fit (decision layer) dominate; each extra independent trigger corroborates. */
+export function rank(eventWeight: number, audienceFit: number, triggers: MomentInput["trigger"][], backend: string, confidence: number): Ranking {
+  const kinds = new Set(triggers.map((t) => t.kind));
+  const corroboration = Math.min(1, (kinds.size - 1) / 2 + (triggers.length > kinds.size ? 0.25 : 0));
+  const score = Math.round(100 * (0.5 * eventWeight + 0.35 * audienceFit + 0.15 * corroboration));
+  return {
+    score, eventWeight, audienceFit, corroboration, triggers: triggers.length, backend, confidence,
+    lowConfidence: backend !== "formula" && confidence < CONFIDENCE_FLOOR,
+    breakdown: { momentConfidence: 0, eventWeight, socialVelocity: kinds.has("social_reaction") ? 1 : 0, recencyDecay: 1, audienceFit },
+  };
+}
+
 async function handleProcessMoment(job: JobRow) {
   const { orgId, input, slug } = job.payload as { orgId?: string; input?: MomentInput; slug?: string };
   if (!orgId || !input) throw new Error(`process_moment payload needs {orgId, input} (got keys ${Object.keys(job.payload ?? {}).join(",") || "none"})`);
   const [org] = await db.select().from(s.orgs).where(eq(s.orgs.id, orgId));
   if (!org) throw new Error(`org ${orgId} not found`);
+  const merged = await mergeIntoExisting(job, orgId, org.sport, input);
+  if (merged) {
+    log(`process_moment merged ${input.trigger.kind} into ${merged.length} existing card(s) (no new analysis)`);
+    return merged;
+  }
   const runSlug = slug ?? `m-${input.scorePlayMediaId}-${Math.round(input.startSec)}`;
   const t0 = performance.now();
   const p = await processMoment(input, runSlug);
@@ -103,38 +162,45 @@ async function handleProcessMoment(job: JobRow) {
     rights: { source: "content rules + ScorePlay rights fields", real: p.scoreplay.mode === "live", rulesNote: "representative demo rules, not club policy", scoreplayFields: p.scoreplay.rightsFieldsUsed },
   };
 
+  // ranking (decision layer: Jev -> Haiku -> formula) + post copy (Haiku -> template), per variant, in parallel
+  const described = { label: p.manifest.moments[0]?.label ?? "moment", description: `${input.headline}. ${input.trigger.text}. ${p.manifest.summary}` };
+  const extras = await Promise.all(p.variants.map(async (v) => {
+    const [fit, copy] = await Promise.all([
+      scoreFit(described, v.audience),
+      generateCopy({ orgKey: input.orgKey, audience: v.audience, channels: v.channels, headline: input.headline, kicker: input.kicker, statLine: input.statLine, summary: p.manifest.summary }),
+    ]);
+    return { ranking: rank(fit.eventWeight, fit.audienceFit, [input.trigger], fit.backend, fit.confidence), copy };
+  }));
+
   const ids: string[] = [];
-  for (const v of p.variants) {
-    const copy = Object.fromEntries(v.channels.map((c) => [c, defaultCopy(input, c)]));
+  for (const [i, v] of p.variants.entries()) {
+    const { ranking, copy } = extras[i];
     const [opp] = await db.insert(s.opportunities).values({
-      orgId, dedupeKey: hash(`${orgId}:${p.scoreplay.mediaId}:${Math.round(p.tightWindow.start / 15)}:${v.contentType}:${v.audience}`), momentId: moment.id, signalIds: [signal.id],
+      orgId, dedupeKey: hash(`${orgId}:${runSlug}:${v.contentType}:${v.audience}`), momentId: moment.id, signalIds: [signal.id],
       sport: org.sport, audience: v.audience, contentType: v.contentType, channels: v.channels,
-      score: 0, scoreBreakdown: { momentConfidence: 0, eventWeight: 0, socialVelocity: 0, recencyDecay: 1, audienceFit: 0 },
-      headline: input.headline.toUpperCase(), generatedCopy: copy,
+      score: ranking.score, scoreBreakdown: ranking.breakdown,
+      headline: input.headline.toUpperCase(), generatedCopy: copy.copy,
       compliance: complianceStamp(p, v.channels, p.scoreplay.mode === "live" ? "scoreplay_metadata" : "scoreplay_fixture"),
       status: "draft_ready",
       draftPaths: Object.fromEntries(v.channels.map((c) => [c, v.posterPublicPath])),
       finalPaths: {},
-      delivery: { variant: v, inputs, content: p.content, window: p.window, tightWindow: p.tightWindow, scoreplay: p.scoreplay, processMs, slug: runSlug, orgKey: input.orgKey, draftVideo: v.contentType === "reel" ? v.publicPath : null },
+      delivery: {
+        variant: v, inputs: { ...inputs, copy: { source: copy.backend === "haiku" ? `Claude ${copy.model}` : "template", real: copy.backend === "haiku", note: copy.error ? `fallback: ${copy.error}` : "producer edits before publish" } },
+        content: p.content, window: p.window, tightWindow: p.tightWindow, scoreplay: p.scoreplay, processMs, slug: runSlug, orgKey: input.orgKey,
+        draftVideo: v.contentType === "reel" ? v.publicPath : null, triggers: [input.trigger], triggerWindows: [{ start: input.startSec, end: input.endSec }], ranking,
+      },
       expiresAt: new Date(Date.now() + 48 * 3600_000),
     }).onConflictDoUpdate({
       target: s.opportunities.dedupeKey,
-      set: { status: "draft_ready", delivery: sql`excluded.delivery`, draftPaths: sql`excluded.draft_paths`, compliance: sql`excluded.compliance` },
+      set: { status: "draft_ready", delivery: sql`excluded.delivery`, draftPaths: sql`excluded.draft_paths`, compliance: sql`excluded.compliance`, score: sql`excluded.score`, scoreBreakdown: sql`excluded.score_breakdown`, generatedCopy: sql`excluded.generated_copy` },
       // belt and braces: never let a dedupe collision touch another org's row (the key includes orgId too)
       setWhere: sql`${s.opportunities.orgId} = excluded.org_id`,
     }).returning();
     if (!opp) throw new Error(`dedupe key collided with another org's opportunity; refusing cross-org update (org ${orgId})`);
     ids.push(opp.id);
   }
-  log(`process_moment ${runSlug}: ${ids.length} opportunities in ${processMs}ms (manifest ${p.manifestMode}, scoreplay ${p.scoreplay.mode}, verdict ${p.content.verdict})`);
+  log(`process_moment ${runSlug}: ${ids.length} opportunities in ${processMs}ms (manifest ${p.manifestMode}, scoreplay ${p.scoreplay.mode}, verdict ${p.content.verdict}, rank ${extras.map((e) => `${e.ranking.score}/${e.ranking.backend}`).join(",")}, copy ${extras.map((e) => e.copy.backend).join(",")})`);
   return ids;
-}
-
-function defaultCopy(i: MomentInput, c: Channel): string {
-  // placeholder until copy generation lands (Haiku lane); producer edits in the UI
-  const tag = i.orgKey === "tottenham-hotspur" ? "#COYS" : "#GoSpursGo";
-  if (c === "x_photo" || c === "x_post") return `${i.headline}. ${i.statLine?.split("·")[0]?.trim() ?? ""} ${tag}`.replace(/\s+/g, " ").trim();
-  return `${i.headline} ${tag}`;
 }
 
 // ── render_final ───────────────────────────────────────────────────────────────────────

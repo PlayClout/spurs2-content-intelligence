@@ -99,6 +99,7 @@ export function ReviewPane({
   const pipeline = (opp.delivery ?? null) as {
     variant?: { why: string };
     inputs?: Record<string, { source: string; real: boolean; note?: string }>;
+    ranking?: { score: number; eventWeight: number; audienceFit: number; corroboration: number; triggers: number; backend: string; confidence?: number; lowConfidence?: boolean };
   } | null;
   const finals = (opp.finalPaths ?? {}) as Record<string, string>;
   const videoSrc = (finals[activeChannel]?.endsWith(".mp4") ? finals[activeChannel] : null) ?? delivery?.draftVideo ?? undefined;
@@ -243,6 +244,19 @@ export function ReviewPane({
                   <span className="text-muted-foreground">Audience ({opp.audience}): </span>
                   {pipeline.variant?.why}
                 </p>
+                {pipeline.ranking && (
+                  <p className="text-foreground">
+                    <span className="text-muted-foreground">Rank {pipeline.ranking.score}: </span>
+                    significance {Math.round(pipeline.ranking.eventWeight * 100)} · audience fit {Math.round(pipeline.ranking.audienceFit * 100)} ·{" "}
+                    {pipeline.ranking.triggers} trigger{pipeline.ranking.triggers === 1 ? "" : "s"}
+                    <span className="text-muted-foreground"> (scored by {pipeline.ranking.backend === "jev" ? "Jev decision engine" : pipeline.ranking.backend === "haiku" ? "Claude Haiku" : "fallback formula"})</span>
+                    {pipeline.ranking.lowConfidence && (
+                      <span className="ml-1 rounded-full bg-[rgba(255,176,32,0.14)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--warning-fg)]">
+                        LOW CONFIDENCE {Math.round((pipeline.ranking.confidence ?? 0) * 100)}%
+                      </span>
+                    )}
+                  </p>
+                )}
                 <p className="kicker mb-1 mt-3">Inputs</p>
                 {Object.entries(pipeline.inputs ?? {}).map(([k, v]) => (
                   <div key={k} className="flex items-center gap-2 rounded-md border border-border bg-background/50 px-2 py-1.5">
