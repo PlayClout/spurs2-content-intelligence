@@ -1,7 +1,9 @@
 # Spurs² Pre-Event Prep — ACTIVE CHECKLIST
-_Last updated: 2026-10-20 21:05 ET by Nova. Check items off as completed; Nova keeps this current._
+_Last updated: 2026-10-20 21:35 ET by Nova. Check items off as completed; Nova keeps this current._
 
 ## 🧑‍💻 STU — Tonight (M5 + accounts)
+
+> ✅ Infra done by Nova 10/20 PM: Supabase `quuvzqvgwuqenucaqpqg` (Reaper Studios Pro org — migrate post-event), Vercel project linked, Drizzle schema pushed + seeded (2 orgs, 12 simulated signals). App DB connections: transaction pooler `aws-0-us-east-1.pooler.supabase.com:6543`, `prepare:false`.
 
 ### M5 machine setup
 - [ ] `brew install ffmpeg pnpm gh jq poppler imagemagick`
@@ -20,8 +22,8 @@ _Last updated: 2026-10-20 21:05 ET by Nova. Check items off as completed; Nova k
 - [ ] Give Hermes the context-update brief (drafted by Nova, in chat 2026-10-20) + point it at PR #1 for review
 
 ### Supabase / Vercel (standby infra — 10 min)
-- [ ] Create Supabase project `spurs2-content-intelligence` (or confirm Nova should use existing access token to create)
-- [ ] Create Vercel project linked to the repo (or confirm Nova does it via token)
+- [x] Create Supabase project `spurs2-content-intelligence` (or confirm Nova should use existing access token to create)
+- [x] Create Vercel project linked to the repo (or confirm Nova does it via token)
 
 ## ⭐ NOVA — Tonight/Wednesday (remote lane, nova/* PRs)
 - [ ] UI pre-build PR: shadcn init + PlayClout token theme + dark mode
@@ -29,7 +31,7 @@ _Last updated: 2026-10-20 21:05 ET by Nova. Check items off as completed; Nova k
 - [ ] OpportunityCard (thumbnail, score ring, signal chips, compliance badge, "surfaced Ns ago" timer)
 - [ ] Vidstack review player + trim handles → `trimOverride`
 - [ ] "Why" explainability panel · approve/reject optimistic flow · empty/loading/error states
-- [ ] Supabase: Drizzle schema push (orgs, assets, moments, signals, opportunities, jobs, published_assets, performance_snapshots) + `pnpm seed`
+- [x] Supabase: Drizzle schema push (orgs, assets, moments, signals, opportunities, jobs, published_assets, performance_snapshots) + `pnpm seed`
 - [ ] **TwelveLabs empirical test** (needs key): index b-roll → Marengo search → Pegasus json_schema → real timestamps
 - [ ] **ffmpeg PoC**: timestamps → rough cut → frame-accurate re-encode → 9:16/16:9/1:1 variants w/ captions; commit tested presets to `pipeline/`
 - [ ] Record real API responses as MOCK_MODE fixtures (`data/fallback-assets/fixtures/`)
