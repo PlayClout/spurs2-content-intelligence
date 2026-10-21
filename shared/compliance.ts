@@ -9,12 +9,23 @@ export interface Restriction {
   kind: "territory" | "platform" | "league" | "competition" | "sponsor" | "expiration" | "usage";
   rule: string; // human-readable, e.g. "No distribution in UK territory before 22:00 local"
   blockedChannels?: Channel[];
+  /** platform families ("instagram", "x", "youtube", "tiktok"); blocks every channel in the family */
+  blockedPlatforms?: string[];
   blockedTerritories?: string[];
   expiresAt?: Date;
   /** embargo: blocked until this instant (e.g. ScorePlay accessible_from in the future) */
   notBefore?: Date;
   /** advisory: never blocks; always surfaces its rule and makes the verdict at least "restricted" */
   advisory?: boolean;
+}
+
+/** Channel -> platform family. instagram_reel/story/feed -> instagram, x_post/x_photo -> x, etc. */
+export function platformOf(channel: string): string {
+  if (channel.startsWith("instagram")) return "instagram";
+  if (channel.startsWith("youtube")) return "youtube";
+  if (channel.startsWith("x_")) return "x";
+  if (channel === "tiktok") return "tiktok";
+  return channel;
 }
 
 export interface ComplianceDecision {
@@ -38,9 +49,9 @@ export function evaluate(requested: Channel[], restrictions: Restriction[], now 
       reasons.push(r.rule);
       continue;
     }
-    if (r.blockedChannels?.length) {
+    if (r.blockedChannels?.length || r.blockedPlatforms?.length) {
       const before = allowed.length;
-      allowed = allowed.filter((c) => !r.blockedChannels!.includes(c));
+      allowed = allowed.filter((c) => !r.blockedChannels?.includes(c) && !r.blockedPlatforms?.includes(platformOf(c)));
       if (allowed.length < before) reasons.push(r.rule);
     }
     if (r.blockedTerritories?.length) reasons.push(`Territory restriction: ${r.rule}`);

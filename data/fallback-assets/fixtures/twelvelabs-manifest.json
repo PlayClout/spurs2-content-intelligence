@@ -1,0 +1,165 @@
+{
+  "$provenance": "RECORDED 2026-10-21T03:17:21.927Z live POST /v1.3/analyze, pegasus1.6, asset 6ad81fcb030b76724d10e3c5, window 5-13s",
+  "request": {
+    "model_name": "pegasus1.6",
+    "video": {
+      "type": "asset_id",
+      "asset_id": "6ad81fcb030b76724d10e3c5"
+    },
+    "prompt": "(MANIFEST_PROMPT)",
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "moments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                },
+                "end": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                }
+              },
+              "required": [
+                "label",
+                "description",
+                "start",
+                "end"
+              ]
+            }
+          },
+          "subjectX": {
+            "type": "number"
+          },
+          "detectedSponsors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "category"
+              ]
+            }
+          },
+          "identifiablePeople": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "player",
+                    "coach",
+                    "official",
+                    "fan"
+                  ]
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "label"
+              ]
+            }
+          },
+          "competitionMarkings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "crowdPrivacy": {
+            "type": "object",
+            "properties": {
+              "facesVisible": {
+                "type": "boolean"
+              },
+              "closeUps": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "facesVisible",
+              "closeUps"
+            ]
+          },
+          "audioRisks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "stadium_music",
+                    "recorded_music",
+                    "broadcast_commentary",
+                    "crowd_chant"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          },
+          "suggestedUse": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary",
+          "moments",
+          "subjectX",
+          "detectedSponsors",
+          "identifiablePeople",
+          "competitionMarkings",
+          "crowdPrivacy",
+          "audioRisks",
+          "suggestedUse"
+        ]
+      }
+    },
+    "start_time": 5,
+    "end_time": 13,
+    "temperature": 0.1,
+    "max_tokens": 2048,
+    "stream": false
+  },
+  "elapsedMs": 7272,
+  "response": {
+    "id": "5d142ce6-01e0-4caa-89f7-3bbba1545ca4",
+    "data": "{\"audioRisks\":[],\"competitionMarkings\":[],\"crowdPrivacy\":{\"closeUps\":false,\"facesVisible\":false},\"detectedSponsors\":[],\"identifiablePeople\":[],\"moments\":[{\"description\":\"The camera holds a steady low-angle view of an outdoor basketball hoop with a clear backboard and net, set against a blue sky with clouds and surrounding trees.\",\"end\":8.0,\"label\":\"Basketball Hoop Static Shot\",\"start\":0.0}],\"subjectX\":0.5,\"suggestedUse\":\"Ideal for establishing shots or background visuals in sports club promotional content highlighting outdoor facilities.\",\"summary\":\"A static low-angle shot of an outdoor basketball hoop against a blue sky with scattered clouds, trees on the left, and utility poles on the right. No people, audio, or branding are visible.\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "output_tokens": 230,
+      "input_tokens": 7937
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "$provenance": "Adapted 2026-10-20 from ~/workspace/builds/spurs2-rights-desk/data/rules.json (Stu GO). Changes: sponsor-conflict rule now compares detected sponsor CATEGORIES to an org policy instead of a 'Competing' name string; MUSIC rule carries a render action (mute). These are REPRESENTATIVE demo rules, not Tottenham/Spurs/league policy. Ask organizers for real rules (briefing checklist).",
+  "orgPolicies": {
+    "$comment": "ILLUSTRATIVE demo policy, NOT the clubs' actual sponsor contracts. Replace with organizer-provided terms.",
+    "san-antonio-spurs": { "sponsorConflictCategories": ["telecom"] },
+    "tottenham-hotspur": { "sponsorConflictCategories": ["betting"] }
+  },
+  "rules": [
+    {
+      "id": "PL-BROADCAST-OWNED-SOCIAL-48H",
+      "name": "Premier League broadcast overlay cooldown",
+      "appliesWhen": { "competition": "Premier League", "competitionMarkingIncludes": "broadcast overlay" },
+      "severity": "AMBER",
+      "restriction": "Owned social use only until broadcast cooldown expires; no partner-site distribution during cooldown.",
+      "platformBlocks": ["partner_site"],
+      "territoryBlocks": [],
+      "expiryHoursAfterEvent": 48
+    },
+    {
+      "id": "MUSIC-SYNC-VERIFY",
+      "name": "Audible music sync-rights review",
+      "appliesWhen": { "audioRiskType": "stadium_music" },
+      "severity": "AMBER",
+      "restriction": "Verify music/sync rights or mute audio before distribution.",
+      "platformBlocks": [],
+      "territoryBlocks": [],
+      "renderActions": ["mute_audio"]
+    },
+    {
+      "id": "CROWD-CLOSEUP-PRIVACY-EU",
+      "name": "Identifiable crowd close-up privacy review",
+      "appliesWhen": { "facesVisible": true, "closeUps": true },
+      "severity": "AMBER",
+      "restriction": "Blur or review identifiable fan close-ups before EU/UK paid or partner distribution.",
+      "platformBlocks": ["partner_site"],
+      "territoryBlocks": ["EU", "UK"]
+    },
+    {
+      "id": "TRAINING-CLUB-CONTROLLED-GREEN",
+      "name": "Club-controlled training footage",
+      "appliesWhen": { "competition": "Training", "facesVisible": false, "audioRiskCount": 0 },
+      "severity": "GREEN",
+      "restriction": "Cleared for global owned social use, subject to normal player/club policy.",
+      "platformBlocks": [],
+      "territoryBlocks": []
+    },
+    {
+      "id": "SPONSOR-COMPETITOR-CATEGORY-REVIEW",
+      "name": "Sponsor category conflict review",
+      "appliesWhen": { "detectedSponsorCategoryInOrgConflicts": true },
+      "severity": "RED",
+      "restriction": "Blocked for partner channels until sponsor conflict is reviewed or edited out.",
+      "platformBlocks": ["partner_site"],
+      "territoryBlocks": ["Global", "US", "Mexico", "EU", "UK"]
+    }
+  ]
+}

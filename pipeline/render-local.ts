@@ -62,6 +62,8 @@ export interface LocalRenderRequest extends RenderRequest {
   /** photo channels only: second within the source to grab (default = window midpoint) */
   grabAtSec?: number;
   statLine?: string;
+  /** from content rules, e.g. ["mute_audio"] (MUSIC-SYNC-VERIFY) */
+  renderActions?: string[];
 }
 
 export class LocalFfmpegBackend implements RenderBackend {
@@ -104,6 +106,7 @@ export class LocalFfmpegBackend implements RenderBackend {
     graph += hasCaption ? `;[base][1:v]overlay=0:0[v]` : `;[base]null[v]`;
 
     const draft = r.mode === "draft";
+    const mute = r.renderActions?.includes("mute_audio") ?? false;
     const venc = draft
       ? ["-c:v", "h264_videotoolbox", "-b:v", "6M"]
       : ["-c:v", "libx264", "-preset", "fast", "-crf", String(p.encode.crf || 20)];
@@ -111,14 +114,14 @@ export class LocalFfmpegBackend implements RenderBackend {
       "-y", "-hide_banner", "-loglevel", "error",
       "-ss", String(r.startSec), "-t", dur.toFixed(3), "-i", r.sourcePath,
       ...(hasCaption ? ["-i", overlayPath] : []),
-      "-filter_complex", graph, "-map", "[v]", "-map", "0:a?",
+      "-filter_complex", graph, "-map", "[v]",
+      ...(mute ? ["-an"] : ["-map", "0:a?", "-c:a", "aac", "-b:a", p.encode.abitrate || "128k"]),
       ...venc, "-r", "30",
-      "-c:a", "aac", "-b:a", p.encode.abitrate || "128k",
       "-movflags", "+faststart", outPath,
     ];
     await run(FFMPEG, args, { maxBuffer: 16 * 1024 * 1024 });
     await run(FFMPEG, ["-y", "-hide_banner", "-loglevel", "error", "-ss", (dur * 0.5).toFixed(2), "-i", outPath, "-frames:v", "1", "-q:v", "3", posterPath]);
-    return { outPath, posterPath, durationSec: await probeDuration(outPath), captionPlacement: placement };
+    return { outPath, posterPath, durationSec: await probeDuration(outPath), captionPlacement: placement, audioMuted: mute };
   }
 
   private async renderPhoto(r: LocalRenderRequest) {

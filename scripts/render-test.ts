@@ -83,5 +83,19 @@ for (const c of cases) {
   check(ps.width === want[0] && ps.height === want[1], `${c.slug} photo card is ${want.join("x")}`);
 }
 
+// mute_audio render action (MUSIC-SYNC-VERIFY). b-roll has no audio track, so synthesize a source that does.
+{
+  const { execFileSync: ex } = await import("node:child_process");
+  const { FFMPEG } = await import("../pipeline/render-local");
+  const withAudio = `${OUT}/tone-source.mp4`;
+  ex(FFMPEG, ["-y", "-loglevel", "error", "-i", "data/fallback-assets/basketball-broll.mp4", "-f", "lavfi", "-i", "sine=frequency=440:duration=14", "-shortest", "-c:v", "copy", "-c:a", "aac", withAudio]);
+  const base = { orgId: "test", sourcePath: withAudio, startSec: 2, endSec: 6, channel: "instagram_reel", mode: "draft" } as const;
+  const keep = await backend.render({ ...base, ...({ club: "san-antonio-spurs", outDir: OUT, slug: "audio-keep" } as object) } as never);
+  const muted = await backend.render({ ...base, ...({ club: "san-antonio-spurs", outDir: OUT, slug: "audio-mute", renderActions: ["mute_audio"] } as object) } as never);
+  check(probe(withAudio).some((s) => s.codec_type === "audio"), "mute test source has an audio track (negative control)");
+  check(probe(keep.outPath).some((s) => s.codec_type === "audio"), "no render action -> audio kept");
+  check(!probe(muted.outPath).some((s) => s.codec_type === "audio"), "mute_audio -> output has no audio stream");
+}
+
 console.log(`\n${fail ? `${fail} FAILED` : "ALL PASS"}`);
 process.exit(fail ? 1 : 0);
