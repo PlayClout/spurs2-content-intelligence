@@ -28,10 +28,9 @@ export interface RenderBackend {
   render(req: RenderRequest): Promise<RenderResult>;
 }
 
-/** Implemented in render-local.ts (Wed PoC): draft = `-ss .. -to .. -c copy` (sub-second);
- * final = fast-seek + frame-trim re-encode -> profile crop/scale/drawtext in one filter chain,
- * then poster frame-grab. Fan-out: Promise.all over channel variants from one master cut. */
-export function getRenderBackend(): RenderBackend {
-  // demo-local profile; cloud-worker lands post-event behind the same interface
-  throw new Error("wire render-local.ts after Wednesday ffmpeg PoC (build list item 2)");
+/** demo-local profile -> LocalFfmpegBackend (render-local.ts). cloud-worker lands post-event
+ * behind the same interface. Captions are PNG overlays (overlay.ts), not drawtext. */
+export async function getRenderBackend(): Promise<RenderBackend> {
+  const { LocalFfmpegBackend } = await import("./render-local");
+  return new LocalFfmpegBackend();
 }

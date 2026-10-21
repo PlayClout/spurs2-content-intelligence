@@ -16,7 +16,7 @@ export const OrgSchema = z.object({
 export const Sport = z.enum(["basketball", "soccer"]);
 export const Audience = z.enum(["casual", "superfan", "regional", "international", "player_community", "sponsor"]);
 export const ContentType = z.enum(["highlight_clip", "reel", "story", "x_post", "youtube_short", "youtube_highlight", "score_graphic", "milestone_graphic"]);
-export const Channel = z.enum(["instagram_reel", "instagram_story", "tiktok", "x_post", "youtube_short", "youtube_highlight"]);
+export const Channel = z.enum(["instagram_reel", "instagram_story", "tiktok", "x_post", "youtube_short", "youtube_highlight", "instagram_feed", "x_photo"]);
 
 export const AssetSchema = z.object({
   id: z.string().uuid(),

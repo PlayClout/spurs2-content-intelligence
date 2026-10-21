@@ -53,5 +53,25 @@
     "captions": { "burnIn": false, "position": "none", "fontSize": 0 },
     "copy": { "maxChars": 5000, "hashtags": false, "tone": "editorial" },
     "encode": { "vcodec": "libx264", "crf": 19, "preset": "medium", "acodec": "aac", "abitrate": "192k" }
+  },
+  "instagram_feed": {
+    "label": "Instagram Feed (photo)",
+    "kind": "photo",
+    "aspect": "4:5", "width": 1080, "height": 1350,
+    "maxDurationSec": 0, "targetDurationSec": [0, 0],
+    "safeZone": { "top": 64, "bottom": 64, "left": 64, "right": 64 },
+    "captions": { "burnIn": true, "position": "lower-third", "fontSize": 64 },
+    "copy": { "maxChars": 2200, "hashtags": true, "tone": "hype" },
+    "encode": { "vcodec": "mjpeg", "crf": 0, "preset": "", "acodec": "", "abitrate": "" }
+  },
+  "x_photo": {
+    "label": "X (photo)",
+    "kind": "photo",
+    "aspect": "16:9", "width": 1600, "height": 900,
+    "maxDurationSec": 0, "targetDurationSec": [0, 0],
+    "safeZone": { "top": 48, "bottom": 48, "left": 64, "right": 64 },
+    "captions": { "burnIn": true, "position": "lower-third", "fontSize": 56 },
+    "copy": { "maxChars": 280, "hashtags": true, "tone": "punchy" },
+    "encode": { "vcodec": "mjpeg", "crf": 0, "preset": "", "acodec": "", "abitrate": "" }
   }
 }

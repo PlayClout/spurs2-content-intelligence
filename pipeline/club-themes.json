@@ -1,0 +1,21 @@
+{
+  "$comment": "Generated assets are CLUB content, so they wear the CLUB's brand, never Clout house colors. Core public brand colors; confirm against each club's brand guidelines before anything ships externally. No club crests/marks are embedded (we do not have licensed marks); club name is set in type.",
+  "san-antonio-spurs": {
+    "displayName": "San Antonio Spurs",
+    "shortName": "SPURS",
+    "panel": "#000000",
+    "accent": "#C4CED4",
+    "text": "#FFFFFF",
+    "subtext": "#C4CED4",
+    "source": "Spurs core palette: black, silver, white (public brand colors; verify with club)"
+  },
+  "tottenham-hotspur": {
+    "displayName": "Tottenham Hotspur",
+    "shortName": "SPURS",
+    "panel": "#132257",
+    "accent": "#FFFFFF",
+    "text": "#FFFFFF",
+    "subtext": "#B8C0DA",
+    "source": "Tottenham core palette: navy, lilywhite (public brand colors; verify with club)"
+  }
+}
