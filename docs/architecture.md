@@ -65,6 +65,24 @@ Approve-to-export < 30 seconds.
 
 **Scope-cut order if behind:** live social sim → second sport → sponsor overlay. Never cut: end-to-end workflow, approval UI.
 
+## Decision layer: Jev (System One) with graceful fallback
+
+Hot-path decisions (signal→event fusion, audience_fit/event_weight scoring inputs, moment dedupe, caption guardrails) run through `shared/clients/decisions.ts` — a `DecisionProvider` chain: **Jev → Haiku structured output → deterministic formula**. Jev (TypeSafe AI, typesafe.ai) returns typed, calibrated probabilities in 70–500ms at ~$0.042/MTok — frontier-level semantic matching at stream speed, cannot hallucinate or emit malformed output. It replaces both brittle keyword rules AND slow LLM calls in the hot path. **LLMs (Haiku) remain only where language is the product**: captions, copy, the "why" narrative.
+
+Status: early access requested (Stu). Jev is an **upgrade, never a dependency** — the pipeline works end-to-end on the formula fallback; same philosophy as MOCK_MODE. Wednesday test (if keyed): real latency from our network, fusion question shape, calibration sanity on ~20 hand-labeled examples.
+
+## Latency budget (timestamp every stage transition in `jobs` from hour one)
+
+| Transition | Target | How |
+|---|---|---|
+| footage → indexed | pre-paid (Wed night / overnight) | upload-on-arrival, parallel, never serial |
+| signal → fused | <200ms | velocity counters in code; Jev for semantic match; LLM never reads raw streams — cheap filters touch everything, decisions touch clusters |
+| fused → scored | <1s | arithmetic over precomputed inputs; top-N cap |
+| scored → draft ready | <10s | speculative: fire drafts on scoring, before producer looks; stream-copy cut (sub-second) + Haiku caption in parallel |
+| approve → final variants | <30s | one frame-accurate master re-encode → all channel variants fan out concurrently (Promise.all over ffmpeg) |
+| **moment → reviewable card** | **<60s** | put a visible "surfaced Ns after the play" timer on the card — the speed IS the pitch |
+| end-to-end (signal → exported asset) | <2 min | pipeline-latency debug view doubles as demo stat |
+
 ## Known risks / dependencies
 
 See docs/api-spike-report.md §5–6. Top 3: licensed footage availability/timing · ScorePlay key issuance (CSM-gated, Thursday) · TwelveLabs indexing latency (pre-index Wednesday night; empirical test ASAP).
