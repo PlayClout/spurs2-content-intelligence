@@ -1,0 +1,30 @@
+{
+  "note": "v1.3 current path is POST /assets (upload) -> POST /indexes/{id}/indexed-assets (index) -> poll GET .../indexed-assets/{id}. Legacy one-shot POST /tasks still exists in some docs but this is the verified-working flow as of 2026-10-20. This fixture captures the indexed-asset resource once status=ready.",
+  "index_id": "6ad81a01030b76724d10dc67",
+  "asset_id": "6ad81fcb030b76724d10e3c5",
+  "indexed_asset_id": "6ad81fd0968fe117efe47d16",
+  "response": {
+    "_id": "6ad81fd0968fe117efe47d16",
+    "asset_id": "6ad81fcb030b76724d10e3c5",
+    "created_at": "2026-10-21T02:13:36Z",
+    "updated_at": "2026-10-21T02:13:41Z",
+    "indexed_at": "2026-10-21T02:13:41Z",
+    "system_metadata": {
+      "duration": 13.972331,
+      "filename": "basketball-broll.mp4",
+      "fps": 23.976023976023978,
+      "height": 720,
+      "size": 4314210,
+      "width": 1280
+    },
+    "hls": {
+      "video_url": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/hlses/playlist.m3u8",
+      "thumbnail_urls": [
+        "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/thumbnails/5.jpeg"
+      ],
+      "status": "COMPLETE",
+      "updated_at": "2026-10-21T02:18:46.258881906Z"
+    },
+    "status": "ready"
+  }
+}

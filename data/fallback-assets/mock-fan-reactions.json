@@ -1,0 +1,11 @@
+{
+  "$comment": "SIMULATED social-reaction stream (simulated:true — demo truth rule). velocity = mentions/min normalized 0-1.",
+  "reactions": [
+    { "sport": "basketball", "refEventText": "Game-winning dunk at the buzzer, Q4 0:00.3", "platform": "x", "velocity": 0.97, "sampleMentions": 18400, "sentiment": "euphoric", "topPhrases": ["CASTLE AT THE BUZZER", "greatest finish of the season", "Spurs win"], "windowMin": 10, "simulated": true },
+    { "sport": "basketball", "refEventText": "Poster dunk over defender in transition, Q3 7:12", "platform": "tiktok", "velocity": 0.78, "sampleMentions": 6200, "sentiment": "hype", "topPhrases": ["Wemby poster", "he's not human"], "windowMin": 15, "simulated": true },
+    { "sport": "basketball", "refEventText": "Career-high 42 points milestone reached, Q4 4:30", "platform": "reddit", "velocity": 0.6, "sampleMentions": 2100, "sentiment": "celebratory", "topPhrases": ["career high 42", "MVP campaign"], "windowMin": 30, "simulated": true },
+    { "sport": "soccer", "refEventText": "Stoppage-time winning goal, 90+3'", "platform": "x", "velocity": 0.95, "sampleMentions": 22600, "sentiment": "euphoric", "topPhrases": ["JOHNSON 90+3", "COYS", "scenes at the Lane"], "windowMin": 10, "simulated": true },
+    { "sport": "soccer", "refEventText": "Bicycle-kick goal from edge of the box, 67'", "platform": "instagram", "velocity": 0.88, "sampleMentions": 9800, "sentiment": "awe", "topPhrases": ["goal of the season", "Solanke bicycle"], "windowMin": 15, "simulated": true },
+    { "sport": "soccer", "refEventText": "Goalkeeper triple save sequence, 81'", "platform": "x", "velocity": 0.45, "sampleMentions": 1500, "sentiment": "respect", "topPhrases": ["Vicario wall"], "windowMin": 20, "simulated": true }
+  ]
+}

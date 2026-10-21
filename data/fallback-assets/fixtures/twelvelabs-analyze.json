@@ -1,0 +1,9 @@
+{
+  "id": "ecbade7e-c542-4f93-b5df-10336555f1f0",
+  "data": "{\"events\":[{\"description\":\"A goalkeeper in a black and yellow uniform walks from the left side of the frame towards the right side of the soccer field.\",\"end_time\":3.5,\"label\":\"Goalkeeper walks across field\",\"start_time\":0.0},{\"description\":\"Various players in yellow and white jerseys are seen jogging and moving around the field behind the chain-link fence.\",\"end_time\":13.5,\"label\":\"Players jogging and moving\",\"start_time\":3.5},{\"description\":\"The goalkeeper walks back from the right side towards the center/left of the goal area as play continues.\",\"end_time\":17.5,\"label\":\"Goalkeeper returns to position\",\"start_time\":13.5}]}",
+  "finish_reason": "stop",
+  "usage": {
+    "output_tokens": 216,
+    "input_tokens": 13925
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "$comment": "SIMULATED game-event feed (simulated:true carried into UI — demo truth rule). Both sports, mirrored shapes.",
+  "events": [
+    { "sport": "basketball", "eventText": "Game-winning dunk at the buzzer, Q4 0:00.3", "type": "game_winner", "player": "Stephon Castle", "team": "San Antonio Spurs", "gameClock": "Q4 00:00.3", "score": "112-110", "weight": 1.0, "occurredAt": "2026-10-22T21:47:00Z", "simulated": true },
+    { "sport": "basketball", "eventText": "Poster dunk over defender in transition, Q3 7:12", "type": "highlight_play", "player": "Victor Wembanyama", "team": "San Antonio Spurs", "gameClock": "Q3 07:12", "score": "78-74", "weight": 0.85, "occurredAt": "2026-10-22T21:05:00Z", "simulated": true },
+    { "sport": "basketball", "eventText": "Career-high 42 points milestone reached, Q4 4:30", "type": "milestone", "player": "Victor Wembanyama", "team": "San Antonio Spurs", "gameClock": "Q4 04:30", "score": "100-98", "weight": 0.9, "occurredAt": "2026-10-22T21:38:00Z", "simulated": true },
+    { "sport": "soccer", "eventText": "Stoppage-time winning goal, 90+3'", "type": "game_winner", "player": "Brennan Johnson", "team": "Tottenham Hotspur", "gameClock": "90+3", "score": "2-1", "weight": 1.0, "occurredAt": "2026-10-22T16:52:00Z", "simulated": true },
+    { "sport": "soccer", "eventText": "Bicycle-kick goal from edge of the box, 67'", "type": "highlight_play", "player": "Dominic Solanke", "team": "Tottenham Hotspur", "gameClock": "67:00", "score": "1-1", "weight": 0.9, "occurredAt": "2026-10-22T16:22:00Z", "simulated": true },
+    { "sport": "soccer", "eventText": "Goalkeeper triple save sequence, 81'", "type": "highlight_play", "player": "Guglielmo Vicario", "team": "Tottenham Hotspur", "gameClock": "81:00", "score": "2-1", "weight": 0.75, "occurredAt": "2026-10-22T16:40:00Z", "simulated": true }
+  ]
+}

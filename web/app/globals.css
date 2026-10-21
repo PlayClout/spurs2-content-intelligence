@@ -1,0 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ── PlayClout design-system tokens mapped into the shadcn theme ──
+   Source: design-system/tokens/{colors,semantic,typography,product,effects}.css
+   Dark is the only product theme. Pink = value/action, NEVER error. */
+
+:root {
+  /* Clout core */
+  --clout-black: #050811;
+  --clout-carbon: #10131c;
+  --clout-carbon-2: #171b26;
+  --clout-white: #f5f5f3;
+  --clout-electric-blue: #126bff;
+  --clout-hyper-blue: #00a3ff;
+  --clout-violet: #7047eb;
+  --clout-pink: #ff006b;
+  --clout-signal-orange: #ff6a1a;
+  --clout-slate: #8b93a3;
+  --clout-slate-dim: #5b6472;
+  --clout-blue-tint: #5aa2ff;
+
+  /* Feedback (product layer) */
+  --success: #00d982;
+  --success-fg: #5cffc0;
+  --warning: #ffb020;
+  --warning-fg: #ffce6b;
+  --danger: #ff2942;
+  --danger-fg: #ff7a88;
+
+  /* shadcn semantic mapping */
+  --background: var(--clout-black);
+  --foreground: var(--clout-white);
+  --card: var(--clout-carbon);
+  --card-foreground: var(--clout-white);
+  --popover: var(--clout-carbon-2);
+  --popover-foreground: var(--clout-white);
+  --primary: var(--clout-electric-blue);
+  --primary-foreground: #ffffff;
+  --secondary: rgba(245, 245, 243, 0.06);
+  --secondary-foreground: var(--clout-white);
+  --muted: rgba(245, 245, 243, 0.06);
+  --muted-foreground: var(--clout-slate);
+  --accent: rgba(18, 107, 255, 0.16);
+  --accent-foreground: var(--clout-blue-tint);
+  --destructive: var(--danger);
+  --destructive-foreground: #ffffff;
+  --border: rgba(245, 245, 243, 0.12);
+  --input: rgba(245, 245, 243, 0.16);
+  --ring: var(--clout-blue-tint);
+
+  /* Clout gradients + effects */
+  --gradient-action: linear-gradient(90deg, #ff006b 0%, #ff3157 50%, #ff6a1a 100%);
+  --glow-blue: 0 0 40px rgba(18, 107, 255, 0.45);
+  --shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  --radius: 12px; /* --radius-md inputs/controls */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-fg: var(--success-fg);
+  --color-warning: var(--warning);
+  --color-warning-fg: var(--warning-fg);
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-value: var(--clout-pink);
+  --color-hyper: var(--clout-hyper-blue);
+  --color-violet: var(--clout-violet);
+  --color-carbon: var(--clout-carbon);
+  --color-carbon-2: var(--clout-carbon-2);
+  --color-slate-dim: var(--clout-slate-dim);
+  --color-blue-tint: var(--clout-blue-tint);
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Oswald", "Arial Narrow", system-ui, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+/* Clout display type: heavy condensed italic uppercase */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+}
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--clout-slate);
+}
+
+.gradient-action {
+  background: var(--gradient-action);
+}
+
+/* subtle atmospheric wash on app background */
+.app-wash {
+  background:
+    radial-gradient(80% 80% at 20% 15%, rgba(18, 107, 255, 0.12) 0%, rgba(18, 107, 255, 0) 55%),
+    radial-gradient(70% 70% at 85% 90%, rgba(255, 49, 87, 0.07) 0%, rgba(255, 49, 87, 0) 55%),
+    var(--clout-black);
+}

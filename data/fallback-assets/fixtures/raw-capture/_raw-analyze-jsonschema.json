@@ -1,0 +1,51 @@
+{
+  "attempt": "json_schema",
+  "elapsedMs": 11953,
+  "assetId": "6ad81fcb030b76724d10e3c5",
+  "prompt": "Identify distinct visual events or actions in this video. For each, provide a short label, a one-sentence description, and the start and end time in seconds.",
+  "jsonSchema": {
+    "type": "object",
+    "properties": {
+      "events": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "start_time": {
+              "type": "timestamp",
+              "format": "seconds"
+            },
+            "end_time": {
+              "type": "timestamp",
+              "format": "seconds"
+            }
+          },
+          "required": [
+            "label",
+            "description",
+            "start_time",
+            "end_time"
+          ]
+        }
+      }
+    },
+    "required": [
+      "events"
+    ]
+  },
+  "result": {
+    "id": "dfd6a608-884a-4dee-ab51-fc30a98936ee",
+    "data": "{\"events\":[{\"description\":\"The video opens with a steady, low-angle shot of an outdoor basketball hoop against a blue sky with scattered clouds. A large tree is visible on the left side of the frame, and power lines stretch across the top.\",\"end_time\":6.0,\"label\":\"static basketball hoop shot\",\"start_time\":0.0},{\"description\":\"The camera begins to slowly zoom in and tilt upwards, bringing the basketball backboard and rim into closer view while the surrounding trees and sky remain in the background.\",\"end_time\":14.0,\"label\":\"camera zoom and tilt up\",\"start_time\":6.0}]}",
+    "finishReason": "stop",
+    "usage": {
+      "outputTokens": 179,
+      "inputTokens": 11045
+    }
+  }
+}
