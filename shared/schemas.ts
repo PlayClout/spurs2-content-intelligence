@@ -4,6 +4,15 @@
  */
 import { z } from "zod";
 
+/** Multi-tenant from day one: every row is org-scoped. Spurs = org 1, Tottenham = org 2. */
+export const OrgSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(), // "San Antonio Spurs", "Tottenham Hotspur"
+  sport: z.enum(["basketball", "soccer"]),
+  league: z.string(), // "NBA", "Premier League"
+  brandTokens: z.record(z.string(), z.string()).optional(), // per-org theming
+});
+
 export const Sport = z.enum(["basketball", "soccer"]);
 export const Audience = z.enum(["casual", "superfan", "regional", "international", "player_community", "sponsor"]);
 export const ContentType = z.enum(["highlight_clip", "reel", "story", "x_post", "youtube_short", "youtube_highlight", "score_graphic", "milestone_graphic"]);
@@ -11,6 +20,7 @@ export const Channel = z.enum(["instagram_reel", "instagram_story", "tiktok", "x
 
 export const AssetSchema = z.object({
   id: z.string().uuid(),
+  orgId: z.string().uuid(),
   source: z.enum(["scoreplay", "upload", "fixture"]),
   sourceRef: z.string().nullable(), // ScorePlay asset id when real
   sport: Sport,
@@ -37,6 +47,7 @@ export const MomentSchema = z.object({
 
 export const SignalSchema = z.object({
   id: z.string().uuid(),
+  orgId: z.string().uuid(),
   kind: z.enum(["game_event", "social_reaction", "context"]),
   simulated: z.boolean(), // HONESTY FLAG — surfaced in UI
   sport: Sport,
@@ -59,6 +70,7 @@ export const ComplianceSchema = z.object({
 
 export const OpportunitySchema = z.object({
   id: z.string().uuid(),
+  orgId: z.string().uuid(),
   dedupeKey: z.string(), // hash(videoId, window±5s, contentType)
   momentId: z.string().uuid(),
   signalIds: z.array(z.string().uuid()),
@@ -97,6 +109,26 @@ export const JobSchema = z.object({
   updatedAt: z.coerce.date(),
 });
 
+/** Measurement: schema'd now, populated post-event (learning loop storage is real from day one). */
+export const PublishedAssetSchema = z.object({
+  id: z.string().uuid(),
+  orgId: z.string().uuid(),
+  opportunityId: z.string().uuid(),
+  channel: Channel,
+  publishedAt: z.coerce.date().nullable(),
+  externalRef: z.string().nullable(),
+});
+
+export const PerformanceSnapshotSchema = z.object({
+  id: z.string().uuid(),
+  publishedAssetId: z.string().uuid(),
+  capturedAt: z.coerce.date(),
+  metrics: z.record(z.string(), z.number()), // views, likes, shares, watch_pct
+});
+
+export type Org = z.infer<typeof OrgSchema>;
+export type PublishedAsset = z.infer<typeof PublishedAssetSchema>;
+export type PerformanceSnapshot = z.infer<typeof PerformanceSnapshotSchema>;
 export type Asset = z.infer<typeof AssetSchema>;
 export type Moment = z.infer<typeof MomentSchema>;
 export type Signal = z.infer<typeof SignalSchema>;

@@ -1,6 +1,21 @@
-# Clout Content Intelligence — Architecture (v1, agreed 2026-10-20)
+# Clout Content Intelligence — Architecture (v2, product posture, 2026-10-20)
 
 **Guiding principle:** *The AI finds the moment, understands the opportunity, recommends the strategy, and produces the content. The producer makes the decision.*
+
+## Posture: product-grade architecture, demo-grade deployment
+
+We are building the sellable product; the hackathon runs its `demo-local` profile. Two profiles, one codebase:
+- **`demo-local`** — worker + render on the M5, localhost UI, MOCK_MODE fixtures available, no auth. Venue-proof.
+- **`cloud`** — Vercel app + Supabase + containerized worker pool (post-event sprint). Supabase auth when needed.
+
+Product seams built NOW (cheap), implemented fully LATER:
+1. **`org_id` on every table** — multi-tenant from day one. Spurs = org 1, Tottenham = org 2; the dual-club demo is the same engine serving two organizations natively — the sport-agnostic story made literal.
+2. **`RenderBackend` interface** — `local-ffmpeg` (implemented now; M5 hardware encoders, sub-second rough cuts) and `cloud-worker` (containerized ffmpeg; post-event). Local rendering is the demo profile of the product answer, not the product answer.
+3. **Compliance as a real module** — full restriction semantics (territory, platform, competition, sponsor, expiry) + an `evaluate()` returning explainable decisions; mock-populated for the demo. This is the Challenge B engine living inside the Challenge A product: judging differentiator + second commercial surface.
+4. **Measurement schema'd, not deferred** — `published_assets` + `performance_snapshots` tables exist (empty) from day one; the learning loop's storage is real.
+5. **Integration layer** — the typed clients (TwelveLabs/ScorePlay/Jev chain + MOCK_MODE) ARE the commercial integration layer: every external dependency behind an interface with graceful degradation.
+
+Explicitly unchanged: Friday 10 AM freeze, scope-cut order, MOCK_MODE demo path, no microservices/K8s/auth screens this week. Scalable ≠ distributed: Next.js + Postgres + worker pool carries this category far past first revenue; scaling = add worker containers, which the job queue already supports.
 
 ## Workflow
 
