@@ -6,11 +6,15 @@
 import { type Compliance, type Channel } from "./schemas";
 
 export interface Restriction {
-  kind: "territory" | "platform" | "league" | "competition" | "sponsor" | "expiration";
+  kind: "territory" | "platform" | "league" | "competition" | "sponsor" | "expiration" | "usage";
   rule: string; // human-readable, e.g. "No distribution in UK territory before 22:00 local"
   blockedChannels?: Channel[];
   blockedTerritories?: string[];
   expiresAt?: Date;
+  /** embargo: blocked until this instant (e.g. ScorePlay accessible_from in the future) */
+  notBefore?: Date;
+  /** advisory: never blocks; always surfaces its rule and makes the verdict at least "restricted" */
+  advisory?: boolean;
 }
 
 export interface ComplianceDecision {
@@ -26,6 +30,13 @@ export function evaluate(requested: Channel[], restrictions: Restriction[], now 
   for (const r of restrictions) {
     if (r.kind === "expiration" && r.expiresAt && now > r.expiresAt) {
       return { status: "blocked", allowedChannels: [], reasons: [`Rights expired ${r.expiresAt.toISOString().slice(0, 10)}: ${r.rule}`] };
+    }
+    if (r.notBefore && now < r.notBefore) {
+      return { status: "blocked", allowedChannels: [], reasons: [`Embargoed until ${r.notBefore.toISOString().slice(0, 16).replace("T", " ")} UTC: ${r.rule}`] };
+    }
+    if (r.advisory) {
+      reasons.push(r.rule);
+      continue;
     }
     if (r.blockedChannels?.length) {
       const before = allowed.length;
