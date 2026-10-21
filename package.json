@@ -5,7 +5,15 @@
   "scripts": {
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "worker": "tsx --env-file=.env pipeline/worker.ts",
+    "worker:once": "tsx --env-file=.env pipeline/worker.ts --once",
+    "demo:moment": "tsx --env-file=.env scripts/enqueue-demo-moment.ts",
+    "test:render": "tsx scripts/render-test.ts",
+    "test:scoreplay": "tsx scripts/scoreplay-test.ts",
+    "test:rules": "tsx scripts/rules-test.ts",
+    "test:e2e": "tsx --env-file=.env scripts/pipeline-e2e.ts",
+    "test": "npm run test:rules && npm run test:scoreplay && npm run test:render && npm run test:e2e"
   },
   "dependencies": {
     "@napi-rs/canvas": "^1.0.12",

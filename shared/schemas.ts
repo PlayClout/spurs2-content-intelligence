@@ -94,13 +94,14 @@ export const OpportunitySchema = z.object({
   draftPaths: z.record(z.string(), z.string()), // channel -> rough-cut file
   finalPaths: z.record(z.string(), z.string()), // channel -> final variant
   trimOverride: z.object({ startSec: z.number(), endSec: z.number() }).nullable(),
+  delivery: z.record(z.string(), z.unknown()).nullable().optional(),
   expiresAt: z.coerce.date(),
   createdAt: z.coerce.date(),
 });
 
 export const JobSchema = z.object({
   id: z.string().uuid(),
-  type: z.enum(["index_asset", "sweep_moments", "fuse_signals", "score_opportunities", "render_draft", "render_final", "export_bundle"]),
+  type: z.enum(["index_asset", "sweep_moments", "fuse_signals", "score_opportunities", "process_moment", "render_draft", "render_final", "export_bundle"]),
   payload: z.record(z.string(), z.unknown()),
   status: z.enum(["queued", "running", "done", "failed"]),
   error: z.string().nullable(),

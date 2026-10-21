@@ -59,7 +59,7 @@ export function OpportunityCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <p className="display truncate text-[15px] leading-tight">{opp.headline}</p>
-            <ScoreRing score={opp.score} size={40} />
+            {opp.score > 0 && <ScoreRing score={opp.score} size={40} />}
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <Badge variant="secondary" className="text-[10px] capitalize">{opp.audience}</Badge>

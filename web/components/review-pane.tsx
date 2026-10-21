@@ -93,6 +93,15 @@ export function ReviewPane({
 
   const status = optimisticStatus ?? opp.status;
   const poster = (opp.draftPaths as Record<string, string>)[activeChannel] ?? Object.values(opp.draftPaths as Record<string, string>)[0];
+  // pipeline cards carry real media: final render when approved+rendered, else the draft reel
+  const delivery = (opp.delivery ?? null) as { draftVideo?: string | null } | null;
+  const pipeline = (opp.delivery ?? null) as {
+    variant?: { why: string };
+    inputs?: Record<string, { source: string; real: boolean; note?: string }>;
+  } | null;
+  const finals = (opp.finalPaths ?? {}) as Record<string, string>;
+  const videoSrc = (finals[activeChannel]?.endsWith(".mp4") ? finals[activeChannel] : null) ?? delivery?.draftVideo ?? undefined;
+  const isStill = !!poster && /\.(jpe?g|png|webp)$/i.test(poster) && !videoSrc;
   const profile = channelProfiles[activeChannel];
   const maxChars = profile?.copy.maxChars ?? 0;
   const currentCopy = copyDrafts[activeChannel] ?? "";
@@ -114,8 +123,8 @@ export function ReviewPane({
           <div>
             <h2 className="display text-2xl">{opp.headline}</h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              {moment?.description} · {moment ? `${(moment.endSec - moment.startSec).toFixed(0)}s` : ""} ·
-              confidence {moment ? Math.round(moment.confidence * 100) : "–"}%
+              {moment?.description} · {moment ? `${(moment.endSec - moment.startSec).toFixed(0)}s` : ""}
+              {moment && moment.confidence > 0 ? ` · confidence ${Math.round(moment.confidence * 100)}%` : moment ? " · detected by TwelveLabs Pegasus" : ""}
             </p>
           </div>
           <Badge variant="outline" className="capitalize">{status.replace(/_/g, " ")}</Badge>
@@ -139,16 +148,22 @@ export function ReviewPane({
                   <div
                     className={cn(
                       "relative overflow-hidden rounded-lg border border-border bg-black",
-                      is916 ? "aspect-[9/16] w-56" : "aspect-video w-[420px]"
+                      is916 ? "aspect-[9/16] w-56" : p?.aspect === "4:5" ? "aspect-[4/5] w-72" : "aspect-video w-[420px]"
                     )}
                   >
-                    <video
-                      key={c}
-                      poster={poster}
-                      controls
-                      playsInline
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+                    {isStill ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={poster} alt={`${opp.headline} photo card`} className="absolute inset-0 h-full w-full object-cover" />
+                    ) : (
+                      <video
+                        key={`${c}-${videoSrc ?? "poster"}`}
+                        poster={poster}
+                        src={videoSrc}
+                        controls
+                        playsInline
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
                     {is916 && <SafeZoneOverlay channel={c} />}
                   </div>
 
@@ -217,6 +232,31 @@ export function ReviewPane({
           {/* Why this */}
           <section>
             <p className="kicker mb-2">Why this</p>
+            {pipeline ? (
+              <div className="space-y-2 text-[11px]">
+                <p className="text-foreground">
+                  <span className="text-muted-foreground">Moment: </span>
+                  {moment?.description}
+                </p>
+                <p className="text-foreground">
+                  <span className="text-muted-foreground">Audience ({opp.audience}): </span>
+                  {pipeline.variant?.why}
+                </p>
+                <p className="kicker mb-1 mt-3">Inputs</p>
+                {Object.entries(pipeline.inputs ?? {}).map(([k, v]) => (
+                  <div key={k} className="flex items-center gap-2 rounded-md border border-border bg-background/50 px-2 py-1.5">
+                    <span className="w-28 shrink-0 capitalize text-muted-foreground">{k.replace(/([A-Z])/g, " $1").toLowerCase()}</span>
+                    <span className="truncate">{v.source}{v.note ? ` · ${v.note}` : ""}</span>
+                    <span className={cn(
+                      "ml-auto shrink-0 rounded-full px-1.5 py-0.5 text-[9px] font-semibold",
+                      v.real ? "bg-[rgba(0,217,130,0.14)] text-[var(--success-fg)]" : "bg-[rgba(0,163,255,0.14)] text-[var(--clout-hyper-blue)]"
+                    )}>
+                      {v.real ? "REAL" : "SIMULATED"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
             <div className="space-y-1.5">
               {Object.entries(opp.scoreBreakdown as Record<string, number>).map(([k, v]) => (
                 <div key={k} className="flex items-center gap-2 text-xs">
@@ -228,6 +268,7 @@ export function ReviewPane({
                 </div>
               ))}
             </div>
+            )}
             <p className="kicker mb-1.5 mt-4">Contributing signals</p>
             <div className="space-y-1">
               {signals.map((sig) => (

@@ -250,7 +250,7 @@ async function main() {
     { type: "fuse_signals", payload: { sport: "basketball" }, status: "done", queuedAt: new Date(now - 530_000), startedAt: new Date(now - 529_800), finishedAt: new Date(now - 529_650) },
     { type: "score_opportunities", payload: { sport: "basketball" }, status: "done", queuedAt: new Date(now - 529_600), startedAt: new Date(now - 529_500), finishedAt: new Date(now - 528_900) },
     { type: "render_draft", payload: { note: "stream-copy rough cut" }, status: "done", queuedAt: new Date(now - 528_800), startedAt: new Date(now - 528_700), finishedAt: new Date(now - 522_400) },
-    { type: "render_final", payload: { note: "awaiting worker" }, status: "queued", queuedAt: new Date(now - 60_000) },
+    { type: "render_final", payload: { note: "seed placeholder (no opportunityId), shown for the latency drawer only" }, status: "done", queuedAt: new Date(now - 60_000), startedAt: new Date(now - 59_000), finishedAt: new Date(now - 57_700) },
   ]);
 
   const counts = await db.execute(sql`select (select count(*) from orgs) as orgs, (select count(*) from signals) as signals, (select count(*) from moments) as moments, (select count(*) from opportunities) as opportunities, (select count(*) from jobs) as jobs`);

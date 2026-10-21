@@ -71,6 +71,8 @@ export const opportunities = pgTable("opportunities", {
   draftPaths: jsonb("draft_paths").notNull().default({}),
   finalPaths: jsonb("final_paths").notNull().default({}),
   trimOverride: jsonb("trim_override"),
+  /** delivery evidence: ScorePlay write-back (video log / upload) results or exact would-send payloads, render timings */
+  delivery: jsonb("delivery"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [uniqueIndex("opportunities_dedupe_uq").on(t.dedupeKey), index("opportunities_org_status_idx").on(t.orgId, t.status)]);
