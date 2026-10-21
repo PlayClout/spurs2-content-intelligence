@@ -7,6 +7,7 @@
  * audience_fit / event_weight scoring inputs, moment dedupe, caption guardrail checks.
  * NOT for captions/copy/why-text — that stays an LLM (Haiku) job in copy.ts.
  */
+import { readFileSync } from "node:fs";
 import type { Channel } from "../schemas";
 
 export type Backend = "jev" | "haiku" | "formula";
@@ -34,15 +35,106 @@ export interface DedupeDecision {
   backend: Backend;
 }
 
-const JEV_BASE = process.env.TYPESAFE_API_BASE ?? "https://api.typesafe.ai";
-const jevAvailable = () => !!process.env.TYPESAFE_API_KEY && process.env.MOCK_MODE !== "1";
+const JEV_KEY_PATH =
+  process.env.TYPESAFE_KEY_PATH ??
+  "/Users/stu/.openclaw/workspace/memory/credentials/typesafe-jev.json";
+
+let jevKeyCache: string | null | undefined;
+function jevKey(): string | null {
+  if (process.env.TYPESAFE_API_KEY) return process.env.TYPESAFE_API_KEY;
+  if (jevKeyCache !== undefined) return jevKeyCache;
+  try {
+    jevKeyCache = (JSON.parse(readFileSync(JEV_KEY_PATH, "utf8")).key as string | undefined) ?? null;
+  } catch {
+    jevKeyCache = null;
+  }
+  return jevKeyCache;
+}
+const jevAvailable = () => !!jevKey() && process.env.MOCK_MODE !== "1";
 const haikuAvailable = () => !!process.env.ANTHROPIC_API_KEY && process.env.MOCK_MODE !== "1";
 
-/** TODO(Wed): fill exact request shape from docs.typesafe.ai once early-access key lands.
- * Expected pattern: POST state + question schema -> parallel typed probabilities. */
-async function jevDecide<T>(_state: object, _questions: object): Promise<T> {
+/**
+ * Jev (TypeSafe System One) — wired via @typesafe-ai/sdk (docs.typesafe.ai).
+ * One systemOne call per decision: state + typed questions (choice/score/noul),
+ * parallel evaluation, calibrated probabilities + confidence. Dynamic import so
+ * the formula fallback works in environments without the SDK installed.
+ */
+async function jevClient() {
+  const key = jevKey();
+  if (!key) throw new Error("jev_unavailable");
+  const sdk = await import("@typesafe-ai/sdk");
+  return { sdk, client: new sdk.TypeSafeClient({ apiKey: key, defaultModel: "jev-latest" }) };
+}
+
+/** Score answers are positions 0..(levels-1); normalize to 0-1. */
+const norm = (score: number, levels: number) => Math.max(0, Math.min(1, score / (levels - 1)));
+
+async function jevDecide<T>(state: object, questions: object): Promise<T> {
+  const kind = (questions as { kind?: string }).kind ?? "";
   if (!jevAvailable()) throw new Error("jev_unavailable");
-  throw new Error("jev_not_wired: fill from docs.typesafe.ai after early-access key (see TODO)");
+  const { sdk, client } = await jevClient();
+  const { choice, score, noul } = sdk;
+
+  if (kind === "fusion") {
+    const { cluster, candidates } = state as {
+      cluster: { text: string; platform: string; velocity: number };
+      candidates: { id: string; eventText: string; occurredAt: string }[];
+    };
+    const criteria: Record<string, string> = { none: "The post does not refer to any of the listed game events" };
+    for (const c of candidates) criteria[c.id] = c.eventText;
+    const res = await client.systemOne({
+      state: { socialPost: cluster.text, platform: cluster.platform, candidateGameEvents: candidates.map((c) => ({ id: c.id, event: c.eventText, occurredAt: c.occurredAt })) },
+      questions: {
+        event: choice("Which candidate game event does the social post refer to? Pick 'none' if it refers to a different play, a previous game, or is generic hype about no specific play.", criteria),
+        sentiment: choice("Overall sentiment of the social post", {
+          euphoric: "Ecstatic, peak celebration", hype: "Excited, energized", positive: "Pleased, approving", neutral: "Flat or informational", negative: "Critical, upset, or disappointed",
+        }),
+        hype: score("How hyped / high-energy is this post", ["Flat, no energy", "Mild interest", "Clearly excited", "Very hyped", "Peak euphoria, all-caps eruption"]),
+      },
+    });
+    const ev = res.answers.event as { choice: string; probabilities: Record<string, number>; confidence: number };
+    const eventMatch: Record<string, number> = {};
+    for (const c of candidates) eventMatch[c.id] = ev.probabilities[c.id] ?? 0;
+    const sent = (res.answers.sentiment as { choice: string }).choice as FusionDecision["sentiment"];
+    const hype = res.answers.hype as { score: number };
+    return { eventMatch, sentiment: sent, hypeLevel: norm(hype.score, 5), confidence: ev.confidence, backend: "jev" } as T;
+  }
+
+  if (kind === "fit") {
+    const { moment, audience } = state as { moment: { label: string; description: string }; audience: string };
+    const channels: Channel[] = ["instagram_reel", "instagram_story", "tiktok", "x_post", "youtube_short", "youtube_highlight"];
+    const qs: Record<string, unknown> = {
+      audienceFit: score(`How well does this moment fit the '${audience}' audience`, ["Poor fit", "Weak fit", "Decent fit", "Strong fit", "Perfect fit"]),
+      eventWeight: score("How significant is this moment within a game", ["Routine play", "Nice play", "Notable highlight", "Major moment", "Game-defining moment"]),
+    };
+    for (const ch of channels) qs[`ch_${ch}`] = noul(`This moment would perform well published as ${ch.replace(/_/g, " ")}`);
+    const res = await client.systemOne({ state: { moment, audience }, questions: qs as never });
+    const answers = res.answers as Record<string, unknown>;
+    const af = answers.audienceFit as { score: number; confidence: number };
+    const ew = answers.eventWeight as { score: number; confidence: number };
+    const suggested = channels.filter((ch) => (answers[`ch_${ch}`] as { noul: number }).noul >= 0.6);
+    return {
+      audienceFit: norm(af.score, 5), eventWeight: norm(ew.score, 5),
+      suggestedChannels: suggested.length ? suggested : (["x_post"] as Channel[]),
+      confidence: Math.min(af.confidence, ew.confidence), backend: "jev",
+    } as T;
+  }
+
+  if (kind === "dedupe") {
+    const { a, b } = state as { a: { startSec: number; endSec: number; description: string }; b: { startSec: number; endSec: number; description: string } };
+    const res = await client.systemOne({
+      state: { clipA: a, clipB: b },
+      questions: {
+        same: choice("Are clipA and clipB detections of the same play (overlapping time windows and matching descriptions)?", {
+          same: "Same play captured twice", different: "Two distinct plays",
+        }),
+      },
+    });
+    const same = res.answers.same as { probabilities: Record<string, number>; confidence: number };
+    return { sameMoment: same.probabilities.same ?? 0, confidence: same.confidence, backend: "jev" } as T;
+  }
+
+  throw new Error(`jev: unknown question kind ${kind}`);
 }
 
 /** Haiku with tool-use forced JSON — slower (~1s) but same typed shape. TODO(Wed): wire via @anthropic-ai/sdk. */
