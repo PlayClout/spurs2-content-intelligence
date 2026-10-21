@@ -126,6 +126,9 @@ export const PerformanceSnapshotSchema = z.object({
   metrics: z.record(z.string(), z.number()), // views, likes, shares, watch_pct
 });
 
+export type Channel = z.infer<typeof Channel>;
+export type Audience = z.infer<typeof Audience>;
+export type ContentType = z.infer<typeof ContentType>;
 export type Org = z.infer<typeof OrgSchema>;
 export type PublishedAsset = z.infer<typeof PublishedAssetSchema>;
 export type PerformanceSnapshot = z.infer<typeof PerformanceSnapshotSchema>;
