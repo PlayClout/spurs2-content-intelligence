@@ -5,6 +5,16 @@ Partners: Tottenham Hotspur · San Antonio Spurs · ScorePlay · TwelveLabs
 
 AI-assisted sports content engine: TwelveLabs video intelligence + ScorePlay media + game/fan signals → audience-specific, production-ready assets → producer approval UI. **The producer approves instead of searches.**
 
+## Current product plan
+
+- [Editor + personalized fan web app design](design.md): rights-screened production, explainable rankings, sourced hooks, compilations, and editor-published clips delivered through favorite-player feeds and natural-language search.
+- [Visual HTML brief](design-brief.html): open locally for an offline walkthrough and implementation handoffs. Its interactive cards are illustrative simulations.
+- [Fan web app and Marengo search](docs/fan-app-and-search.md): preference ranking, publication lifecycle, published-only retrieval, and permitted playback.
+- [OpenCut integration instructions](docs/opencut-integration.md): pinned source evaluation, adapter boundaries, timeline clocks, and final-export gates.
+- [Verified TwelveLabs evidence](docs/research/twelvelabs-live-evidence-2026-10-22.md) and [organizer builder brief](docs/research/builder-brief-2026-10-22.md).
+
+These documents describe the implementation target; they do not claim the planned integrations are complete. The former stadium-first proposal is preserved under `docs/archive/`.
+
 ## Layout
 - `api/` — orchestration/intelligence layer (recommendations, explainability)
 - `pipeline/` — video: TwelveLabs indexing/search → clip extraction → ffmpeg assembly

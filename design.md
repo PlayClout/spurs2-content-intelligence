@@ -1,0 +1,403 @@
+# Clout Content Intelligence — Editor & Personalized Fan Web App Design
+
+**Spurs² Hackathon · October 22–23, 2026 · revised October 22**  
+**Challenge:** Assisted Auto-Production, with rights screening built into the production path  
+**Application form:** One responsive browser-based web app: editor dashboard plus fan routes under `/fan`; no native mobile app or installation planned.
+**Primary user:** Club producer / social video editor  
+**Fan-facing output:** Personalized clip feed, favorite players, and natural-language search  
+**Status:** Implementation plan. The HTML brief is an explanatory prototype, not the completed product.
+
+> **Product promise:** Editors validate the moments. Fans get the moments they care about—and can ask for the clip they want.
+
+The production promise stays intact: put the five most useful destination-cleared options in front of the editor, with explanations, sourced story hooks, and an editable rough cut.
+
+The product has **two connected surfaces**: an editor-first matchday production desk and a **personalized fan app**. The desk receives footage, finds moments, evaluates rights, creates permitted derivatives, ranks options, and helps an editor assemble clips and montages. The editor validates and explicitly publishes a prepared version to the fan catalog. Fans follow favorite players, select interests, get different feeds from that approved catalog, and ask for clips in natural language. The editor approves instead of searching through a match; the fan discovers the published moments that matter to them.
+
+The **personalized fan frontend replaces the stadium viewer**. Ticketing is outside this scope. Location remains a pitch/court zone or camera filter inside the editor, while fan preferences center on players and interests. The previous spatial design is [archived](docs/archive/hypeseat-spatial-design-2026-10-22.md); its verified API work is retained in [the evidence report](docs/research/twelvelabs-live-evidence-2026-10-22.md).
+
+## 1. Scope and evidence
+
+### What is established
+
+| Evidence | Status and implication |
+|---|---|
+| Organizer builder brief, now supplied | Teams should produce audience-specific outputs, use outside signals, show rejected candidates, preserve human approval, and write findings back to ScorePlay. We choose Challenge 1; compliance enables that workflow rather than adding a separate rights-manager product. |
+| ScorePlay / TwelveLabs onboarding decks | ScorePlay is the media system of record; editing compute runs locally for this event. The supplied football fixture is an away match at Old Trafford. Teams have different platform IDs. |
+| Authenticated TwelveLabs audit | One visible `premiere-league` index with **58/58 ready videos**; the asset endpoint reports **476 assets**. Two searches and one timed-analysis task succeeded. No basketball index was visible. |
+| Actual source join | All 58 indexed videos carry `user_metadata.scoreplay_id`, plus origin event/rendition/type. Search `video_id` equals indexed-asset `_id`; Pegasus uses the underlying `asset_id`. Origin IDs still require reconciliation with the team's ScorePlay instance. |
+| Measured analysis | One **24-second** source window produced four shot classifications in **58 seconds**. This is one measurement, not an instant-processing promise or a live-feed benchmark. |
+| Current repository | A producer queue, pipeline worker, FFmpeg renderer, schemas, illustrative content rules, and publish adapters already exist. Their presence is not proof that they satisfy the new plan. Reuse and extend them. |
+| Missing external inputs | No live broadcast endpoint, current ScorePlay credential, authorized club policy pack, complete historical stats dataset, or X read credential was supplied for this design revision. Real integrations remain adapter work; fixture/replay inputs must be labeled. |
+
+**Event terms:** the builder brief limits media to event use and forbids downloading, posting, or sharing outside the event. The ScorePlay onboarding deck explicitly describes authorized local proxy processing. Keep all working media and derivatives in organizer-permitted local/private environments, clarify any retention conflict with staff, and keep external publication disabled for club content. Tags/logs do not grant broader media rights.
+
+### Delivery tiers
+
+- **P0:** Replay-as-live or arriving-asset path; discovery; rights gate and one real audio cleanup; explainable queue and sourced/fixture stat hook; three-clip compilation and editor trim/reorder; approved render; **editor Publish → event-only fan catalog → two favorite/interest profiles with different feeds → natural-language Marengo search over approved derivatives**; withdrawal and playback checks; ScorePlay writeback evidence.
+- **P1:** Authorized live feed, X reads, richer historical hooks, fuller OpenCut editing, alternate angles/formats, persistent authenticated fan profiles, saved clips/feedback, optional beta entity search, and second-sport proof after locating its index.
+- **P2:** Automated tracked visual redaction, broad historical record discovery, many live camera feeds, advanced OpenCut effects and server-render parity, distribution outside the hackathon environment.
+
+OpenCut integration has a bounded P0 spike; its fuller editor is a desired product capability, with the existing renderer and a simple timeline preserving the core demo if that spike fails.
+
+## 2. Editor journey and dashboard
+
+1. Choose match, target audience, destination profile, and output format. A profile includes **platform, territory set, owned/paid/partner use, language, intended release time**, and the club policy version.
+2. The desk shows feed health, available footage, analysis backlog, source age, and processing mode: **LIVE / REPLAY / FIXTURE**. Never display replay as a live broadcast.
+3. New candidates enter an inspection lane. Only clips cleared for the selected context enter **Ready to use**. Others remain accessible to authorized reviewers under **Cleaning / Needs review / Blocked / Rejected**, with reasons.
+4. Each ready card answers **Why now? Why this clip? Why allowed here? What evidence supports the hook?** It shows duration, match time, source range, camera, zone, rank breakdown, freshness, and source links.
+5. Editors filter by player, play type, pitch/court zone, camera view, recency, audience, and theme. A 2D zone map is an optional shortcut alongside accessible filters. Unknown location remains selectable as unknown.
+6. Open a clip in the editor, inspect the original versus cleaned output, trim, mute, replace audio, add approved graphics/captions, or place it in a compilation. Every material edit creates a new draft revision and invalidates earlier approval.
+7. Approve the exact draft. The backend rechecks rights, evidence, policy version, and dependencies, then renders and prepares/indexes the approved final derivative. **Publish to fan app** commits its exact publication version, featured-player tags, interests, visibility window, and allowed audience; it is distinct from saving or approving. Demo release stays inside the event.
+8. Unpublish/withdraw or prepare a replacement version without deleting the source. A replacement becomes current only when it is ready and approved; withdrawn/expired versions disappear from feed, search, details, and new playback grants.
+
+```text
+┌ Match / feed health / LIVE or REPLAY ─ Destination: Instagram · US · owned ┐
+│ Ready (5) | Cleaning | Needs review | Blocked | Rejected | Compilations   │
+├ Ranked candidates ───┬ Preview / OpenCut editor ─────┬ Justification ────┤
+│ 01 · last-play moment│ Original ↔ permitted variant │ WHY THIS MOMENT   │
+│ rank 87 · 12s       │ playback / trim / crop        │ video + game + X  │
+│ source + rights chip│                               │ FACT CHECK        │
+│ 02 · crowd response │                               │ source / coverage │
+│ 03 · bench reaction │                               │ RIGHTS            │
+│ player / zone filter│                               │ rule / remedy     │
+├─────────────────────┴───────────────────────────────┴───────────────────┤
+│ Compilation: Hook → build-up → payoff → reaction → end card             │
+│ [Recommend montage] [Save draft] [Review & render]  export status        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Personalized fan journey
+
+- Choose a club, favorite players, and interests, with a skippable onboarding flow and an editable preference screen.
+- Open **For You**: the app ranks only editor-published, currently permitted clips/compilations for that fan. Explain cards with “Because you follow [player]” or “You chose crowd energy.” Fan relevance is separate from the producer's hype score.
+- Browse favorite-player pages; tags are verified at clip level, not copied blindly from whole-match player metadata.
+- Search **“Give me a clip of [player] scoring”**, “Show bench reactions,” or another supported natural-language request. **Marengo 3.0 retrieves relevant published clip ranges**; Pegasus handles analysis, while our app handles preference ranking.
+- Play the approved derivative at a relevant matching offset, with approved captions and source context. Search never generates or publishes a new unreviewed cut.
+- Handle no favorites, no matches, unavailable regions, withdrawn content, and provider fallback honestly. An explicit query about a different player is not silently constrained to the fan's favorites.
+
+**Implementation handoff:** [docs/fan-app-and-search.md](docs/fan-app-and-search.md) defines onboarding, feed weights, verified player identity, safe Marengo scope, publication lifecycle, routes, data contracts, and tests. This is the required fan frontend, not a stadium feature.
+
+**Separate four explanations:** editorial ranking, factual/statistical support, rights eligibility, and processing/delivery provenance. A high ranking never compensates for an unverified claim or a rights block. Missing evidence is shown explicitly rather than narrated away.
+
+## 3. Continuous ingest and clip generation
+
+### Product input modes
+
+| Mode | Implementation | Truth label |
+|---|---|---|
+| Existing indexed archive | Query the organizer's index and resolve existing ScorePlay media. | Indexed archive; real source-backed AI results |
+| Replay-as-live, P0 | Advance a replay clock over the supplied match. Release only footage available at that virtual instant. Cached real results are allowed, with cache/replay labeling and a `visibleAt` cutoff. | Replay; analysis cached or live per card |
+| Arriving assets | ScorePlay webhook or bounded polling detects a completed new asset; register the asset/version and submit bounded analysis. Deduplicate webhook deliveries. | Arriving media; measure detection and processing delay |
+| Authorized live feed, P1 | An ingest worker captures a permitted broadcast/ISO source into completed chunks and retains a rolling event-local buffer. Confirm the actual feed protocol/access first. | Live only after source connectivity is demonstrated |
+
+**Do not send an endless live URL directly to Pegasus.** Its documented URL input accepts files/VOD HLS and rejects live streams. Close a chunk, then upload/reuse a ready asset and analyze it. Text-response streaming is not live video ingestion. [TwelveLabs async SDK input contract](https://docs.twelvelabs.io/v1.3/sdk-reference/node-js/analyze-videos/async-analysis).
+
+### Proposed hot path
+
+1. Capture closed **20–30-second chunks** with a short overlap; persist feed/segment sequence, discontinuity ID, source start/end, wall-clock anchors, and checksum. These sizes are application starting points, not vendor requirements.
+2. Use game-event triggers when available and cheap video/audio cues to shortlist windows. A video-only sweep must still discover bench/crowd moments absent from a stats feed. Never require every moment to trend on X.
+3. Upload a new chunk only when needed and authorized; await asset readiness. Analyze that asset directly without waiting for Marengo indexing. Index asynchronously for subsequent semantic search.
+4. Pegasus supplies shot boundaries, visible/audible content, event descriptions, uncertain identities, coarse zone and camera cues. Normalize them into candidates; do not invent calibrated confidence scores.
+5. Merge duplicate views/replays into a canonical play/event with separate camera-source references. Keep distinct reactions as related moments. Do not dedupe solely by filename or overlapping timestamps across different feeds.
+6. Evaluate processing and distribution permissions. If remediation is permitted, create a derivative, inspect the result, and reevaluate the destination decision. Only eligible candidates enter the main recommendation set.
+7. Enrich eligible moments with approved game facts and sampled social clusters, rank them for the selected audience, and offer an editable draft.
+
+**Clock contract:** maintain `sourceSec`, `chunkLocalSec`, wall-clock time, and period/game clock separately. Chunk-local output maps as `sourceSec = chunk.sourceStartSec + chunkLocalSec`. Handle halftime, basketball stopped clocks, overtime, reconnects, and PTS resets with explicit anchors; never equate game minute with video minute.
+
+**Response-mode distinction:** the October 22 async timed-metadata test retained absolute source offsets; the repository's earlier general JSON-schema probe reports window-relative custom moment times. Store `timestampBasis` on every analysis result and use a mode-specific adapter. Do not globally add—or globally omit—the window offset.
+
+**Operational constraints:** one analysis task at a time initially; cap candidate windows and cache by source version/range/model/schema. Use persistent task IDs, `custom_id`, bounded polling/backoff, and freshness indicators. Track ingest → analysis → rights → ready → render durations separately. The 58-second sample requires an asynchronous UI; any faster target is unproven.
+
+## 4. Rights screening and compliance cleaning
+
+### Policy facts and decision context
+
+Pegasus detects **content facts**; it does not grant permission. A policy pack approved by club/rights staff supplies the rules. Convert policy text into draft structured rules with the source document, clause, effective dates, owner, and version; a person activates those rules. Existing `pipeline/rules/content-rules.json` is explicitly illustrative and must not be presented as Tottenham, Spurs, NBA, or Premier League policy.
+
+Evaluate each exact source range/derivative against:
+
+```typescript
+type DistributionContext = {
+  orgId: string;
+  platform: string;
+  territories: string[];
+  use: "owned_social" | "owned_fan_web" | "paid" | "partner" | "internal_preview";
+  language: string;
+  releaseAt: string; // UTC; display the selected destination timezone too
+  policyVersion: string;
+};
+type RightsStatus = "cleared" | "needs_remediation" | "needs_review" | "blocked" | "expired";
+```
+
+A decision contains `ruleId`, policy/clause reference, matched evidence/time ranges, context, rationale, allowed actions, required remedies, validity interval, `evaluatedAt`, and source/derivative fingerprints. Unknown rights do **not** become cleared because no rule happened to match. Internal analysis/view permission and fan distribution permission are separate. Owned-social permission does not imply owned-web permission. Feed, search, poster/detail responses, and playback must enforce the current viewer context for the exact publication version.
+
+### Permitted transformations, not blanket clearance
+
+| Issue, if actually restricted by the supplied policy | Proposed action | What still has to pass |
+|---|---|---|
+| Unlicensed music in an otherwise permitted clip | Remove the full affected audio track/range; optionally add club-cleared audio. Preserve crowd audio only if separately available/verified. | Probe rendered tracks; reevaluate remaining visual, speech, broadcast, and distribution rights. Audio-risk detection alone is not music identification or ownership proof. |
+| Removable restricted shot | Cut that shot, repair narrative continuity, record excluded range. | Reevaluate the resulting range and captions; trimming cannot satisfy a minimum embargo. |
+| Restricted face/logo with an approved redaction remedy | Offer tracked blur/crop only if permitted and verified across all affected frames. Otherwise hold or choose another shot. | The action remains visible, masking persists after transitions/crops, and the rule explicitly accepts redaction. P0 does not claim reliable automatic tracked redaction. |
+| Embargo, expired right, disallowed territory/platform, prohibited commercial use | Hold, schedule within a valid window, choose an allowed profile, or exclude. | Muting, blurring, cropping, subtitles, or captions cannot erase a distribution restriction. |
+| Dubbed/subtitled/synthetic-commentary variant | New derivative/version; reevaluate speech, voice, likeness, text, music, and destination permissions. | Clearance is specific to that variant; it does not inherit automatically. |
+
+### Decision lifecycle and enforcement
+
+```text
+candidate → evaluate → cleared ───────────────────────────→ eligible queue
+                   ├ needs_remediation → render → verify → reevaluate
+                   ├ needs_review → authorized rights review
+                   └ blocked / expired → explanation + permitted alternatives
+```
+
+- Default queue = only `cleared` for the currently selected context and valid output revision. Restriction changes remove stale cards from that queue.
+- Show excluded/held clips with the precise reason, not a permanently invisible discard bin. Protect access to restricted previews; merely viewing or analyzing may itself require permission.
+- An editor cannot click through an unresolved block. An authorized rights reviewer can correct facts or attach an explicit exception with issuer, scope, expiry, and audit record; this generates a new decision.
+- Recheck at **recommendation, timeline import, approval, render start, and final asset delivery**. Check every video, still, title, audio bed, end card, language variant, and excerpt actually in the final cut.
+- Bind approval and release permission to the edit-manifest hash, dependencies, source versions, context, and policy version. A trim expansion, added clip, restored audio, changed headline, or new destination invalidates approval.
+- The server authorizes render jobs and signed final-asset access. Hiding a browser export button or writing a ScorePlay tag is not access enforcement. Existing preview/download routes and all OpenCut export entry points must be audited.
+- If a source decision is revoked/expired, invalidate dependent recommendations, fan publications/search eligibility, projects, and new exports; revoke links under our control. Do not promise to recall downloaded copies or externally published media automatically.
+- Write the verdict, source timecoded evidence, selected/rejected ranges, remediation lineage, and output reference back to ScorePlay after taxonomy agreement. Record `pending / synced / failed`; reconcile ambiguous retries.
+
+### Gaps in the existing code to fix
+
+`shared/compliance.ts` currently reports territory restrictions as reasons without evaluating a requested territory. `web/lib/actions.ts` blocks approval only for `blocked`; `unknown` and `restricted` are not a sufficient destination-clearance gate. The render worker also needs variant/context-aware checks and a revision binding. Extend the existing modules and tests; do not declare the new compliance behavior already implemented.
+
+## 5. Hype and relevance ranking
+
+Run ranking **after** destination eligibility. Keep all considered candidates and their selection/rejection reasons. Maintain separate priorities for rapid individual posts and a balanced post-game story.
+
+### Proposed transparent starting score
+
+For each eligible candidate, normalize each available component to 0–1:
+
+`score = 100 × weighted mean(event impact .30, audience fit .20, video intensity .15, sampled social momentum .15, verified stat hook .10, recency .10) − duplicate/fatigue penalties`
+
+These are tunable editorial weights, not probabilities or validated engagement predictors. If an input is missing, omit its weight and renormalize the available weights; display **evidence coverage** and missing channels. Do not fabricate a social score or penalize an otherwise strong clip because X is disconnected. Do not silently merge simulated inputs with observed ones.
+
+- **Event impact:** verified game context, game state, late/decisive action, or editor-confirmed significance. A big play may be an opponent play; `teamRelation` must be explicit.
+- **Audience fit:** player/community, casual fan, international audience, superfans, sponsor audience. Sponsor outputs pass their own usage/category rules.
+- **Video intensity:** observable bench/crowd reaction, action, visual clarity, and usable audio; model interpretations are labeled and reviewable.
+- **Social momentum:** local sampled growth, distinct authors, freshness, and event/entity match; one prolific account cannot count as many independent fans.
+- **Stat hook:** only a verified claim with sufficient coverage boosts the rank. An interesting but unverified lead stays in the investigation panel.
+- **Recency/diversity:** favor current useful moments, group alternate angles, cap repeated players/themes, and allow the editor to pin an overlooked candidate.
+
+A card's reason might read: **“Late equalizer candidate; crowd reaction detected; 3 independent evidence types; strongest for casual fans.”** Each clause expands to its evidence. Numbers in UI fixtures are marked **illustrative**, not actual observed fan response or sports facts.
+
+## 6. Statistical story hooks with proof
+
+TwelveLabs and X posts are **not authoritative historical-stat databases**. Add a `StatsProvider` interface accepting licensed/organizer-provided match facts and history, or editor-imported structured facts with source links. No such historical feed is currently connected. P0 can use either an explicitly labeled fixture or a separately sourced fact; it must not present a simulated record as real.
+
+### Claim pipeline
+
+`identify event/player → resolve IDs → select claim template → deterministic query → validate coverage/time cutoff → produce proof → draft wording → editor review`
+
+An LLM may suggest which query to run or rewrite an already verified result. It cannot create the result, fill missing history, or turn a fan post into a verified stat. Every on-screen and burned-in factual assertion, including manually edited text, must be linked to a claim or reviewed factual source.
+
+| Requested hook | Required interpretation and validation |
+|---|---|
+| “First goal in 3 games” | Choose **team matches vs player appearances**, competition scope, event cutoff, and counting rules. For “First goal in three appearances,” verify current goal and the two preceding scoreless appearances. If the preceding three were scoreless, use an explicitly defined drought template instead. Exclude DNP consistently; distinguish own goals and shootouts. |
+| “Most goals against X in 20 years” | Resolve whether this is a team's single-match tally, a player's cumulative tally, or another metric; specify opponent, competition, population, exact date window, tie handling, and current provisional status. A record requires complete comparison coverage. Prefer precise wording such as “Club's highest league-match tally against [opponent] since [date]” when supported. |
+| A live milestone | Reconcile the official event ID and later corrections. A provisional scorer/result gets a provisional badge and cannot become an unqualified historical claim. |
+
+Store a `StatClaim` with `templateId`, subject/opponent IDs, metric, scope, interval boundaries, comparison population, ordered supporting match IDs, query/version, source/record links, retrieved/as-of timestamps, coverage/completeness, result, exact wording, and state: **candidate / verified / stale / conflicting / rejected**. Add a correction/invalidation path so changed scorers, results, or datasets invalidate dependent titles and exports.
+
+The dashboard shows **claim text + source + scope + coverage + checked time**. Insufficient coverage means no superlative caption; show “Not verified: historical coverage incomplete” and offer a neutral headline. Examples in this plan are templates, not claims about the supplied match.
+
+## 7. X signals and post-game compilation creator
+
+### Listening, not publishing
+
+Use authorized X API reads with match aliases, opponent, roster IDs/names, club handles, and a bounded match-time query. Recent search uses **`GET /2/tweets/search/recent`** for the last seven days; an optional filtered stream uses **`GET /2/tweets/search/stream`**. Account entitlements and credits must be checked. No X read access has been tested here. [Search](https://docs.x.com/x-api/posts/search/introduction), [filtered stream](https://docs.x.com/x-api/posts/filtered-stream/introduction), [pricing](https://docs.x.com/x-api/getting-started/pricing).
+
+Persist query/time coverage, post IDs/permalinks, timestamps, public metrics at observation time, canonical entities, and collection mode. Retain only permitted data and handle changed/deleted source posts. Deduplicate reposts and near-identical messages; count distinct observed authors, not verified distinct people. Treat bot-like repetition as a noisy signal, not a proven identity judgment.
+
+Cluster by **play/player/theme**, match against source footage, and compute observed 60-second momentum against a prior comparable sampled window. Show count and baseline, not just a ratio; a zero baseline is “new activity,” not infinite growth. Freshness, sample gaps, and collection scope stay visible. Posts arriving late can reorder recommendations without forcing repeated video analysis.
+
+**“Trending in our match sample” differs from a platform trend.** The optional **`GET /2/trends/by/woeid/:id`** provides geographic topic context, not proof that our clip is popular or rights-cleared. [X trends](https://docs.x.com/x-api/trends/trends-by-woeid/introduction).
+
+Read fan posts as untrusted evidence, never application instructions. Sanitize text/URLs, corroborate entities, and do not reproduce third-party text/media or download a fan video merely because it is popular. A viral song does not become an approved music bed. X publishing remains disabled for event club content.
+
+### Compilation recommendations
+
+The editor chooses **theme, audience, target duration, aspect ratio, destination, release time**, and optionally pins a clip. Initial recipes: **match story / player focus / crowd energy / comeback / fan conversation**. The planner proposes a timeline, not just a list of links.
+
+1. Retrieve destination-cleared footage and approved archive context matching verified themes. Resolve alternate angles to their canonical moment.
+2. Pick an opening hook, necessary setup, escalation, payoff, reaction, and approved end card as the footage permits. Match tone to result; don't impose a celebration story on a loss.
+3. Select clips under the duration budget, with penalties for duplicate plays, repeated angles, excessive player concentration, and redundant reaction shots. Use a simple explainable greedy planner initially.
+4. Attach only verified stat overlays and licensed music/graphics. For each entry show **why selected, why this position, supporting trend/fact, and permitted use**. Show omitted high-score moments and why.
+5. Import the plan into the editor. The producer can replace, trim, reorder, remove a factual hook, or change the target profile. Recompute budget and invalidate affected eligibility/approval.
+6. Save an application-owned `CompilationManifest`; render a preview, approve the exact revision, recheck the final composition, and return an event-local output plus provenance bundle.
+
+**P0:** one three-clip 20–45-second montage with a real saved order, one intentional exclusion, a permitted audio cleanup, and a local FFmpeg render. **P1:** X-driven recommendations and richer OpenCut controls. For missing X access, use a visibly labeled imported/fixture signal set; never invent live posts or “trending now” badges.
+
+## 8. Architecture, entities, and application contracts
+
+```mermaid
+flowchart TB
+  Feed[Authorized feed / ScorePlay arrivals / replay] --> Buffer[Closed chunks + clock/provenance registry]
+  Buffer --> TL[TwelveLabs: ready asset → shot/content analysis]
+  TL --> Candidates[Canonical moments + source ranges]
+  Policy[Versioned rights policy + destination] --> Rights[Rights evaluation]
+  Candidates --> Rights
+  Rights -->|permitted remedy| Clean[Local derivative render + verification]
+  Clean --> Rights
+  Rights -->|cleared| Rank[Explainable candidate ranking]
+  Facts[Verified game facts + stat claims] --> Rank
+  Social[Authorized X sample / labeled fixtures] --> Rank
+  Rank --> Desk[Producer desk + compilation planner]
+  Desk --> Editor[OpenCut adapter / minimal timeline]
+  Editor --> Gate[Exact revision approval + final recheck]
+  Gate --> Render[Local FFmpeg final render]
+  Render --> Delivery[Authorized event delivery + ScorePlay writeback]
+  Render --> Prepared[Final derivative + dedicated fan search index]
+  Prepared --> Publish[Editor Publish: current approved version]
+  Publish --> Catalog[Published and viewer-permitted catalog]
+  Profile[Favorite players + interests] --> FanRank[Clout personalization]
+  Catalog --> FanRank
+  Catalog --> Search[Marengo retrieval + server post-validation]
+  FanRank --> Fan[Personalized fan app]
+  Search --> Fan
+  Fan --> Play[Current rights / version check → approved playback]
+```
+
+ScorePlay owns source media and source metadata. Clout owns evidence, policy decisions, ranking, project manifests, revisions, approvals, and job state. OpenCut owns editing mechanics through an adapter. The fan app consumes only Clout's published catalog, never OpenCut project files or the editor discovery index. Marengo retrieves; Clout personalizes and authorizes. Neither OpenCut nor a provider search hit grants publication permission.
+
+| Entity | Core fields / invariant |
+|---|---|
+| `FeedSession`, `SourceSegment` | Mode, org/match/feed, sequence/discontinuity, source and wall-clock anchors, availability, immutable version/checksum. |
+| `SourceAsset` | Origin ScorePlay media/event/company, reconciled team media ID, rendition, version, TwelveLabs asset/indexed IDs, refreshable media reference. |
+| `Moment`, `Shot`, `MomentSource` | Canonical event/play, type, source-relative bounds, local analysis basis, player/team attribution, coarse zone, camera cues, evidence references. |
+| `PolicyRule`, `RightsDecision` | Versioned clause, approved issuer, context, matched timecodes, status, allowed actions, remedies, validity, fingerprint. |
+| `Derivative`, `RemediationJob` | Parent source/ranges, transformation recipe, artifact hash, verification result, new rights evaluation. |
+| `Evidence`, `SocialCluster` | Observed/provider/fixture mode, source IDs/URLs, event time vs observed time, sample coverage, freshness, canonical entities. |
+| `StatClaim` | Computed result, scope/query/proof/completeness, source/as-of times, exact wording, validation state, dependent outputs. |
+| `Recommendation` | Destination decision ID, rank version/breakdown/coverage, why-selected/why-rejected, source candidates. |
+| `Compilation`, `CompilationEntry` | Revision, destination, ordered source ranges, timeline position, transforms, claim/audio/graphic dependencies, decision IDs. |
+| `EditorProjectBinding` | Clout project/revision ↔ OpenCut project/scene/element IDs; preserve source-offset mapping and immutable parent lineage. |
+| `Approval`, `ExportJob`, `EditorialEvent` | Actor, exact manifest/dependency/context/policy hash, transition times, recheck, audit, writeback/delivery state. |
+| `Player`, `FanProfile`, `FanPreference` | Canonical roster and provider mappings; fan-owned favorite-player IDs/interests; seeded demo identities are labeled. |
+| `Publication`, `PublicationVersion` | Current prepared/published/scheduled/withdrawn version, exact artifact/hash, reviewed tags, final-derivative indexed ID, approval/decision references, permitted audience and visibility window. |
+| `FanInteraction` | Optional minimal save/show-less feedback with owner/retention scope; unnecessary for the explicit-preference P0 ranker. |
+
+### Proposed API surface — adapt existing server actions where appropriate
+
+```text
+POST /api/feed-sessions                         authorized replay/live/arriving mode
+GET  /api/feed-sessions/:id/status               buffer/analysis/backlog/latency
+GET  /api/matches/:id/recommendations            context-scoped cleared set + reasons
+GET  /api/matches/:id/candidates                 held/rejected inspection, role scoped
+POST /api/clips/:id/evaluate                    context + revision → decision
+POST /api/clips/:id/remediations                permitted recipe → derivative job
+GET  /api/stat-claims/:id                       proof, coverage, freshness
+GET  /api/matches/:id/social-clusters            sample scope and supporting post refs
+POST /api/compilations/recommend                recipe + context → draft manifest
+PATCH /api/compilations/:id                     optimistic revision check
+POST /api/editor-projects/import                manifest → editor binding
+POST /api/editor-projects/:id/save               canonical edits → new draft revision
+POST /api/compilations/:id/approve               exact hash + current evidence validation
+POST /api/exports                              approved revision → gated render job
+GET  /api/jobs/:id                             state, stages, retryable error
+GET  /api/exports/:id/delivery                   final recheck → authorized artifact
+POST /api/publications                         editor publishes a prepared approved version
+POST /api/publications/:id/withdraw             invalidate fan eligibility and new playback
+PUT  /api/fan/me/preferences                    own canonical players and interests
+GET  /api/fan/feed                              current eligibility → personalized order
+POST /api/fan/search                            allowed catalog → Marengo → post-validation
+GET  /api/fan/clips/:id                         current published detail, approved fields
+POST /api/fan/clips/:id/playback                 current context → permitted media reference
+```
+
+**Fan search boundary:** prepare a dedicated Marengo catalog of approved final derivatives, then constrain each search to the current viewer-eligible published indexed IDs and post-validate every result/version. An empty allowed set returns empty results; it must never omit the filter. Never expose raw full-match hits, provider pagination tokens, draft thumbnails, or source footage to the fan app. Index readiness is not publication or authorization.
+
+All operations are org/actor scoped; mutating calls have idempotency keys and expected revisions. External media URLs are resolved server-side from configured sources, not arbitrary user-provided URLs. Do not forward provider secrets to the editor or treat a signed URL as durable identity.
+
+Example proposed montage entry (illustrative IDs, not a real rights clearance):
+
+```json
+{
+  "clipId": "clip-demo-02",
+  "sourceAssetId": "source-demo",
+  "sourceStartSec": 4752.099609375,
+  "sourceEndSec": 4757.099609375,
+  "timelineStartSec": 6,
+  "derivativeId": "derivative-muted-demo",
+  "rightsDecisionId": "decision-demo-owned-us-v3",
+  "claimIds": [],
+  "whySelected": "Wide contextual shot between setup and reaction; attribution still requires review",
+  "readyForExport": false
+}
+```
+
+## 9. OpenCut adaptation and existing-code reuse
+
+The requested [OpenCut repository](https://github.com/OpenCut-app/OpenCut) is a **rewrite in progress**, not a finished embeddable package. Its README points to **[OpenCut Classic](https://github.com/OpenCut-app/opencut-classic)** for current use; Classic is archived. Pin the inspected Classic revision **`cf5e79e919144200294fb9fed22a222592a0aeea`** for the initial evaluation. The rewrite was inspected at **`e668010778568641babef2cc40be4703ae6916d6`**. Do not assume promised plugin/headless/MCP APIs exist and are production-ready.
+
+**Recommended integration:** retain our producer dashboard and worker; evaluate a separate local OpenCut Classic editor app/route behind an explicit bridge. Do not merge its entire Next.js app, auth, database, or package lock into `web/`. Our web app uses Next 16.4.2 / React 19.3; the inspected Classic package uses Next 16.1.3 / React 19 and a Bun workspace. Confirm WASM and browser media dependencies with a tiny clip before importing a full match.
+
+The detailed, source-linked tailoring instructions, actual extension points, time conversion, and export guard design are in **[docs/opencut-integration.md](docs/opencut-integration.md)**.
+
+| Current local module | Planned extension |
+|---|---|
+| `web/app/page.tsx`, `web/components/opportunity-card.tsx`, `review-pane.tsx` | Context-scoped ready feed, evidence breakdowns, claim proof, original/cleaned compare, montage entry actions. |
+| `web/lib/actions.ts` | Org/actor scope, exact-revision approval, fan-app destination clearance, idempotent export/publish/withdraw actions. |
+| Proposed `web/app/fan/`, `shared/fan-ranking.ts`, `shared/fan-search.ts`, `shared/publication.ts` | Fan preference flow, published-only feed/search/playback, canonical player filters, dedicated derivative index and current-version enforcement. |
+| `shared/compliance.ts`, `shared/clients/scoreplay-rights.ts`, `shared/content-rules.ts` | Explicit territory/use/time evaluation, unknown handling, versioned policy facts and verified remedies. |
+| `shared/moment-manifest.ts` | Separate response-mode clock adapters, content evidence time ranges, validated source identity. |
+| `pipeline/moment.ts`, `pipeline/watchlist.ts`, `pipeline/replay.ts` | Continuous/replay discovery, clock anchors, availability cutoff, event/shot dedupe. |
+| `pipeline/worker.ts` | Versioned ranking, bounded analysis, remediation verification, revision-aware final gate and compilation jobs. |
+| `pipeline/render-local.ts`, `render-backend.ts`, `channel-profiles.json` | Multi-entry render plan, approved audio/text/graphics, bounded proxy variants, per-format output checks. |
+| `shared/schemas.ts`, `shared/db-schema.ts` | Extend existing entities with decision/evidence/revision lineage. Migrate explicitly; do not rewrite unrelated tables. |
+| `shared/clients/publish.ts` | Keep simulated event distribution. Existing live-X functionality is not authorization to publish club footage. |
+
+## 10. Build order and bounded work packets
+
+| Order / owner | Concrete deliverable | Definition of done |
+|---|---|---|
+| 1 · integration + shared contracts | Source identity/clock fixture, destination profile, policy pack, canonical montage manifest | One known source range round-trips through identity and clocks; no ambiguous team-company writeback. |
+| 2 · ingest + discovery | Replay/arriving-media path, availability cutoff, candidates, async states | A new eligible window yields a real source-backed candidate without future replay footage leaking. |
+| 3 · rights + rendering | Context evaluator, held/excluded reasons, permitted audio mute, derivative inspection | Blocked territory remains blocked; unknown remains review; actual muted output passes audio inspection. |
+| 4 · intelligence | Transparent ranking, sourced/fixture claim with proof, sampled/fixture social cluster | No unsourced record copy; stale/missing inputs visibly affect evidence coverage. |
+| 5 · producer UI | Ready/held lanes, why panels, trim/reorder, three-clip recipe | Editor changes the rough cut, sees exact reasons and output revision, approves the correct version. |
+| 6 · OpenCut evaluation | Pinned local editor, import short derivative, trim/save round-trip | One real clip imports with source lineage; undo works; saved time conversions are correct. Timebox to 60–90 minutes, an allocation rather than a promise. |
+| 7 · fan app + search | Prepared publication catalog, favorite/interests onboarding, two personalized feeds, scoped Marengo search, permitted playback | Publishing a prepared clip updates eligible feed/player/search views; another profile gets a different ranking; blocked/draft/withdrawn sources never leak. |
+| 8 · final integration | Local compilation output, event-only publication/withdrawal, current final gate, audit/writeback | Export and fan playback match current approved publication versions and viewer context. |
+
+Work packets are instructions for future implementation, not a claim that separate agents are running. Use fixtures with explicit provenance before live integration. The already-working renderer is the fallback while OpenCut is evaluated; preserve the endpoint/manifest contract so the editor can be added later.
+
+**Cut order if time runs short:** tracked visual cleaning → advanced OpenCut effects → live X → actual live ingest → rich historical records → second sport. Keep the rights gate, truthful evidence, producer edit/approval, one real rendered compilation, and the editor → published catalog → personalized fan/search loop.
+
+## 11. Acceptance checks and demo
+
+1. **Source and clocks:** the 58-video inventory is fully paginated. Search IDs resolve to the correct source and team namespace. General JSON vs timed-metadata outputs are normalized separately. Source 4752 seconds never becomes 9502 seconds.
+2. **Near-live behavior:** replay releases only available frames; overlapping chunks/retries do not duplicate canonical plays; reconnects and period anchors are visible. Ingest/analysis failure does not freeze the UI.
+3. **Rights context:** same source may clear for US owned social and block for another territory/use. Unknown policy fails closed for distribution. Embargo/expiry is enforced at the selected release instant and actual delivery time.
+4. **Cleaning proof:** audio removal changes actual rendered media, not just a badge. It leaves unrelated platform/territory blocks intact. Expanding the trim into restricted material triggers a new evaluation.
+5. **Approval race:** policy change or edit after approval invalidates export permission. A direct action, stale render job, native OpenCut export path, or cross-org ID cannot bypass the server release gate.
+6. **Story accuracy:** incomplete 20-year coverage cannot produce a record claim. DNP/competition/tie semantics are tested; a scorer correction invalidates dependent overlays. Fixtures remain marked in UI and output where applicable.
+7. **Ranking:** only eligible clips enter ready; missing X does not create imaginary counts; a viral blocked clip stays excluded with a reason. Editors can inspect the skipped moment.
+8. **Compilation:** three ordered clips render within the chosen duration; duplicates are explained; reorder/trim persists; invalidating one source blocks the dependent final output. Licensed audio/graphics are checked too.
+9. **OpenCut:** short-clip import, native-time conversion, grouped undo, save/reopen lineage, target canvas after insertion, and render-plan parity pass before broader integration.
+10. **Writeback/delivery:** exact source logs and output references are synced or explicitly pending/failed. No club video leaves the authorized event environment.
+11. **Personalized frontend:** two favorite/interest profiles see distinct ordering and evidence-backed why chips over the same eligible catalog. Skipping preferences yields a balanced feed.
+12. **Published-only search:** a natural-language Marengo query returns an editor-published playable derivative; drafts, future scheduled items, raw full matches, expired/withdrawn versions, and other clubs are excluded before and after retrieval.
+13. **Identity and query intent:** a whole-match player tag cannot create a verified clip tag. An explicit player query can differ from favorites; ambiguous names prompt a roster choice.
+14. **Publish/withdraw:** commit only a rendered, prepared/indexed approved version; replacing a version is atomic. Withdrawal removes it from feed/search/detail and prevents new playback grants even if the index/cache still contains a hit.
+15. **Viewer context:** social permission alone cannot publish to the fan app. Server-resolved entitlement/territory is checked for search, thumbnails, detail, and playback. Metadata fallback is labeled and no-match does not synthesize footage.
+
+**Three-minute demo:** replay produces candidates → restricted clip is held with a reason → permitted cleaned derivative and sourced/fixture stat proof → editor adjusts a montage, approves and publishes the prepared version → fan A sees the new clip for a favorite player → fan B sees crowd-focused ordering → “Give me a clip of [player] scoring” returns a published playable match → withdrawal removes it from discovery/new playback. Show real render/source-log evidence and keep simulated inputs labeled. The personalized fan app is the frontend climax.
+
+**Measure:** moment-to-ready latency by stage; number considered/held/cleaned/selected; corrections/overrides; recommendation-to-approved-cut time; source-claim coverage; successful render/writeback counts; publish-to-discoverable delay; fan preference response; scoped search latency; withdrawal enforcement. Never report guessed accuracy, sales lift, live social reach, or legal certainty as a measured outcome.
+
+## 12. Sources and unresolved inputs
+
+- **Supplied builder brief:** [Spurs² Hackathon: Builder Brief](docs/research/builder-brief-2026-10-22.md), provided in this conversation on October 22, 2026. It establishes the challenge, supplied datasets, production loop, and event terms. The earlier unverified rubric percentages are intentionally omitted; the supplied brief does not give them.
+- **ScorePlay onboarding:** [26-slide PDF](https://d2tfwi4f7bl4bp.cloudfront.net/25d95437-58be-4774-a6ed-209842cdaa5a.pdf), especially slides 10–11 (clocks/away venue), 16–19 (auth/search/proxies), and 21–25 (local editing/writeback).
+- **TwelveLabs onboarding:** [25-slide deck](https://docs.google.com/presentation/d/1hf4mNFoW0flgXfNAUvT4eaDWCQa83mszbSnzFflxMow/edit); [live evidence](docs/research/twelvelabs-live-evidence-2026-10-22.md).
+- **Fan implementation guide:** [personalized feed, favorites, publishing and Marengo search](docs/fan-app-and-search.md). Official [ID filtering](https://docs.twelvelabs.io/v1.3/docs/guides/search/filtering) and optional beta [entity search](https://docs.twelvelabs.io/v1.3/docs/guides/search/entity-search) were checked for this revision; no published-derivative catalog or entity-search test was run.
+- **TwelveLabs contracts:** [search](https://docs.twelvelabs.io/v1.3/api-reference/any-to-video-search/make-search-request), [async task](https://docs.twelvelabs.io/v1.3/api-reference/analyze-videos/create-async-analysis-task), [task results](https://docs.twelvelabs.io/v1.3/api-reference/analyze-videos/retrieve-analysis-task-status-results), [Node SDK](https://docs.twelvelabs.io/v1.3/sdk-reference/node-js/analyze-videos/async-analysis), [billing migration](https://docs.twelvelabs.io/v1.3/docs/get-started/plans-and-billing/migrate-to-new-billing). The API/deck say 20 segment definitions while the guide says 10; use one tested definition rather than relying on either maximum.
+- **OpenCut:** [rewrite README](https://github.com/OpenCut-app/OpenCut/blob/e668010778568641babef2cc40be4703ae6916d6/README.md), [Classic README](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/README.md), and the pinned source links in the integration guide. This revision inspected source but did not install, run, or prove OpenCut compatibility.
+- **X:** [recent search](https://docs.x.com/x-api/posts/search/introduction), [filtered stream](https://docs.x.com/x-api/posts/filtered-stream/introduction), [geographic trends](https://docs.x.com/x-api/trends/trends-by-woeid/introduction), [pay-per-use](https://docs.x.com/x-api/getting-started/pricing). Documentation was researched; no account access or real fan sample was tested.
+- **ScorePlay:** [API documentation](https://developer.scoreplay.io/), [Postman collection](https://developer.scoreplay.io/downloads/scoreplay.postman_collection.json), and the existing repository's vendor snapshot. No live ScorePlay test was performed in this planning revision.
+
+**Inputs needed to replace fixtures:** authorized feed/arriving-asset access; actual rights pack and target destination(s); verified ScorePlay company/media mapping; historical stats with coverage and usage permissions; X read entitlement; San Antonio game/index; approved sponsor/music/graphic assets. Implement adapters and explicit unavailable states now; do not invent those inputs.
