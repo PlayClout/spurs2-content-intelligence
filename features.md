@@ -15,6 +15,8 @@ This is a task breakdown, not a fresh product spec. Reuse the current repo aggre
 
 Automatic write-back is the normal workflow once the workspace taxonomy and write access are configured. The current event sign-off gate can hold queued writes; it does not introduce a manual write-back step for each clip.
 
+Rights metadata uses the same write path (Phase B14b). A media item's rights record is detected, gaps are inferred from Pegasus facts, and the record is written only after a person confirms it. Editorial approval queues the source log; it confirms the rights record only when that record is complete and has no inferred-only or conflicting fields. `rights:` tags come only from a confirmed rights record.
+
 ---
 
 ## Technical stack additions
@@ -63,7 +65,7 @@ Keep stack changes minimal. We already have most of what we need.
 - No full OpenCut merge.
 - No public posting of club content.
 - No cloud worker or cloud storage for club media (no Fargate, no S3). Source copies, renders and frame grabs stay on team laptops and are purged after the event.
-- No live ScorePlay writes until taxonomy is approved.
+- No live ScorePlay writes until taxonomy is approved and the write-back allow-list is configured. Until then every write (source log, upload, rights metadata) runs as a labelled dry run. No `PUT /media/{id}/details` or `accessible_*` writes to source media.
 - No AI-generated fan-requested cuts. Search returns approved published derivatives only.
 
 ---
@@ -160,6 +162,11 @@ Local interaction feedback target is 100ms; supported matched external signals s
 | A4.4 | Add taxonomy readiness panel | B1.4 | `docs/TAXONOMY.md`, held write payload | Shows writes held until sign-off |
 | A4.5 | Add safe requeue failed job action | B6.2 | `jobs` table | Failed demo jobs can be retried without DB shell |
 | A4.6 | Rehearse demo 3x and record backup video | all P0 | DemoControls | Under 4 min three times; purge run after each |
+| A4.7 | Add Rights rules screen: list, enable/disable, parameters, scope and severity | B2.13, B14.1 | admin panels, compliance-badge | Admin edits an existing rule into a draft; illustrative/verified label, citation and effective dates are visible; behind the app lock |
+| A4.8 | Add new-rule form with JSON condition editor | A4.7, B2.14 | rule schema | A new territory rule (e.g. gambling-ad law) is created without code changes and fails lint until valid |
+| A4.9 | Add validate and preview against sample media | A4.8, B2.14 | cached manifests, seeded media | Preview lists verdicts that would change before activation, with zero TwelveLabs calls |
+| A4.10 | Add activate, version history and audit diff view | A4.7, B2.13, B2.16 | rule_set_version, rule_audit | Activation creates an immutable version; history shows who/when/diff; decisions show the version that produced them |
+| A4.11 | Show write-back dry run, held work and kill switch | A4.4, B10.9 | held write payload, delivery status | Operator sees each would-send payload labelled DRY RUN, held/failed items, and can toggle the kill switch |
 
 ## Phase A5 - OpenCut spike as bounded admin feature
 
@@ -280,6 +287,10 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B2.10 | Add `rights_decisions` + `rights_findings` tables; worker writes one decision per context | 0.1, B2.6 | `shared/db-schema.ts`, `handleProcessMoment` | New moment creates a decision with findings and timecodes; opportunity shows current status |
 | B2.11 | Add approval audit, reason codes and out-of-window recheck job | B2.4, B2.10 | `approveOpportunity`, `saveTrim`, `jobs` | Every approve/override/reject/trim writes an audit row; out-of-window trim re-analyzes before approve |
 | B2.12 | Seed labelled SIMULATED rights cases | B2.10 | `scripts/seed.ts` | Expired window, ended partner window, departed player and brand case show SIMULATED; nothing written to ScorePlay |
+| B2.13 | Store rights rules as JSON rows with immutable rule-set versions and an audit trail | B2.6 | `pipeline/rules/content-rules.json`, `shared/db-schema.ts` | `rights_rule`, `rights_rule_set_version`, `rights_rule_audit` exist; the six current rules seed version 1 as illustrative; every change records who, when and a JSON diff |
+| B2.14 | Add safe JSON condition evaluator, fact registry and rule lint | B2.13 | `shared/content-rules.ts` `fires()` | No `eval`; unknown fact paths, type mismatches, empty scopes, bad dates and `verified` without citation are rejected; same facts + same version give the same result |
+| B2.15 | Load the active rule-set version at evaluation and pin it on each decision | B2.13, B2.10 | `evaluateRights` | Every decision and rights record stores `ruleSetVersion`; out-of-date or out-of-scope rules do not fire; unknown facts yield needs_review |
+| B2.16 | Re-evaluate affected decisions from cached facts on activation | B2.15 | `rights_recheck` job, cached manifests | Activating a version re-evaluates current decisions without a TwelveLabs call; changed states supersede and follow withdrawal/write-back rules |
 
 ## Phase B3 - Discovery, candidate storage and rejected reasons
 
@@ -366,11 +377,12 @@ Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichmen
 | B10.1 | Keep writes held by default | current | `SCOREPLAY_WRITES` guard | No live metadata write without sign-off |
 | B10.2 | Run one safe write/delete test after taxonomy approval | ScorePlay sign-off | `writeMomentAsVideoLog` | Create, read back, delete succeeds |
 | B10.3 | Create `Spursx2 AI Productions` collection after approval | ScorePlay sign-off | `uploadToEvent`, event API | Final outputs can be uploaded to ScorePlay |
-| B10.4 | Queue automatic write-back on approval and persist pending/synced/held/failed state | B4.2 | worker jobs, delivery JSON or new table | Approval creates a durable source-log job without a separate sync action; held/failed work stays visible |
+| B10.4 | Queue automatic write-back on approval and persist pending/synced/held/failed state | B4.2 | worker jobs, delivery JSON or new table | Approval creates a durable source-log job without a separate sync action; held/failed work stays visible; rights metadata (B14b.6) uses the same job queue and gate |
 | B10.5 | Automatically upload completed channel/app renditions and sync output refs | B4.2, B10.3, B12.3 | ScorePlay upload/media/details API | Every completed eligible rendition is linked to its exact source, approval revision, channel and artifact |
 | B10.6 | Add idempotent retries and reconciliation | B10.4, B10.5 | DB-recorded write-back IDs, jobs | Retry/restart cannot duplicate source logs or uploads; transient failures back off; held writes resume automatically after workspace enablement |
 | B10.7 | Verify automatic approval-to-ScorePlay flow | B10.6 | integration tests | One approval creates the source log, completed variants upload automatically, and repeated jobs do not duplicate records |
-| B10.8 | Enforce write-back tag allow-list from TAXONOMY.md | B10.1 | `buildVideoLogPayload`, `docs/TAXONOMY.md` | Unknown tags (e.g. `clout-approved`) are rejected before send |
+| B10.8 | Enforce one write-back allow-list (TAXONOMY.md groups plus `rights:` options) for tags, log `raw_tags` and fields | B10.1 | `buildVideoLogPayload`, `docs/TAXONOMY.md` | Unknown tags (e.g. `clout-approved`) and any `PUT /details` or `accessible_*` write to source media are rejected before send |
+| B10.9 | Add a write-back kill switch checked at send time | B10.4 | `writesEnabled`, admin settings | Admin toggle (DB) or env override moves queued and retrying writes to held within one job cycle; no live send while on |
 
 ## Phase B11 - OpenCut adapter backend
 
@@ -413,6 +425,20 @@ Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichmen
 | B14.5 | Release source in `finally`; delete frame grab after card | none | `pipeline/moment.ts` processMoment, `pipeline/render-local.ts` | Forced throw leaves 0 `source-*`; no `*.grab.png` remains |
 | B14.6 | Purge script + start-up sweep + teardown log (render root, `out/real-proof`, TMPDIR) | B14.5 | `scripts/purge-local-media.ts` (new) | `--all` leaves 0 files; log line `files_left=0` per laptop |
 | B14.7 | One-time AWS teardown (owner: ______) | none | `aws` CLI with the `clout-ci` profile | Fargate service stopped and deleted; `renders/cloudproof-*` and bucket `clout-ci-renders-271825827331` emptied and deleted (`NoSuchBucket`); worker secret, ECR repo, log group and keys deleted; output logged with a CT timestamp |
+
+## Phase B14b - Rights metadata stage: detect, infer, write back (Challenge 2 rules engine)
+
+Owner: ______. Runs per ScorePlay media item before the destination decision. Existing ScorePlay or human values beat inferred values field by field; inferred values fill gaps only; conflicts become needs_review; unknown never clears. Writes go through the single B10 write path.
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| B14b.1 | Define required rights fields and completeness checklist (`shared/rights/metadata.ts`) | B2.6 | `restrictionsFromScorePlay`, design.md §4 checklist | Each media item is `complete`, `incomplete` (missing fields listed) or `absent`; empty or `0` fields count as missing, never as permission |
+| B14b.2 | Detect existing rights metadata from ScorePlay | B14b.1, B2.9 | `getMedia`, cached reads | Contract fields (window, usage, partner DRMs, sponsor/player tags) and existing `rights:` tags are read with provenance `existing_scoreplay`; a failed read yields needs_review |
+| B14b.3 | Infer missing content fields from cached Pegasus facts | B14b.1, B2.8 | `MomentManifest`, `evaluateContent` | Brands, on-screen text, music, players, crowd and markings get values with evidence, source time ranges and `observed`/`uncertain` confidence; contract fields are never inferred |
+| B14b.4 | Merge field by field with provenance and conflict detection | B14b.2, B14b.3 | B8.6 per-field evidence pattern | Existing values are never overwritten; inferred values fill gaps; any disagreement sets needs_review and is shown with both values |
+| B14b.5 | Add rights-record confirmation for reviewers | B14b.4, A2.7, B2.11 | review pane, reason codes | Reviewer confirms inferred fields and supplies or confirms contract gaps; confirmation is logged; editorial approval confirms only complete, conflict-free records |
+| B14b.6 | Write the confirmed record through the B10 write path | B14b.5, B10.4, B10.6, B10.8 | `writeMomentAsVideoLog`, `findOurLog`, tag endpoints | One `rights:` state tag plus provenance tags (replacing only tags our records wrote) and one marked `/video/logs` entry; unknown/conflict writes needs review, never cleared; no `PUT /details` or `accessible_*` write |
+| B14b.7 | Prove idempotency, dry run and kill switch | B14b.6, B10.9 | integration tests, fixture mode | Repeated and retried jobs create no duplicate tag or log; dry run sends nothing and shows the payload; seeded/fixture records never write live |
 
 ---
 
@@ -464,7 +490,7 @@ First concrete tasks:
 ## Step 1: Do not break the current demo
 - Keep current editor dashboard compiling.
 - Keep worker live on the laptops.
-- Keep ScorePlay writes held.
+- Keep ScorePlay writes held (dry run) until sign-off; the kill switch stays available after.
 - Keep live posting disabled.
 - Keep real Tottenham replay working.
 
@@ -560,8 +586,9 @@ Target a three-minute primary walkthrough. Use a pre-rendered, accurately labele
 16. Admin UX passes desktop/laptop visual QA, keyboard workflows, autosave/recovery and state-preserving live refresh; hot alert → playable review takes one click when the draft is ready.
 17. Authorized external signals highlight the correct hot clip with source, age, momentum baseline and why-now evidence. Duplicates and stale signals are suppressed, unavailable feeds are explicit, and rights-blocked clips stay blocked regardless of urgency.
 18. No club media leaves the team laptops: no cloud upload path exists, and the teardown log shows `files_left=0` per laptop after the event.
-
 19. Fan PWA installs where supported and launches standalone into `/fan/`; browser links remain usable without installation. Offline mode exposes only the static shell/fallback, and installed mode still enforces current publication/rights checks.
+20. A media item with no rights metadata is detected as absent, its content fields are inferred from cached Pegasus facts with evidence, existing values are never overwritten, and conflicts or unknowns end in needs_review. After confirmation, only allow-listed `rights:` tags and one marked log are written; a retry writes nothing new; dry run and the kill switch send nothing.
+21. An admin can disable a rights rule, change its parameters and add a new JSON rule with a citation without a code change. Validate and preview run before activation; activation creates an immutable version with an audit diff, affected decisions re-evaluate from cached facts, and each verdict shows its rule-set version.
 
 ---
 
