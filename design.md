@@ -66,6 +66,20 @@ OpenCut integration has a bounded P0 spike; its fuller editor is a desired produ
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
+### Admin UX quality bar — P0
+
+The admin desk must feel like a polished editorial tool: clean typography, generous spacing, restrained color, a dominant media preview and one clear primary action for the current step. Keep the three-pane workflow, but progressively disclose evidence, technical status and advanced controls. Deep diagnostics belong in drawers; essential rights, identity and freshness states stay visible.
+
+- A persistent **Act now** rail surfaces a small set of actionable hot clips with thumbnail, player/play, why now, signal age, momentum sparkline, evidence coverage and readiness. Hot but blocked/unresolved moments sit in a separate needs-attention lane with the next step; they never appear ready to publish.
+- Selecting a card updates the preview and inspector in place. Preserve filters, scroll position, selection, playback position and unsaved edits. Incoming signals must not steal focus or reshuffle the card being edited; show a “new hot moments” indicator and let the editor apply the refreshed order.
+- Support keyboard navigation, visible shortcuts and a command palette for find, next/previous clip, preview, claim, snooze, dismiss and open channel packaging. Shortcuts must not fire while typing; publication remains explicit and revision-bound.
+- Use autosaved drafts with saving/saved/error feedback, recoverable edits, optimistic reversible actions with rollback, and undo for queue dismissal. Approval/publication confirms server success; no optimistic success for a release or rights decision.
+- Channel packaging uses consistent destination tabs with immediate aspect/safe-zone previews, editable trims/crops/copy, batch render and per-output progress. Avoid repetitive dialogs and show actionable inline validation.
+- Use skeletons, stable layouts, subtle motion and reduced-motion support. Provide accessible contrast, focus states and keyboard equivalents to drag/reorder. Empty, loading, disconnected, held and failed states explain the next useful action.
+- One editor can claim a hot moment; other editors see ownership and current status. Snooze/dismiss asks for a lightweight reason; activity and version-conflict handling prevent duplicate effort and overwritten edits.
+
+Quality targets for verification, not current performance claims: visible acknowledgement within 100ms for local interactions; no focus/selection loss during refresh; one click from a hot alert to playable review when its draft is ready; keyboard completion of the core workflow. Test the actual media load separately from local UI feedback. Visual QA must cover desktop and smaller laptop screens plus all loading/error states.
+
 ### Automatic ScorePlay write-back and channel packaging
 
 Approval of an exact clip revision automatically queues a source timeline log in ScorePlay with timecodes, evidence, tags and the approval reference. Once final renditions are ready, the worker automatically uploads them into the approved output collection and attaches source/revision/channel metadata. No per-clip sync action is required. Persist pending/synced/held/failed state and provider IDs; use idempotency keys, retry/backoff and reconciliation to avoid duplicate logs or uploads. Existing taxonomy/workspace sign-off holds live writes until configured, then queued eligible writes resume after current-state checks.
@@ -203,6 +217,18 @@ These are tunable editorial weights, not probabilities or validated engagement p
 - **Recency/diversity:** favor current useful moments, group alternate angles, cap repeated players/themes, and allow the editor to pin an overlooked candidate.
 
 A card's reason might read: **“Late equalizer candidate; crowd reaction detected; 3 independent evidence types; strongest for casual fans.”** Each clause expands to its evidence. Numbers in UI fixtures are marked **illustrative**, not actual observed fan response or sports facts.
+
+### Outside signals and the fast-response loop
+
+Build an authorized signal ingestion layer for **X match/player conversation**, licensed/organizer match-event or stats feeds, permitted club/league news or RSS updates, and first-party app activity once real usage exists. These are planned adapters, not connected feeds. Start with one authorized live source plus labeled replay fixtures; expose unavailable providers without invented metrics. Do not add a dependency on scraping private pages or unlicensed media.
+
+Normalize each signal with provider/event ID, source link, event/observation times, query/sample coverage, canonical match/team/player/play IDs, metric snapshots, confidence and live/replay/fixture mode. Reconcile entities and time windows to the candidate ledger and exact footage; ambiguous or wrong-match signals remain unmatched. A signal with no clip creates a scoped discovery request, not a claim that an asset is ready.
+
+Compute explainable **urgency** separately from editorial quality and fan relevance: sampled acceleration versus a comparable baseline, independent observed authors, event significance, freshness and evidence confidence. Record raw counts, window/baseline and missing coverage. A high score means an editorial opportunity in our observed sample, not predicted virality. Bot-like repetition, duplicate reposts, stale news and corrected match events reduce or invalidate support. Missing providers do not supply zero or imaginary popularity.
+
+Use configurable thresholds, minimum evidence, hysteresis, cooldowns and expiry to produce **Act now / Rising / Watch** states. Re-score on new evidence without rerunning video analysis unless the clip/evidence scope changes. Show why the alert fired, when it was observed, what changed, the recommended editorial angle and destination, and whether a ready draft exists. Readiness/rights, metadata certainty and hotness remain separate.
+
+Deliver in-app alerts with a quiet badge/toast and an optional user-enabled sound; deduplicate per canonical play and escalate only on meaningful change. Claim, review, package, approve and publish remain editor actions; automatic ScorePlay sync follows approval. Log signal-to-alert, alert-to-open and review-to-delivery timestamps. Demo targets: a supported matched signal appears in the admin within 10 seconds of ingestion, with source/event age visible; upstream provider delay is measured separately. A disconnected feed marks stale evidence and decays urgency without interrupting editing.
 
 ## 6. Statistical story hooks with proof
 
@@ -405,8 +431,11 @@ Work packets are instructions for future implementation, not a claim that separa
 14. **Identity and query intent:** a whole-match player tag cannot create a verified clip tag. An explicit player query can differ from favorites; ambiguous names prompt a roster choice.
 15. **Publish/withdraw:** commit only a rendered, prepared/indexed approved version; replacing a version is atomic. Withdrawal removes it from feed/search/detail and prevents new playback grants even if the index/cache still contains a hit.
 16. **Viewer context:** social permission alone cannot publish to the fan app. Server-resolved entitlement/territory is checked for search, thumbnails, detail, and playback. Metadata fallback is labeled and no-match does not synthesize footage.
+17. **Admin polish:** hot queue → preview → package flow preserves edits/focus during live updates; keyboard navigation, autosave recovery, inline validation, reduced motion and laptop layouts pass visual/interaction QA.
+18. **Fast-response signals:** an authorized external signal resolves to the right clip with source, timestamps and evidence; duplicate/stale/wrong-match signals do not create repeated actionable alerts. Claim/snooze/dismiss work, and a blocked clip cannot become publishable because it is hot.
 
-**Three-minute demo:** replay produces candidates → restricted clip is held with a reason → permitted cleaned derivative and sourced/fixture stat proof → editor adjusts a montage, approves and publishes the prepared version → fan A sees the new clip for a favorite player → fan B sees crowd-focused ordering → “Give me a clip of [player] scoring” returns a published playable match → withdrawal removes it from discovery/new playback. Show real render/source-log evidence and keep simulated inputs labeled. The personalized fan app is the frontend climax.
+
+**Three-minute demo:** outside signal spikes around a player/play → Act now surfaces the matching clip with source, freshness and why-now evidence → editor opens the draft, confirms metadata, adjusts and approves → publisher/editor prepares channel-specific social and app renditions → automatic ScorePlay source log and completed uploads enrich the library → editor publishes the app rendition → fan A sees a favorite-player match while fan B sees interest-driven ordering → natural-language search retrieves that same approved derivative. Follow one canonical moment and show its source/approval/output lineage throughout. ScorePlay completion must be backed by provider IDs; held/simulated writes remain labeled. If analysis/rendering is still running, use a clearly labeled prepared continuation. Keep the primary story focused; rights-block, withdrawal, compilation and recovery checks remain required follow-up proofs.
 
 **Measure:** moment-to-ready latency by stage; number considered/held/cleaned/selected; corrections/overrides; recommendation-to-approved-cut time; source-claim coverage; successful render/writeback counts; publish-to-discoverable delay; fan preference response; scoped search latency; withdrawal enforcement. Never report guessed accuracy, sales lift, live social reach, or legal certainty as a measured outcome.
 

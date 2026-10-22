@@ -90,6 +90,21 @@ Parallel rule: once 0.1 to 0.4 are stubbed and typed, backend, admin frontend an
 
 Admin frontend means the editor / producer dashboard and operator controls. This is the primary work surface for the hackathon judges.
 
+## Phase A0 - Premium admin UX and fast-response desk (P0)
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| A0.1 | Define and implement a clean admin visual hierarchy | 0.5 | existing tokens, three-pane desk | Dominant preview, restrained color, clear primary action, consistent spacing/type; deeper diagnostics move into drawers |
+| A0.2 | Add Act now / Rising / Watch rail | B13.4, A1.1 | opportunity cards, signal evidence | Each alert has why-now, player/play, momentum, age, coverage, readiness and one-click review |
+| A0.3 | Stabilize live updates and editing state | A1.1 | auto refresh, review state | New signals never steal focus, reset playback/edits or reorder the active card; editor applies new ranking from an indicator |
+| A0.4 | Add keyboard navigation and command palette | A1.1 | accessible UI components | Core review/package workflow works by keyboard; shortcuts respect text entry and explicit publication |
+| A0.5 | Add autosave, recovery and reversible action feedback | A1.5 | server actions, draft revisions | Saved/error states are clear; failed optimistic actions roll back; release success reflects server confirmation |
+| A0.6 | Add claim/snooze/dismiss and notification preferences | B13.5 | queue status, editorial events | Editors see ownership; alerts deduplicate; snoozes expire; version conflicts preserve work; sound is opt-in |
+| A0.7 | Polish channel tabs and processing transitions | A3b.2 | destination previews, jobs | Safe-zone previews, inline errors and per-channel progress feel consistent without repeated modal dialogs |
+| A0.8 | Run visual and interaction QA | A0.1–A0.7 | browser walkthrough | Desktop/laptop, skeleton/empty/error/held states, keyboard access, reduced motion, draft recovery and refresh stability verified |
+
+Local interaction feedback target is 100ms; supported matched external signals should surface within 10s of ingestion. Measure provider lag and media-load latency separately. These are acceptance targets, not claims about current code.
+
 ## Phase A1 - Stabilize current editor desk
 
 | ID | Task | Depends on | Reuse | Done when |
@@ -351,6 +366,17 @@ Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichmen
 | B12.4 | Bind app publication/indexing to the app rendition | B12.3, B4.2, B9.2 | publication lifecycle | Fan playback/search uses the exact approved app artifact and its own index mapping; social variants retain separate lineage |
 | B12.5 | Verify multi-destination output end to end | B12.4, B10.6 | render/integration tests | One source produces social plus app variants, preserves lineage, respects destination limits and automatically syncs to ScorePlay |
 
+## Phase B13 - External signals and hot-clip urgency
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| B13.1 | Define normalized signal contract and provider adapters | B3.3, B8.1 | `signals`, existing replay | Support authorized X reads, licensed/organizer event feeds, permitted news/RSS and first-party app activity; persist IDs, links, event/observation times, coverage, entities and mode |
+| B13.2 | Connect one authorized outside source and replay fixtures | B13.1 | provider client patterns | Live feed and simulated/replay modes are distinct; missing access and rate limits are visible with bounded retry/backoff |
+| B13.3 | Correlate external signals to exact plays/clips | B13.2, B8.6 | footage map, candidate ledger, dedupe | Match/player/time evidence resolves the correct footage; ambiguous signals stay unmatched and missing footage triggers scoped discovery |
+| B13.4 | Add explainable urgency scoring and lifecycle | B13.3 | ranking, source evidence | Act now/Rising/Watch use sampled acceleration, baseline counts, freshness and confidence; thresholds/hysteresis/expiry suppress noise; rights remain separate |
+| B13.5 | Emit durable deduplicated admin alerts and ownership state | B13.4 | editorial events, queue updates | Canonical play cooldowns, meaningful-change escalation, claim/snooze/dismiss and stale-feed states work across editors |
+| B13.6 | Verify signal-to-action flow and timing | B13.5, A0.6 | replay/integration tests | Fresh signal highlights the correct clip; duplicates/stale/wrong-match signals do not alert repeatedly; ingestion-to-alert target and upstream lag are measured separately |
+
 ---
 
 # Parallel ownership recommendation
@@ -464,6 +490,19 @@ Deliver:
 
 ---
 
+# Flagship demo story
+
+**Outside signal → hot clip → editor packaging → ScorePlay enrichment → personalized fan experience.** Show one canonical moment through the complete loop, carrying the same source, clip, approval and rendition IDs throughout.
+
+1. **Opportunity appears:** an authorized outside signal spikes around a player/play. The Act now card identifies the matching footage, explains why it matters and shows source, age and LIVE/REPLAY/FIXTURE mode.
+2. **Editor acts:** one click opens a playable draft. The editor checks player metadata and evidence, adjusts the cut and approves the exact revision.
+3. **One clip, relevant destinations:** the publisher/editor previews and prepares the appropriate social and app cuts/sizes with per-output progress.
+4. **ScorePlay gets richer:** show the automatic source timeline log and completed output assets with reviewed tags and source/revision links. Display actual provider IDs for completed writes; held/simulated work is visibly labeled and is not presented as a successful live sync.
+5. **Fans see the result:** explicitly publish the app rendition. Fan A sees it promoted for a favorite player; Fan B sees a different order driven by interests over the same eligible catalog. Both views explain the match to preferences.
+6. **Find it again:** a natural-language fan query finds the approved derivative and plays the relevant point. End with the source-to-output lineage connecting the fan clip back to the enriched ScorePlay library.
+
+Target a three-minute primary walkthrough. Use a pre-rendered, accurately labeled continuation if processing takes longer; never imply background work finished before confirmation. Keep rights-block, withdrawal, failure recovery and compilation demonstrations as follow-up proofs so the main story remains clear. This is the demo contract; implementation readiness must be verified end to end.
+
 # Acceptance checks
 
 1. Editor can reset and replay the real Tottenham timeline.
@@ -481,6 +520,8 @@ Deliver:
 13. Each variant passes its own destination limits and rights checks. App publication/search/playback references the approved app rendition; retrying one failed social rendition does not rerender successful outputs.
 14. Every published clip has reviewed, versioned metadata from ScorePlay plus time-scoped TwelveLabs evidence. Verified featured-player and interest IDs drive preferences; whole-match rosters and uncertain identities cannot create false favorite-player matches.
 15. Trim/crop changes, compilation chapters and metadata corrections preserve accurate clip-level attribution across renditions. Correcting identity refreshes feed/search metadata without leaving stale personalized results.
+16. Admin UX passes desktop/laptop visual QA, keyboard workflows, autosave/recovery and state-preserving live refresh; hot alert → playable review takes one click when the draft is ready.
+17. Authorized external signals highlight the correct hot clip with source, age, momentum baseline and why-now evidence. Duplicates and stale signals are suppressed, unavailable feeds are explicit, and rights-blocked clips stay blocked regardless of urgency.
 
 ---
 
