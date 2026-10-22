@@ -38,7 +38,7 @@ _Last updated: 2026-10-20 21:35 ET by Nova. Check items off as completed; Nova k
 - [ ] Stage Coverr/Pexels b-roll into `data/fallback-assets/`
 - [x] Jev wiring + calibration test — live on nova/architecture: 12/15 agreement, ~100ms median, calibration sane (high-conf 100% vs low 63%)
 - [x] Vercel standby deploy of app shell — preview verified 200 w/ seeded queue: https://spurs2-content-intelligence-rfbs7ngs9-porter-labs-projects.vercel.app (MOCK_MODE=1)
-- [x] X publish backend (x-clout) — real OAuth 1.0a + chunked video upload; live post+delete verified 10/20 (tweet 2112732235686166670, deleted); PUBLISH_LIVE=1 gate
+- [x] Publish backend reduced to simulated/event-internal export only. Removed live @playclout/X posting path because club content is event-only and @playclout is a separate B2C surface.
 
 ## 🤖 HERMES — Before Thursday (on-site primary)
 - [ ] Review PR #1 (architecture v2 + scaffold) — explicit agree/disagree on: Jev provider chain, org-scoped schema, RenderBackend seam, drafts-before-approval

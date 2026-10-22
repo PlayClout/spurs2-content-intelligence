@@ -88,7 +88,6 @@ export function ReviewPane({
   const [copyDrafts, setCopyDrafts] = useState<Record<string, string>>({ ...copyMap });
   const [rejectMode, setRejectMode] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
-  const [liveMode, setLiveMode] = useState(false); // LIVE publish deliberately disabled
   const [flash, setFlash] = useState<string | null>(null);
   const [optimisticStatus, setOptimisticStatus] = useState<string | null>(null);
 
@@ -270,6 +269,12 @@ export function ReviewPane({
                     </span>
                   </div>
                 ))}
+                <p className="kicker mb-1 mt-3">Considered / rejected</p>
+                <div className="rounded-md border border-border bg-background/50 p-2 text-[11px] text-muted-foreground">
+                  <p><span className="text-foreground">Rejected duplicate:</span> overlapping triggers on the same ScorePlay media merge into the existing card instead of producing a second draft.</p>
+                  <p className="mt-1"><span className="text-foreground">Rejected outside scope:</span> TwelveLabs watch-list is filtered to this match's watched clips before ranking hits, so archive clips cannot crowd out the live demo footage.</p>
+                  <p className="mt-1"><span className="text-foreground">Rejected by rights:</span> blocked channels are removed at recommendation time and checked again before publish.</p>
+                </div>
               </div>
             ) : (
             <div className="space-y-1.5">
@@ -333,39 +338,28 @@ export function ReviewPane({
         {flash && <span className="text-xs text-[var(--clout-blue-tint)]">{flash}</span>}
 
         <div className="ml-auto flex items-center gap-2">
-          {/* Publish group: only once approved/rendered. The SIM/LIVE switch is part of PUBLISH, not approval,
-              so it sits with the Publish button and is labeled as a destination, not a standalone action. */}
+          {/* Publish group: event-internal simulation only. No live social posting: club footage is not Clout IP,
+              and @playclout is a separate B2C surface. */}
           {(status === "approved" || status === "rendered") && (
             <div className="flex items-center gap-2 rounded-lg border border-border px-2 py-1">
-              <span className="kicker">Destination</span>
+              <span className="rounded-full border border-[rgba(0,163,255,0.45)] bg-[rgba(0,163,255,0.14)] px-2 py-1 text-[10px] font-semibold text-[var(--clout-hyper-blue)]">
+                SIMULATED EXPORT
+              </span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <div role="radiogroup" aria-label="publish destination" className="flex items-center overflow-hidden rounded-md border border-border text-[10px] font-semibold">
-                      <button
-                        role="radio"
-                        aria-checked={!liveMode}
-                        className={cn("px-2 py-1", !liveMode ? "bg-[rgba(0,163,255,0.2)] text-[var(--clout-hyper-blue)]" : "text-muted-foreground")}
-                        onClick={() => setLiveMode(false)}
-                      >
-                        SIMULATED
-                      </button>
-                      <button role="radio" aria-checked={false} className="cursor-not-allowed px-2 py-1 text-muted-foreground opacity-50" aria-disabled>
-                        LIVE @playclout
-                      </button>
-                    </div>
+                    <Button
+                      size="sm"
+                      className="h-8 bg-[var(--clout-violet)] text-xs text-white hover:bg-[var(--clout-violet)]/90"
+                      disabled={pending || isBlocked}
+                      onClick={() => run(() => publishOpportunity(opp.id, activeChannel), "Published internally (simulated)")}
+                    >
+                      <BrandIcon name="share" size={13} /> Mark exported {channelProfiles[activeChannel]?.label}
+                    </Button>
                   </TooltipTrigger>
-                  <TooltipContent>LIVE posts to the real @playclout X account; armed for the demo only</TooltipContent>
+                  <TooltipContent>No external social post is created. This records an event-internal simulated export only.</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <Button
-                size="sm"
-                className="h-8 bg-[var(--clout-violet)] text-xs text-white hover:bg-[var(--clout-violet)]/90"
-                disabled={pending || isBlocked}
-                onClick={() => run(() => publishOpportunity(opp.id, activeChannel, liveMode ? "live" : "simulated"), liveMode ? "Published to @playclout" : "Published (simulated)")}
-              >
-                <BrandIcon name="share" size={13} /> Publish {channelProfiles[activeChannel]?.label}
-              </Button>
             </div>
           )}
 

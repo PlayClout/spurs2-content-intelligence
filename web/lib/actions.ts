@@ -1,10 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db, schema as s } from "@/lib/db";
 import type { Compliance } from "@shared/schemas";
 import { getPublishBackend } from "@shared/clients/publish";
+import timeline from "../../data/replays/thfc-mnu-week6.json" with { type: "json" };
+import themes from "../../pipeline/club-themes.json" with { type: "json" };
+import { search, pickNew, type Footage, type Window } from "@pipeline/watchlist";
+import type { MomentInput } from "@pipeline/moment";
+import type { Timeline } from "@pipeline/replay";
 
 export type OpportunityRow = typeof s.opportunities.$inferSelect;
 export type SignalRow = typeof s.signals.$inferSelect;
@@ -15,6 +20,26 @@ export interface QueueFilters {
   status?: string; // "active" | specific status | "all"
   audience?: string;
   sport?: string;
+}
+
+const demoTimeline = timeline as Timeline;
+const orgKeyToDisplayName = (key: string) => (themes as Record<string, { displayName?: string }>)[key]?.displayName ?? key;
+const DEMO_LANE = "default";
+
+function inputFromTimelineEvent(ev: Timeline["events"][number], f: Footage, trigger: MomentInput["trigger"], start: number, end: number): MomentInput {
+  return {
+    orgKey: f.orgKey,
+    competition: f.competition,
+    scorePlayMediaId: f.scorePlayMediaId,
+    twelvelabsAssetId: f.twelvelabsAssetId,
+    manifestFixture: demoTimeline.manifestFixture,
+    startSec: start,
+    endSec: end,
+    headline: ev.headline,
+    kicker: ev.kicker,
+    statLine: ev.statLine,
+    trigger,
+  };
 }
 
 export async function listOrgs(): Promise<OrgRow[]> {
@@ -143,7 +168,6 @@ export async function saveCopy(id: string, channel: string, copy: string) {
 export async function publishOpportunity(
   id: string,
   channel: string,
-  mode: "simulated" | "live"
 ) {
   const [opp] = await db.select().from(s.opportunities).where(eq(s.opportunities.id, id));
   if (!opp) return { ok: false as const, error: "Opportunity not found" };
@@ -153,7 +177,7 @@ export async function publishOpportunity(
     return { ok: false as const, error: "Blocked by compliance — cannot publish" };
   }
 
-  const backend = getPublishBackend(mode);
+  const backend = getPublishBackend();
   const copy = (opp.generatedCopy as Record<string, string>)[channel] ?? opp.headline;
   const finalPaths = opp.finalPaths as Record<string, string>;
   const draftPaths = opp.draftPaths as Record<string, string>;
@@ -210,5 +234,75 @@ export async function engineStatus() {
     return { ok: true as const, latencyMs: Math.round(performance.now() - t0) };
   } catch {
     return { ok: false as const, latencyMs: null };
+  }
+}
+
+export async function resetDemo() {
+  // Demo reset is intentionally DB-only. It never touches ScorePlay, TwelveLabs, S3 objects or external posts.
+  try {
+    await db.execute(sql`delete from performance_snapshots`);
+    await db.execute(sql`delete from published_assets`);
+    await db.execute(sql`delete from opportunities`);
+    await db.execute(sql`delete from signals`);
+    await db.execute(sql`delete from moments`);
+    await db.execute(sql`delete from assets`);
+    await db.execute(sql`delete from jobs`);
+    revalidatePath("/");
+    revalidatePath("/published");
+    return { ok: true as const, message: "Demo reset: queue cleared; ScorePlay untouched" };
+  } catch (e) {
+    return { ok: false as const, error: (e as Error).message };
+  }
+}
+
+export async function replayDemo(selectedOrgId?: string) {
+  try {
+    const orgs = await db.select().from(s.orgs);
+    const orgByName = new Map(orgs.map((o) => [o.name, o]));
+    const selected = orgs.find((o) => o.id === selectedOrgId) ?? null;
+    const now = Date.now();
+    const events = [...demoTimeline.events].sort((a, b) => a.at - b.at);
+    const fired: { mediaId: number; window: Window }[] = [];
+    let queued = 0;
+    let skipped = 0;
+
+    for (const ev of events) {
+      const keys = Array.isArray(ev.footage) ? ev.footage : [ev.footage];
+      const pool = keys.map((k) => demoTimeline.footage[k]);
+      if (ev.kind !== "ai_watchlist") {
+        const f = pool[0];
+        const org = orgByName.get(orgKeyToDisplayName(f.orgKey));
+        if (!org) throw new Error(`Org ${orgKeyToDisplayName(f.orgKey)} not found`);
+        const input = inputFromTimelineEvent(ev, f, { kind: ev.kind, text: `${ev.text} (simulated feed)`, simulated: true }, ev.start!, ev.end!);
+        const scheduledAt = new Date(now + ev.at * 1000);
+        await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: org.id, input, lane: DEMO_LANE }, status: "queued", queuedAt: scheduledAt });
+        fired.push({ mediaId: input.scorePlayMediaId, window: { start: input.startSec, end: input.endSec } });
+        queued++;
+        continue;
+      }
+
+      const { hits, mode } = await search(demoTimeline.indexId, ev.query!, pool.map((f) => f.twelvelabsVideoId));
+      const pick = pickNew(hits, pool, fired);
+      if (!pick) { skipped++; continue; }
+      const org = orgByName.get(orgKeyToDisplayName(pick.footage.orgKey));
+      if (!org) throw new Error(`Org ${orgKeyToDisplayName(pick.footage.orgKey)} not found`);
+      const input = inputFromTimelineEvent(
+        ev,
+        pick.footage,
+        { kind: "ai_watchlist", text: `TwelveLabs watch-list "${ev.query}" hit #${pick.hit.rank} at ${pick.hit.start.toFixed(1)}-${pick.hit.end.toFixed(1)}s (${mode === "live" ? "live search" : "recorded live search"})`, simulated: false },
+        pick.hit.start,
+        pick.hit.end,
+      );
+      const scheduledAt = new Date(now + ev.at * 1000);
+      await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: org.id, input, lane: DEMO_LANE }, status: "queued", queuedAt: scheduledAt });
+      fired.push({ mediaId: input.scorePlayMediaId, window: { start: input.startSec, end: input.endSec } });
+      queued++;
+    }
+
+    revalidatePath("/");
+    const selectedName = selected ? ` · viewing ${selected.name}` : "";
+    return { ok: true as const, message: `Replay queued ${queued} moment${queued === 1 ? "" : "s"}${skipped ? `, ${skipped} skipped` : ""}${selectedName}` };
+  } catch (e) {
+    return { ok: false as const, error: (e as Error).message };
   }
 }

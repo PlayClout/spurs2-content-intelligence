@@ -243,7 +243,7 @@ A **match replay clock**. Press play on a real match; data events and fan spikes
 - In MVP, "Deliver" does three things:
   - writes the asset back into ScorePlay (REAL if we have a key);
   - drops the export package (files + copy + rights note);
-  - publishes to X for real on the LIVE toggle (@playclout, Nova's x-clout backend); every other channel is a **SIMULATED publish**.
+  - records an event-internal simulated export only. Live X/@playclout posting was removed: club media is event-only and @playclout is a separate B2C surface.
 
 **Screen 2: Audit log.** Who approved what, when, with which rights verdict. Executives and rights teams care about this more than engineers do.
 

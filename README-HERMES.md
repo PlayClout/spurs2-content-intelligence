@@ -32,7 +32,7 @@ Notes:
 | Seam | File | Now | Later |
 |---|---|---|---|
 | **RenderBackend** | `pipeline/render-backend.ts` | `getRenderBackend()` throws — wire `render-local.ts` after the ffmpeg PoC | cloud-worker |
-| **PublishBackend** | `shared/clients/publish.ts` | `simulated` (writes published_assets, externalRef null). `x-clout` is a stub with the full TODO (v1.1 chunked media upload → v2 tweet create); **deliberately not wired to creds** | real X posting |
+| **PublishBackend** | `shared/clients/publish.ts` | simulated/event-internal export only (writes published_assets, externalRef null). No live social posting: club media is event-only and @playclout is a separate B2C surface. | ScorePlay/platform-native distribution later, if authorized |
 | **DecisionProvider** | `shared/clients/decisions.ts` | Jev → Haiku → formula chain | — |
 | **Clients + MOCK_MODE** | `shared/clients/*.ts`, `data/fallback-assets/` | fixtures | live APIs |
 | **Compliance** | `shared/compliance.ts` | `evaluate()` is real; data mocked. Approve + publish **hard-gate** on `status === "blocked"` in `web/lib/actions.ts` | ScorePlay metadata |

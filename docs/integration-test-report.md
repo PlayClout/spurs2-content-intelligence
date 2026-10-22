@@ -7,19 +7,14 @@ Every claim below is marked **VERIFIED** (observed live in this run) or **UNVERI
 
 ## 1. X (Twitter) publish backend — `shared/clients/publish.ts`
 
-**Implementation:** `XCloutPublishBackend` is real. OAuth 1.0a user context (HMAC-SHA1 via
-`oauth-1.0a` + node `crypto`), credentials read at runtime from `X_CREDENTIALS_PATH`
-(default: workspace credential store — never in repo). Video path: v1.1 chunked upload
-(INIT → APPEND 4MB chunks → FINALIZE → STATUS poll, `media_category=tweet_video`) then
-v2 `POST /2/tweets` with `media.media_ids`. **Hard gate:** backend refuses unless
-`PUBLISH_LIVE=1` (the UI SIM/LIVE toggle maps to this env).
+**Historical note:** this path was implemented and tested early, but has been removed from the product. Publishing is now simulated/event-internal only. Rationale: club footage is event-only, not Clout IP, and @playclout is a separate B2C surface that should not receive this content.
 
 **Live verification (scripts/x-live-test.ts, run 2026-10-21 02:28 UTC):**
 - Video upload (`data/fallback-assets/poc/final_clip_9x16.mp4`): media_id `2112732217277394944`, processed in ~4.7s — **VERIFIED**
 - Tweet created with video: HTTP 201, id `2112732235686166670`, URL `https://x.com/playclout/status/2112732235686166670` — **VERIFIED**
 - Tweet deleted via `DELETE /2/tweets/:id`: response `deleted: true` — **VERIFIED**
 - No tier-limit fallback was needed; full video path worked on the first run.
-- Gate behavior (throws/returns error without `PUBLISH_LIVE=1`): code-path reviewed — **VERIFIED by test-script guard** (script aborts without the env; backend returns `ok:false` with gate message).
+- Current behavior: there is no live X gate or backend. The only supported publish mode is simulated/event-internal export.
 
 ## 2. Jev (TypeSafe System One) — `shared/clients/decisions.ts`
 
@@ -46,7 +41,7 @@ Haiku → formula fallback chain untouched; `MOCK_MODE=1` still bypasses Jev ent
 - Vercel Deployment Protection was disabled (`ssoProtection: null`) so the preview is shareable without Vercel auth — deliberate for the hackathon backup URL.
 
 **`../shared` import fix (two-part, least-invasive):**
-1. Added `drizzle-orm` + `oauth-1.0a` to `web/package.json` (web's server actions import `shared/` which uses them).
+1. Historical: `oauth-1.0a` was previously added for the removed X publish backend. Current code no longer needs it; `drizzle-orm` remains required because web server actions import shared/database code.
 2. Project `installCommand` = `npm install && npm install --prefix ..` — files under `shared/` (outside the root dir) resolve node_modules upward from the **repo root**, which Vercel otherwise never populates. No code moved, no copy step; tsconfig aliases unchanged.
 
 ## Caveats / UNVERIFIED
