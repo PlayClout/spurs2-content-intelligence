@@ -29,7 +29,7 @@ The **personalized fan frontend replaces the stadium viewer**. Ticketing is outs
 | Current repository | A producer queue, pipeline worker, FFmpeg renderer, schemas, illustrative content rules, and publish adapters already exist. Their presence is not proof that they satisfy the new plan. Reuse and extend them. |
 | Missing external inputs | No live broadcast endpoint, current ScorePlay credential, authorized club policy pack, complete historical stats dataset, or X read credential was supplied for this design revision. Real integrations remain adapter work; fixture/replay inputs must be labeled. |
 
-**Event terms:** the builder brief limits media to event use and forbids downloading, posting, or sharing outside the event. The ScorePlay onboarding deck explicitly describes authorized local proxy processing. Keep all working media and derivatives in organizer-permitted local/private environments, clarify any retention conflict with staff, and keep external publication disabled for club content. Tags/logs do not grant broader media rights.
+**Event terms:** the builder brief limits media to event use and forbids downloading, posting, or sharing outside the event. The ScorePlay onboarding deck explicitly describes authorized local proxy processing. Keep all working media and derivatives in organizer-permitted local/private environments, clarify any retention conflict with staff, and keep external publication disabled for club content. Tags/logs do not grant broader media rights. For this event the worker, renders and render storage run on team laptops only: no cloud worker or cloud object storage for club media, and local copies are purged with a logged file count afterwards.
 
 ### Delivery tiers
 
@@ -195,7 +195,7 @@ candidate → evaluate → cleared ───────────────
 
 ### Gaps in the existing code to fix
 
-`shared/compliance.ts` currently reports territory restrictions as reasons without evaluating a requested territory. `web/lib/actions.ts` blocks approval only for `blocked`; `unknown` and `restricted` are not a sufficient destination-clearance gate. The render worker also needs variant/context-aware checks and a revision binding. Extend the existing modules and tests; do not declare the new compliance behavior already implemented.
+`shared/compliance.ts` currently reports territory restrictions as reasons without evaluating a requested territory. `web/lib/actions.ts` blocks approval only for `blocked`; `unknown` and `restricted` are not a sufficient destination-clearance gate. The render worker also needs variant/context-aware checks and a revision binding. `shared/storage.ts` can still upload renders to S3 and `/renders` can redirect to a presigned bucket URL; both must be local-only. Extend the existing modules and tests; do not declare the new compliance behavior already implemented.
 
 ## 5. Hype and relevance ranking
 
@@ -392,6 +392,7 @@ The detailed, source-linked tailoring instructions, actual extension points, tim
 | `shared/moment-manifest.ts` | Separate response-mode clock adapters, content evidence time ranges, validated source identity. |
 | `pipeline/moment.ts`, `pipeline/watchlist.ts`, `pipeline/replay.ts` | Continuous/replay discovery, clock anchors, availability cutoff, event/shot dedupe. |
 | `pipeline/worker.ts` | Versioned ranking, bounded analysis, remediation verification, revision-aware final gate and compilation jobs. |
+| `shared/storage.ts`, `web/app/renders/[...path]/route.ts` | Local-only render storage; serve from the worker laptop behind the app lock; remove the S3 upload/presign path. |
 | `pipeline/render-local.ts`, `render-backend.ts`, `channel-profiles.json` | Multi-entry render plan, approved audio/text/graphics, bounded proxy variants, per-format output checks. |
 | `shared/schemas.ts`, `shared/db-schema.ts` | Extend existing entities with decision/evidence/revision lineage. Migrate explicitly; do not rewrite unrelated tables. |
 | `shared/clients/publish.ts` | Keep simulated event distribution. Existing live-X functionality is not authorization to publish club footage. |
