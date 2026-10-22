@@ -1,0 +1,731 @@
+{
+  "generatedAt": "2026-10-22T17:33:05.030Z",
+  "twelvelabsIndexId": "6ad90f31960d8ea7bdd040ab",
+  "scorePlayVideos": 101,
+  "twelvelabsVideos": 58,
+  "matched": 58,
+  "media": [
+    {
+      "scorePlayMediaId": 130916205,
+      "name": "S5 DRIVE-237B-.mov",
+      "durationSec": 17,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916204,
+      "name": "S5 DRIVE-237A-.mov",
+      "durationSec": 17,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916203,
+      "name": "S5 DRIVE-218A-.mov",
+      "durationSec": 7,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916202,
+      "name": "S5 3PT-322B-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916201,
+      "name": "S5 3PT-329B-.mov",
+      "durationSec": 23,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916200,
+      "name": "S5 DRIVE-231A-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130916199,
+      "name": "S5 3PT-322A-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage"
+    },
+    {
+      "scorePlayMediaId": 130907149,
+      "name": "VicDunkCompQ1_vs_SAC_261016_9x16.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907148,
+      "name": "VicDropsSabonis_vs_SAC_261016_9x16.mp4",
+      "durationSec": 9,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907143,
+      "name": "Vic_Dunk_#3_16x9.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907142,
+      "name": "Vic_Dunk_#3_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907139,
+      "name": "Vic_Dunk_#2_NOAUDIO.mp4",
+      "durationSec": 4,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907134,
+      "name": "Vic one hand jam!!_9x16.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907108,
+      "name": "Vic FB Backboard Oop_9x16.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907106,
+      "name": "Vic FB Backboard Oop_4x5.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907105,
+      "name": "TeamReadyForTuesday_PostgameBite_261016_9x16.mp4",
+      "durationSec": 19,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907090,
+      "name": "Steph Windmill Speed Ramp_9x16.mp4",
+      "durationSec": 11,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907089,
+      "name": "Steph Windmill Speed Ramp_4x5.mp4",
+      "durationSec": 11,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907088,
+      "name": "S40_Three_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907050,
+      "name": "S40 3PT-332A-.mov",
+      "durationSec": 15,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907048,
+      "name": "S30_Three_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907046,
+      "name": "S17_Three_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907041,
+      "name": "S11_Dunk_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907040,
+      "name": "S5_Dunk_9x16.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907033,
+      "name": "S5_Dunk_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907031,
+      "name": "S4_Fox and 1_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907006,
+      "name": "S4 AND 1-259A-.mov",
+      "durationSec": 16,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907005,
+      "name": "S3_layup (assist from S10)_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907003,
+      "name": "S2_dribble + layup_9x16.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130907002,
+      "name": "S2_dribble + layup_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906986,
+      "name": "Luke on Tarris already being impactful.mp4",
+      "durationSec": 45,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906962,
+      "name": "KJ and 1_Tongue out_4x5.mp4",
+      "durationSec": 9,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906961,
+      "name": "KJ and 1 lay_Tongue Out _9x16.mp4",
+      "durationSec": 8,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906960,
+      "name": "JuThree.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906959,
+      "name": "Ja'Kobi Cross 3pt_4x5.mp4",
+      "durationSec": 8,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906958,
+      "name": "HarperComp_vs_SAC_261016_9x16.mp4",
+      "durationSec": 28,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906902,
+      "name": "Harper14PTRun_2_NDE_vs_SAC_261016_9x16.mp4",
+      "durationSec": 30,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906901,
+      "name": "Dylan tuff lay and 1_4x5.mp4",
+      "durationSec": 10,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906900,
+      "name": "FoxDrive.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906899,
+      "name": "Dylan 3_Team Pass_4x5.mp4",
+      "durationSec": 13,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906898,
+      "name": "DylanOnShotConfidence_PostgameBite_261016_9x16.mp4",
+      "durationSec": 38,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906897,
+      "name": "Dev_Three_4x5.mp4",
+      "durationSec": 4,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130906896,
+      "name": "10.17_NDE_TeamWin_9x16.mp4",
+      "durationSec": 71,
+      "collection": "Social Edits"
+    },
+    {
+      "scorePlayMediaId": 130849875,
+      "name": "Man Utd (A) Previously Against.mp4",
+      "durationSec": 18,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f5e960d8ea7bdd041cf",
+      "twelvelabsAssetId": "6ad90e10030b76724d135bcf"
+    },
+    {
+      "scorePlayMediaId": 130849874,
+      "name": "261009_Men_De Zerbi Pre Match Man Utd A_16x9.mp4",
+      "durationSec": 243,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f5f030b76724d136324",
+      "twelvelabsAssetId": "6ad90e10960d8ea7bdd03a54"
+    },
+    {
+      "scorePlayMediaId": 130849873,
+      "name": "261009_Men_De Zerbi Pre Match Man Utd A_9x16 CLIP.mp4",
+      "durationSec": 25,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f605411fa6e602f3a73",
+      "twelvelabsAssetId": "6ad90e10500e82756f2ea205"
+    },
+    {
+      "scorePlayMediaId": 130849872,
+      "name": "261008_Men_Pre Match Man Utd A_Utd Line Up_9x16.mp4",
+      "durationSec": 93,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f60030b76724d13632c",
+      "twelvelabsAssetId": "6ad90e105411fa6e602f335b"
+    },
+    {
+      "scorePlayMediaId": 130849871,
+      "name": "261008_Men_Pre Match Man Utd A_Podcast Mathys Tel_9x16.mp4",
+      "durationSec": 118,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f5e968fe117efe6fad3",
+      "twelvelabsAssetId": "6ad90e115411fa6e602f335d"
+    },
+    {
+      "scorePlayMediaId": 130849870,
+      "name": "261008_Men_Pre Match Man Utd A_Mo Kudus_9x16.mp4",
+      "durationSec": 67,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f5d0ca748ea3c0a9b32",
+      "twelvelabsAssetId": "6ad90e1165b4aff96dc7a8a8"
+    },
+    {
+      "scorePlayMediaId": 130849869,
+      "name": "261008_Men_Pre Match Man Utd A_Left Back Dilemma_9x16.mp4",
+      "durationSec": 118,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f5d4a68f3b40321cb1a",
+      "twelvelabsAssetId": "6ad90e11030b76724d135bd1"
+    },
+    {
+      "scorePlayMediaId": 130849868,
+      "name": "solanke over the bar.mp4",
+      "durationSec": 28,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f5b500e82756f2ea96b",
+      "twelvelabsAssetId": "6ad90e115411fa6e602f335e"
+    },
+    {
+      "scorePlayMediaId": 130849867,
+      "name": "solanke late goal.mp4",
+      "durationSec": 30,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f5a65b4aff96dc7afe5",
+      "twelvelabsAssetId": "6ad90e129c038876f3589de8"
+    },
+    {
+      "scorePlayMediaId": 130849866,
+      "name": "Solanke early chance.mp4",
+      "durationSec": 19,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f59030b76724d136306",
+      "twelvelabsAssetId": "6ad90e129c038876f3589de9"
+    },
+    {
+      "scorePlayMediaId": 130849865,
+      "name": "savio chance.mp4",
+      "durationSec": 19,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f58960d8ea7bdd041ab",
+      "twelvelabsAssetId": "6ad90e122cc348c0bd1fffb3"
+    },
+    {
+      "scorePlayMediaId": 130849864,
+      "name": "Savio cele Man United 9x16 (A) v2.mp4",
+      "durationSec": 13,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f58030b76724d1362f8",
+      "twelvelabsAssetId": "6ad90e122cc348c0bd1fffb4"
+    },
+    {
+      "scorePlayMediaId": 130849863,
+      "name": "RDZ United.mp4",
+      "durationSec": 59,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f575411fa6e602f3a4c",
+      "twelvelabsAssetId": "6ad90e1265b4aff96dc7a8b2"
+    },
+    {
+      "scorePlayMediaId": 130849862,
+      "name": "Slide 19 - Players Clapping Fans.mov",
+      "durationSec": 15,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f5565b4aff96dc7afcd",
+      "twelvelabsAssetId": "6ad90e135411fa6e602f3362"
+    },
+    {
+      "scorePlayMediaId": 130849861,
+      "name": "Slide 18 - Away End FT.mov",
+      "durationSec": 6,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f56960d8ea7bdd04198",
+      "twelvelabsAssetId": "6ad90e1365b4aff96dc7a8b3"
+    },
+    {
+      "scorePlayMediaId": 130849860,
+      "name": "Slide 17 - Stadium GV.mov",
+      "durationSec": 7,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f555411fa6e602f3a43",
+      "twelvelabsAssetId": "6ad90e130ca748ea3c0a93b5"
+    },
+    {
+      "scorePlayMediaId": 130849859,
+      "name": "Slide 16 -Tonali.mov",
+      "durationSec": 4,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f54960d8ea7bdd04193",
+      "twelvelabsAssetId": "6ad90e1365b4aff96dc7a8b5"
+    },
+    {
+      "scorePlayMediaId": 130849858,
+      "name": "Slide 15 - CG.mov",
+      "durationSec": 7,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f53500e82756f2ea92e",
+      "twelvelabsAssetId": "6ad90e13960d8ea7bdd03a5a"
+    },
+    {
+      "scorePlayMediaId": 130849857,
+      "name": "Slide 14 - Savio.mov",
+      "durationSec": 11,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f530ca748ea3c0a9afa",
+      "twelvelabsAssetId": "6ad90e139c038876f3589dea"
+    },
+    {
+      "scorePlayMediaId": 130849856,
+      "name": "Slide 13 - Kinsky.mov",
+      "durationSec": 5,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f5265b4aff96dc7afab",
+      "twelvelabsAssetId": "6ad90e142cc348c0bd1fffb7"
+    },
+    {
+      "scorePlayMediaId": 130849855,
+      "name": "Slide 12 - Bergvall.mov",
+      "durationSec": 7,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f520ca748ea3c0a9aed",
+      "twelvelabsAssetId": "6ad90e149c038876f3589dec"
+    },
+    {
+      "scorePlayMediaId": 130849854,
+      "name": "Slide 11 - Senesi.mov",
+      "durationSec": 6,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f51968fe117efe6fa8f",
+      "twelvelabsAssetId": "6ad90e140ca748ea3c0a93b8"
+    },
+    {
+      "scorePlayMediaId": 130849853,
+      "name": "Slide 10 - Gray Tackle.mov",
+      "durationSec": 6,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f515411fa6e602f3a28",
+      "twelvelabsAssetId": "6ad90e14960d8ea7bdd03a5d"
+    },
+    {
+      "scorePlayMediaId": 130849852,
+      "name": "Slide 9 - KO.mov",
+      "durationSec": 5,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f504a68f3b40321cac5",
+      "twelvelabsAssetId": "6ad90e1465b4aff96dc7a8b7"
+    },
+    {
+      "scorePlayMediaId": 130849851,
+      "name": "Slide 8 - Can't Smile without you Pre-KO.mov",
+      "durationSec": 13,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f4f960d8ea7bdd0416f",
+      "twelvelabsAssetId": "6ad90e154a68f3b40321c3f7"
+    },
+    {
+      "scorePlayMediaId": 130849850,
+      "name": "Limbs Man United 9x16 (A) v2.mp4",
+      "durationSec": 17,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4f968fe117efe6fa7c",
+      "twelvelabsAssetId": "6ad90e150ca748ea3c0a93bb"
+    },
+    {
+      "scorePlayMediaId": 130849849,
+      "name": "Gallagher.mp4",
+      "durationSec": 26,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4e9c038876f358a486",
+      "twelvelabsAssetId": "6ad90e15500e82756f2ea211"
+    },
+    {
+      "scorePlayMediaId": 130849848,
+      "name": "kudus chance_1.mp4",
+      "durationSec": 26,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4e500e82756f2ea907",
+      "twelvelabsAssetId": "6ad90e1565b4aff96dc7a8b8"
+    },
+    {
+      "scorePlayMediaId": 130849847,
+      "name": "Archie tackle.mp4",
+      "durationSec": 13,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4d960d8ea7bdd04163",
+      "twelvelabsAssetId": "6ad90e16968fe117efe6f3c1"
+    },
+    {
+      "scorePlayMediaId": 130849846,
+      "name": "Goal Man United 9x16 (A) v1.mp4",
+      "durationSec": 30,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f470ca748ea3c0a9aab",
+      "twelvelabsAssetId": "6ad90e164a68f3b40321c3f8"
+    },
+    {
+      "scorePlayMediaId": 130849845,
+      "name": "Dom United Subs.mp4",
+      "durationSec": 43,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4c500e82756f2ea904",
+      "twelvelabsAssetId": "6ad90e16960d8ea7bdd03a61"
+    },
+    {
+      "scorePlayMediaId": 130849844,
+      "name": "Goal Slo Mo Man United 9x16 (A) v1.mp4",
+      "durationSec": 45,
+      "collection": "Moments",
+      "twelvelabsVideoId": "6ad90f4665b4aff96dc7af68",
+      "twelvelabsAssetId": "6ad90e169c038876f3589df5"
+    },
+    {
+      "scorePlayMediaId": 130849841,
+      "name": "Slide 7 - Teams Out.mov",
+      "durationSec": 7,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f460ca748ea3c0a9aa6",
+      "twelvelabsAssetId": "6ad90e1765b4aff96dc7a8be"
+    },
+    {
+      "scorePlayMediaId": 130849840,
+      "name": "Slide 4 - Dad with his boy.mov",
+      "durationSec": 5,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f45030b76724d136273",
+      "twelvelabsAssetId": "6ad90e17030b76724d135beb"
+    },
+    {
+      "scorePlayMediaId": 130849839,
+      "name": "Slide 5 - Savio to Camera.mov",
+      "durationSec": 5,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f444a68f3b40321ca7d",
+      "twelvelabsAssetId": "6ad90e17030b76724d135bed"
+    },
+    {
+      "scorePlayMediaId": 130849838,
+      "name": "Slide 6 - Away End Singing Pre-KO.mov",
+      "durationSec": 10,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f43960d8ea7bdd04119",
+      "twelvelabsAssetId": "6ad90e17960d8ea7bdd03a62"
+    },
+    {
+      "scorePlayMediaId": 130849837,
+      "name": "Slide 3 - Warm Ups.mov",
+      "durationSec": 4,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f435411fa6e602f39c2",
+      "twelvelabsAssetId": "6ad90e18500e82756f2ea21b"
+    },
+    {
+      "scorePlayMediaId": 130849836,
+      "name": "Slide 2 -Players Out for Warm Ups.mov",
+      "durationSec": 9,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f422cc348c0bd200674",
+      "twelvelabsAssetId": "6ad90e182cc348c0bd1fffc7"
+    },
+    {
+      "scorePlayMediaId": 130849835,
+      "name": "Slide 1 - Goal.mov",
+      "durationSec": 20,
+      "collection": "Creative Video",
+      "twelvelabsVideoId": "6ad90f414a68f3b40321ca72",
+      "twelvelabsAssetId": "6ad90e182cc348c0bd1fffc8"
+    },
+    {
+      "scorePlayMediaId": 130849809,
+      "name": "9x16_TEAM_NEWS_MAN_UTD.mp4",
+      "durationSec": 52,
+      "collection": "Press Conference",
+      "twelvelabsVideoId": "6ad90f400ca748ea3c0a9a7b",
+      "twelvelabsAssetId": "6ad90e180ca748ea3c0a93c8"
+    },
+    {
+      "scorePlayMediaId": 130849808,
+      "name": "Press Conference: De Zerbi speaks to the media ahead of Manchester United trip.mp4",
+      "durationSec": 725,
+      "collection": "Press Conference",
+      "twelvelabsVideoId": "6ad90f3f968fe117efe6fa2c",
+      "twelvelabsAssetId": "6ad90e190ca748ea3c0a93cb"
+    },
+    {
+      "scorePlayMediaId": 130849807,
+      "name": "9x16_TEAM_NEWS_MAN_UTD_2.mp4",
+      "durationSec": 52,
+      "collection": "Press Conference",
+      "twelvelabsVideoId": "6ad90f3f960d8ea7bdd04103",
+      "twelvelabsAssetId": "6ad90e192cc348c0bd1fffc9"
+    },
+    {
+      "scorePlayMediaId": 130849806,
+      "name": "9x16_RDZ_ON_FERNANDES.mp4",
+      "durationSec": 48,
+      "collection": "Press Conference",
+      "twelvelabsVideoId": "6ad90f3d968fe117efe6fa23",
+      "twelvelabsAssetId": "6ad90e192cc348c0bd1fffca"
+    },
+    {
+      "scorePlayMediaId": 130849805,
+      "name": "9x16_RDZ_ON_DEKI.mp4",
+      "durationSec": 23,
+      "collection": "Press Conference",
+      "twelvelabsVideoId": "6ad90f3e960d8ea7bdd040fe",
+      "twelvelabsAssetId": "6ad90e19500e82756f2ea21d"
+    },
+    {
+      "scorePlayMediaId": 130849784,
+      "name": "Manchester United vs Spurs | Full Match | 2026-27.mp4",
+      "durationSec": 6334,
+      "collection": "Full Match",
+      "twelvelabsVideoId": "6ad90f3c9c038876f358a41b",
+      "twelvelabsAssetId": "6ad90e1a030b76724d135bf2"
+    },
+    {
+      "scorePlayMediaId": 130849783,
+      "name": "Manchester United vs Spurs | Extended Highlights | 2026-27.mp4",
+      "durationSec": 509,
+      "collection": "Highlights",
+      "twelvelabsVideoId": "6ad90f3b968fe117efe6fa19",
+      "twelvelabsAssetId": "6ad90e1a960d8ea7bdd03a6a"
+    },
+    {
+      "scorePlayMediaId": 130849782,
+      "name": "16x9_MNU_1_1_TOT_KEY_HIGHLIGHTS.mp4",
+      "durationSec": 121,
+      "collection": "Highlights",
+      "twelvelabsVideoId": "6ad90f3d500e82756f2ea8a4",
+      "twelvelabsAssetId": "6ad90e1a65b4aff96dc7a8c2"
+    },
+    {
+      "scorePlayMediaId": 130849781,
+      "name": "9x16_MNU_1_1_TOT_HIGHLIGHTS.mp4",
+      "durationSec": 119,
+      "collection": "Highlights",
+      "twelvelabsVideoId": "6ad90f3b968fe117efe6fa14",
+      "twelvelabsAssetId": "6ad90e1b960d8ea7bdd03a6b"
+    },
+    {
+      "scorePlayMediaId": 130849780,
+      "name": "9x16_DEF_ACTIONS_VS_MNU.mp4",
+      "durationSec": 120,
+      "collection": "Highlights",
+      "twelvelabsVideoId": "6ad90f3a968fe117efe6fa0e",
+      "twelvelabsAssetId": "6ad90e1c960d8ea7bdd03a6c"
+    },
+    {
+      "scorePlayMediaId": 130849747,
+      "name": "The mentality is something to build on Solanke on his late equaliser and captaincy against Red Devils.mp4",
+      "durationSec": 152,
+      "collection": "Post-Match",
+      "twelvelabsVideoId": "6ad90f39030b76724d13621e",
+      "twelvelabsAssetId": "6ad90e1c2cc348c0bd1fffcc"
+    },
+    {
+      "scorePlayMediaId": 130849746,
+      "name": "IMG_2434.MOV",
+      "durationSec": 19,
+      "collection": "Post-Match",
+      "twelvelabsVideoId": "6ad90f399c038876f358a40f",
+      "twelvelabsAssetId": "6ad90e1c968fe117efe6f3cd"
+    },
+    {
+      "scorePlayMediaId": 130849745,
+      "name": "We didn’t deserve to lose De Zerbi proud of togetherness in Man United draw.mp4",
+      "durationSec": 214,
+      "collection": "Post-Match",
+      "twelvelabsVideoId": "6ad90f384a68f3b40321ca49",
+      "twelvelabsAssetId": "6ad90e1c500e82756f2ea221"
+    },
+    {
+      "scorePlayMediaId": 130849744,
+      "name": "Solanke Goal.mp4",
+      "durationSec": 58,
+      "collection": "Post-Match",
+      "twelvelabsVideoId": "6ad90f37030b76724d13621b",
+      "twelvelabsAssetId": "6ad90e1d030b76724d135bf6"
+    },
+    {
+      "scorePlayMediaId": 130849743,
+      "name": "Fans clap Man United A 9x16.mp4",
+      "durationSec": 30,
+      "collection": "Post-Match",
+      "twelvelabsVideoId": "6ad90f37960d8ea7bdd040d2",
+      "twelvelabsAssetId": "6ad90e1d5411fa6e602f3377"
+    },
+    {
+      "scorePlayMediaId": 130849692,
+      "name": "261008_Men_Pre Match Man Utd A_FPL Pick_9x16.mp4",
+      "durationSec": 42,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f355411fa6e602f3971",
+      "twelvelabsAssetId": "6ad90e1d500e82756f2ea226"
+    },
+    {
+      "scorePlayMediaId": 130849691,
+      "name": "9x16_MNU_1_6_TOT_20_21_HIGHLIGHTS_2.mp4",
+      "durationSec": 159,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f369c038876f358a400",
+      "twelvelabsAssetId": "6ad90e1d968fe117efe6f3ce"
+    },
+    {
+      "scorePlayMediaId": 130849690,
+      "name": "9x16_MNU_1_6_TOT_20_21_HIGHLIGHTS.mp4",
+      "durationSec": 159,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f34960d8ea7bdd040c0",
+      "twelvelabsAssetId": "6ad90e1e0ca748ea3c0a93d1"
+    },
+    {
+      "scorePlayMediaId": 130849689,
+      "name": "9x16_MNU_0_3_TOT_PL_18_19_HIGHLIGHTS.mp4",
+      "durationSec": 92,
+      "collection": "Pre-Match",
+      "twelvelabsVideoId": "6ad90f354a68f3b40321ca3b",
+      "twelvelabsAssetId": "6ad90e1e65b4aff96dc7a8c8"
+    }
+  ]
+}

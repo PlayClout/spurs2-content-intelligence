@@ -22,9 +22,9 @@ export const SAME_PLAY = 0.5;
 
 const FIXTURE = fileURLToPath(new URL("../data/fallback-assets/fixtures/twelvelabs-search.json", import.meta.url));
 
-export async function search(indexId: string, query: string): Promise<{ hits: Hit[]; mode: "live" | "recorded" }> {
+export async function search(indexId: string, query: string, videoIds?: string[]): Promise<{ hits: Hit[]; mode: "live" | "recorded" }> {
   if (process.env.TWELVELABS_API_KEY && process.env.MOCK_MODE !== "1") {
-    const r = (await searchMoments(indexId, query)) as { data?: Hit[] };
+    const r = (await searchMoments(indexId, query, videoIds)) as { data?: Hit[] };
     return { hits: r.data ?? [], mode: "live" };
   }
   return { hits: (JSON.parse(await readFile(FIXTURE, "utf8")) as { data: Hit[] }).data, mode: "recorded" };

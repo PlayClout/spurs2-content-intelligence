@@ -73,6 +73,9 @@ const base = () => (process.env.SCOREPLAY_API_BASE || DEFAULT_BASE).replace(/\/$
 export function mode(): Mode {
   return process.env.SCOREPLAY_API_KEY && process.env.MOCK_MODE !== "1" ? "live" : "fixture";
 }
+/** Live WRITES are opt-in: until SCOREPLAY_WRITES=1 (set after ScorePlay signs off our taxonomy, docs/TAXONOMY.md),
+ * live write calls return the exact request as `wouldSend` and send nothing. Reads are unaffected. */
+export const writesEnabled = () => mode() === "live" && process.env.SCOREPLAY_WRITES === "1";
 
 let fetchImpl: typeof fetch = (...a) => fetch(...a);
 /** test seam: swap the transport to exercise the live request path without a key */
@@ -194,10 +197,11 @@ export async function downloadFormats(id: number): Promise<Result<SPMediaFormats
   return { mode: "live", data: await api<SPMediaFormats>(`/media/${id}/formats/download`) };
 }
 
-/** Best downloadable source for rendering: original > video_large > video_medium > video_small (video),
- * original > photo > compressed (photo). Returns a fetchable URL (presigned when live, file:// in fixture). */
+/** Best downloadable source for rendering. Video: the 1080p proxy first (ScorePlay's brief: "fetch the proxy"; ~6x
+ * smaller than the original, same 1080 frame we output), then 720p, then original. Photo: original > photo > compressed.
+ * Returns a fetchable URL (presigned when live, file:// in fixture). */
 export function bestSource(f: SPMediaFormats, kind: "video" | "photo" = "video"): SPFormatFile | null {
-  const order = kind === "video" ? ["original", "video_large", "video_medium", "video_small"] : ["original", "photo", "compressed"];
+  const order = kind === "video" ? ["video_large", "video_medium", "original", "video_small"] : ["original", "photo", "compressed"];
   const files = Object.values(f.items).flat().filter((x) => x.size !== -1 && x.file_url);
   for (const t of order) {
     const hit = files.find((x) => x.type === t);
@@ -211,7 +215,9 @@ export async function listVideoLogs(mediaId: number, page = 1, limit = 200): Pro
     const items = [...((await fixtures()).logs[String(mediaId)] ?? []), ...(fixtureLogs.get(mediaId) ?? [])];
     return { mode: "fixture", data: { items, total: items.length, page: 1, limit } };
   }
-  return { mode: "live", data: await api<SPVideoLogList>(`/media/${mediaId}/logs?page=${page}&limit=${limit}`) };
+  // live responses carry {items, page, limit} and no `total` (observed 2026-10-22): derive it
+  const r = await api<Omit<SPVideoLogList, "total"> & { total?: number }>(`/media/${mediaId}/logs?page=${page}&limit=${limit}`);
+  return { mode: "live", data: { ...r, items: r.items ?? [], total: r.total ?? (r.items ?? []).length } };
 }
 
 // ── Write-back: approved moment -> ScorePlay video log ────────────────────────────────────
@@ -258,7 +264,8 @@ export async function writeMomentAsVideoLog(m: MomentLog): Promise<Result<{ crea
   const existing = findOurLog((await listVideoLogs(m.mediaId)).data.items, m.ref);
   if (existing) return { mode: mode(), data: { created: false, entry: existing } };
 
-  if (mode() === "fixture") {
+  if (mode() === "fixture" || !writesEnabled()) {
+    if (mode() === "live") return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: "SCOREPLAY_WRITES!=1 (awaiting taxonomy sign-off)" } };
     const entry: SPVideoLogEntry = {
       id: nextFixtureLogId++, media_id: m.mediaId, name: m.label, comment: payload.video_logs[0].log.comment,
       start_timestamp: Math.round(m.startSec * 1000), end_timestamp: Math.round(m.endSec * 1000), tags: m.tags ?? [],
@@ -279,8 +286,8 @@ export async function uploadToEvent(eventId: number, filePath: string, meta: { d
   const size = (await stat(filePath)).size;
   const parts = Math.max(1, Math.ceil(size / PART));
   const createBody = { name: basename(filePath), ...(meta.description ? { description: meta.description } : {}), ...(meta.tags?.length ? { raw_tags: meta.tags } : {}) };
-  if (mode() === "fixture") {
-    return { mode: "fixture", data: { mediaId: null }, wouldSend: { method: "POST", path: `/upload/event/${eventId}?parts=${parts}`, body: createBody, thenPutParts: parts, thenComplete: "/upload/complete/{media_id}" } };
+  if (!writesEnabled()) {
+    return { mode: mode(), data: { mediaId: null }, wouldSend: { method: "POST", path: `/upload/event/${eventId}?parts=${parts}`, body: createBody, thenPutParts: parts, thenComplete: "/upload/complete/{media_id}", ...(mode() === "live" ? { held: "SCOREPLAY_WRITES!=1 (awaiting taxonomy sign-off)" } : {}) } };
   }
   const init = await api<{ upload_id: string; key: string; urls: { url: string; parts_number: number }[]; media_id: number }>(
     `/upload/event/${eventId}?parts=${parts}`, { method: "POST", body: JSON.stringify(createBody), retry: false });

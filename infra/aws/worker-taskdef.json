@@ -22,6 +22,7 @@
       "secrets": [
         { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:DATABASE_URL::" },
         { "name": "TWELVELABS_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:TWELVELABS_API_KEY::" },
+        { "name": "SCOREPLAY_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:SCOREPLAY_API_KEY::" },
         { "name": "TYPESAFE_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:TYPESAFE_API_KEY::" },
         { "name": "ANTHROPIC_API_KEY", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:ANTHROPIC_API_KEY::" },
         { "name": "RENDER_S3_ACCESS_KEY_ID", "valueFrom": "arn:aws:secretsmanager:us-east-1:271825827331:secret:spurs2/worker-B2m0Le:RENDER_S3_ACCESS_KEY_ID::" },

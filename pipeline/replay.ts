@@ -41,7 +41,7 @@ export async function runTimeline(
     let input: MomentInput | null = null;
     let note: string;
     if (ev.kind === "ai_watchlist") {
-      const { hits, mode } = await search(tl.indexId, ev.query!);
+      const { hits, mode } = await search(tl.indexId, ev.query!, pool.map((f) => f.twelvelabsVideoId));
       const pick = pickNew(hits, pool, fired);
       if (!pick) {
         note = `watch-list "${ev.query}": ${hits.length} hit(s), none new`;

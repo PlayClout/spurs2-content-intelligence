@@ -84,6 +84,21 @@ sp.__setFetch((async (url: string | URL | Request, init?: RequestInit) => {
 }) as typeof fetch);
 const json = (status: number, body: unknown, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", ...headers } });
 
+// writes HELD until taxonomy sign-off: live key but SCOREPLAY_WRITES unset -> read happens, NO POST, exact request returned
+delete process.env.SCOREPLAY_WRITES;
+script = [() => json(200, { items: [], page: 1, limit: 200 })]; // live logs carry no `total`
+const held = await sp.writeMomentAsVideoLog({ ...m, ref: "opp-held-1" });
+const hs = held.wouldSend as { path: string; held?: string; body: { video_logs: { log: { end_offset: number } }[] } } | undefined;
+check(calls.length === 1 && calls[0].method === "GET" && !held.data.created && hs?.path === "/video/logs" && !!hs.held && hs.body.video_logs[0].log.end_offset === 13.972, "live write HELD without SCOREPLAY_WRITES=1: no POST, exact payload returned");
+const upHeld = await sp.uploadToEvent(321901, "data/fallback-assets/basketball-broll.mp4", {});
+check(calls.length === 1 && upHeld.data.mediaId === null && !!(upHeld.wouldSend as { held?: string }).held, "live upload HELD without SCOREPLAY_WRITES=1: no network call");
+calls.length = 0;
+script = [() => json(200, { items: [{ id: 5 }], page: 1, limit: 200 })];
+const lv = await sp.listVideoLogs(46000301);
+check(lv.data.total === 1 && lv.data.items.length === 1, "live logs list: `total` derived when ScorePlay omits it");
+calls.length = 0;
+process.env.SCOREPLAY_WRITES = "1";
+
 // write-back: list (none) -> POST -> list (ours)
 script = [
   () => json(200, { items: [], total: 0, page: 1, limit: 200 }),

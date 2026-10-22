@@ -48,14 +48,17 @@ async function fixture(name: string) {
   return JSON.parse(await readFile(`data/fallback-assets/fixtures/twelvelabs-${name}.json`, "utf8"));
 }
 
-/** Marengo semantic search: returns hits with start/end seconds. Verified: multipart/form-data required. */
-export async function searchMoments(indexId: string, query: string) {
+/** Marengo semantic search: returns hits with start/end seconds. Verified: multipart/form-data required.
+ * `videoIds` scopes the search to specific indexed videos (the watch-list watches THIS match's footage, not the whole
+ * library: unscoped, the top-10 cap lets other clips crowd it out). */
+export async function searchMoments(indexId: string, query: string, videoIds?: string[]) {
   if (MOCK) return fixture("search");
   const form = new FormData();
   form.append("index_id", indexId);
   form.append("query_text", query);
   form.append("search_options", "visual");
   form.append("search_options", "audio");
+  if (videoIds?.length) form.append("filter", JSON.stringify({ id: videoIds }));
   return api("/search", { method: "POST", body: form });
 }
 

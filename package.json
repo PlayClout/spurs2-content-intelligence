@@ -18,7 +18,9 @@
     "test:e2e": "tsx --env-file=.env scripts/pipeline-e2e.ts",
     "test": "npm run test:rules && npm run test:scoreplay && npm run test:engine && npm run test:storage && npm run test:render && npm run test:e2e",
     "test:s3live": "tsx --env-file=.env scripts/s3-live-test.ts",
-    "test:cloud": "tsx --env-file=.env scripts/cloud-proof.ts"
+    "test:cloud": "tsx --env-file=.env scripts/cloud-proof.ts",
+    "test:real": "tsx --env-file=.env scripts/real-footage-proof.ts",
+    "footage:map": "tsx --env-file=.env scripts/build-footage-map.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1155.0",

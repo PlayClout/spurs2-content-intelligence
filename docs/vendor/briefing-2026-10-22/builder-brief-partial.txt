@@ -1,0 +1,28 @@
+The event
+Two days at UT Austin, Oct 22 to 23, building on the ScorePlay and Twelve Labs APIs to solve real content problems from Tottenham Hotspur and the San Antonio Spurs. Hosted by ScorePlay, Twelve Labs, The Players Fund, both clubs and the UT McCombs Business of Sports Institute.
+The objective: show what teams can build when a club's media is open infrastructure and AI can understand it. Both clubs want tools they can put to work.
+Format:
+10 teams of up to 5
+Thursday morning: onboarding and the brief
+Thursday afternoon to Friday 2pm: build
+Friday afternoon: presentations, judging and awards
+The two building blocks
+What's a MAM:
+A media asset management platform is where an organization stores, organizes and distributes its photos and video
+Every asset carries metadata: who's in it, the game, the date, rights, tags
+Teams search it, pull from it, and push content out to social, broadcast, partners and sponsors
+ScorePlay is the MAM here and the system of record
+If it's not on the asset in ScorePlay, the club doesn't know it
+Assets already carry player tags, so you can filter by who's in the shot
+Starting point: think of the MAM as the source of truth you read from and write back to
+What's video understanding:
+Video understanding models "watch" video the way a person does, across visuals, audio, speech and on-screen text, and turn it into data you can search and use
+Twelve Labs is the video understanding platform here. It has two models:
+Marengo: search your footage in plain language ("dunk in transition") and find the exact moment
+Pegasus: generate text from video, such as summaries, descriptions and tags
+Starting point: think of Twelve Labs as the analyst that watches everything and hands you structured answers
+How they fit together:
+ScorePlay holds the content and knows who's in it
+Twelve Labs understands what's happening in it
+Your app connects the two
+Example: filter ScorePlay for assets tagged with a player, then use Marengo to find the dunks in transition within those assets

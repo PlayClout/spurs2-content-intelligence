@@ -5,6 +5,7 @@
  * Uses a disposable test org; cleans up DB rows after. (S3 objects are left: harmless, tiny, prefixed cloudproof-.)
  */
 import postgres from "postgres";
+import { readFileSync } from "node:fs";
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 const sql = postgres(process.env.DATABASE_URL!, { prepare: false, max: 1 });
@@ -12,13 +13,15 @@ let fail = 0;
 const check = (ok: boolean, msg: string) => { console.log(`${ok ? "PASS" : "FAIL"}  ${msg}`); if (!ok) fail++; };
 const tag = `cloudproof-${Date.now()}`;
 
-const [org] = await sql`insert into orgs (name, sport, league) values (${"TEST " + tag}, 'basketball', 'NBA') returning id`;
+const [org] = await sql`insert into orgs (name, sport, league) values (${"TEST " + tag}, 'soccer', 'Premier League') returning id`;
+// a REAL clip from the team's ScorePlay workspace (live ScorePlay + official TwelveLabs index), first event of the demo timeline
+const tl = JSON.parse(readFileSync("data/replays/thfc-mnu-week6.json", "utf8"));
+const ev = tl.events[0], f = tl.footage[ev.footage];
 const input = {
-  orgKey: "san-antonio-spurs", competition: "NBA Regular Season", scorePlayMediaId: 46000301, startSec: 6, endSec: 12,
-  headline: "Castle at the buzzer", kicker: "Spurs 112 · Thunder 110", statLine: "Game-winning dunk · SIMULATED",
+  orgKey: f.orgKey, competition: f.competition, scorePlayMediaId: f.scorePlayMediaId, twelvelabsAssetId: f.twelvelabsAssetId,
+  startSec: ev.start, endSec: ev.end, headline: ev.headline, kicker: ev.kicker, statLine: ev.statLine,
   trigger: { kind: "game_event", text: "cloud proof", simulated: true },
-  twelvelabsAssetId: "6ad81fcb030b76724d10e3c5",
-  manifestFixture: "data/fallback-assets/fixtures/twelvelabs-manifest.json",
+  manifestFixture: tl.manifestFixture,
 };
 const t0 = Date.now();
 const [job] = await sql`insert into jobs (type, payload, status) values ('process_moment', ${sql.json({ orgId: org.id, input, slug: tag } as never)}, 'queued') returning id`;

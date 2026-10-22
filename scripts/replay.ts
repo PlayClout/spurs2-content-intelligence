@@ -1,7 +1,8 @@
 /**
  * Demo driver: play a match timeline against the live DB; cards appear in the producer UI (5s refresh).
- *   npm run demo:replay                         # data/replays/demo-broll.json, real time, runs the worker inline
+ *   npm run demo:replay                         # data/replays/thfc-mnu-week6.json (real footage), real time, worker inline
  *   npm run demo:replay -- --speed=5            # 5x faster
+ *   npm run demo:replay -- --timeline=data/replays/demo-broll.json   # the old stock b-roll timeline (legacy key only)
  *   npm run demo:replay -- --timeline=data/replays/<match>.json --no-worker   # when `npm run worker` runs separately
  * Orgs are resolved by club display name (seeded orgs). Reset first with `npm run seed` for a clean queue.
  */
@@ -11,7 +12,7 @@ import { runTimeline, type Timeline } from "../pipeline/replay";
 import themes from "../pipeline/club-themes.json" with { type: "json" };
 
 const arg = (k: string) => process.argv.find((a) => a.startsWith(`--${k}=`))?.split("=")[1];
-const tl = JSON.parse(readFileSync(arg("timeline") ?? "data/replays/demo-broll.json", "utf8")) as Timeline;
+const tl = JSON.parse(readFileSync(arg("timeline") ?? "data/replays/thfc-mnu-week6.json", "utf8")) as Timeline;
 const speed = Number(arg("speed") ?? 1);
 const inline = !process.argv.includes("--no-worker");
 

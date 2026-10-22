@@ -91,5 +91,15 @@ check(enq.slice(0, 3).every((e) => e.simulated), "game/social triggers labeled s
 const span = enq[3].at - enq[0].at;
 check(span >= ((45 - 5) / 50) * 1000 * 0.8, `replay honors timing at 50x (${span}ms between first and last, ~800ms expected)`);
 
+// ── real-footage timeline: every id resolves against the ScorePlay<->TwelveLabs map; windows inside the clip ─────
+const real = JSON.parse(readFileSync("data/replays/thfc-mnu-week6.json", "utf8")) as Timeline;
+const fmap = JSON.parse(readFileSync("data/footage-map.json", "utf8")) as { twelvelabsIndexId: string; media: { scorePlayMediaId: number; durationSec: number; twelvelabsAssetId?: string; twelvelabsVideoId?: string }[] };
+check(real.indexId === fmap.twelvelabsIndexId, "real timeline uses the official TwelveLabs index");
+const bad = Object.entries(real.footage).filter(([, f]) => { const m = fmap.media.find((x) => x.scorePlayMediaId === f.scorePlayMediaId); return !m || m.twelvelabsAssetId !== f.twelvelabsAssetId || m.twelvelabsVideoId !== f.twelvelabsVideoId; });
+check(bad.length === 0, `every footage entry matches data/footage-map.json (ScorePlay id <-> TwelveLabs asset + video)${bad.length ? `: bad ${bad.map(([k]) => k)}` : ""}`);
+const outOfClip = real.events.filter((e) => e.kind !== "ai_watchlist").filter((e) => { const m = fmap.media.find((x) => x.scorePlayMediaId === real.footage[e.footage as string]?.scorePlayMediaId); return !m || e.start! < 0 || e.end! > m.durationSec + 1 || e.end! <= e.start!; });
+check(outOfClip.length === 0, `every trigger window lies inside its clip${outOfClip.length ? `: ${outOfClip.map((e) => e.headline)}` : ""}`);
+check(real.events.some((e) => e.kind === "ai_watchlist") && real.events.filter((e) => e.kind !== "ai_watchlist").every((e) => (e.text ?? "").length > 0), "real timeline has a watch-list event and every feed trigger has text");
+
 console.log(`\n${fail ? `${fail} FAILED` : "ALL PASS"}`);
 process.exit(fail ? 1 : 0);
