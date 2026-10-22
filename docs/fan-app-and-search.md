@@ -4,7 +4,7 @@
 
 Read [design.md](../design.md) for the complete production workflow. The fan app is the destination for editor-published clips; it replaces the former stadium frontend. The producer remains the primary operator for the hackathon challenge, and the fan experience demonstrates how one workflow serves different audiences.
 
-**Application form:** a responsive browser-based web app for phones and desktops. The editor dashboard and `/fan` routes are parts of the same product; no native iOS/Android app, app-store release, or install flow is planned. The OpenCut evaluation uses its web editor.
+**Application form:** an installable fan PWA for phones and desktops, served under `/fan` in the same Next app as the editor dashboard. Support home-screen installation and standalone mode alongside normal browser access. No native iOS/Android app or app-store release is required. The OpenCut evaluation uses its web editor.
 
 ## 1. Two connected surfaces
 
@@ -185,3 +185,15 @@ Keep route naming separate from an authorization claim: all server actions need 
 **Demo climax:** editor approves and publishes a cleaned clip → fan A sees it because of a favorite player → fan B sees a different order for crowd energy → a fan asks for a specific action/player and gets a published playable result → editor withdraws the clip and it disappears from feed/search/playback. Keep the event-only release boundary visible.
 
 **Measure honestly:** publish-to-discoverable delay, authorized search success/latency, feed reason coverage, preference response, and withdrawal-to-new-playback-denial. The current live API audit proves raw retrieval mechanics, not this end-to-end personalized fan application.
+
+### Fan PWA requirements (P0)
+
+Deliver `/fan` as an installable Progressive Web App in the existing Next app. Use the Spursx2 AI name, app icons including a maskable icon, theme/background colors, a `/fan/` start URL and scope, and standalone display. Provide install guidance appropriate to the browser and an in-browser experience when installation is unavailable or declined. Keep the editor/admin outside the fan service-worker scope.
+
+Build mobile-first navigation, touch targets, safe-area layouts, responsive media and deep links to published clips/player pages. The installed app and normal browser must use the same preference and publication services. Keep installation optional; a shared link must work without installing.
+
+Cache only the versioned static app shell and a neutral offline screen. Do not cache club video/audio, range responses, signed proxy/media URLs, thumbnails, personalized feeds/search results, clip details or publication/rights responses for offline use. The service worker must bypass protected/dynamic content; current server eligibility remains required for discovery and new playback. Offline mode explains that connection is required to load clips, rather than serving stale or withdrawn content. Reconnect refreshes publication state.
+
+Use HTTPS for the deployed PWA and test on supported Android and iOS browsers plus installed standalone mode; local development follows browser secure-context rules. Offer a clear update-available/reload flow without interrupting active playback or discarding preferences, and clean up obsolete static caches on activation. Push notifications and offline media downloads are deferred; they are not prerequisites for this PWA.
+
+Acceptance: manifest/icons/start URL validate; home-screen launch opens `/fan/` in standalone mode where supported; direct clip links work in browser and installed contexts; offline launch shows the cached shell/fallback without protected content; reconnection and service-worker upgrades work; withdrawal still blocks discovery and new playback in installed mode.

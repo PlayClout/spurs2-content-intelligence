@@ -23,10 +23,10 @@ Keep stack changes minimal. We already have most of what we need.
 
 ### Keep using
 
-- **One responsive browser app:** existing Next app in `web/`.
+- **One responsive browser app with an installable fan PWA:** existing Next app in `web/`.
   - Admin/editor dashboard stays at `/`.
   - Fan app routes go under `/fan`.
-  - No native app, no install flow.
+  - Fan home-screen installation and standalone mode; no native app or app-store release.
 - **Database:** current Supabase Postgres through Drizzle schema in `shared/db-schema.ts`. Metadata only; no media or frames.
 - **Backend worker:** current `pipeline/worker.ts` running locally on team laptops (M5 primary). No cloud worker.
 - **Media processing:** current FFmpeg renderer in `pipeline/render-local.ts` and `render-backend.ts`.
@@ -175,7 +175,20 @@ Local interaction feedback target is 100ms; supported matched external signals s
 
 # 2. User app frontend work
 
-User app means the fan-facing web routes under `/fan`. This is not a native app. It consumes only editor-published content.
+User app means the installable fan PWA under `/fan`, usable in a browser or standalone from the home screen. It consumes only editor-published content.
+
+## Phase U0 - Installable fan PWA (P0)
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| U0.1 | Add fan web manifest, icons and standalone identity | U1.1 | existing Next app | Spursx2 AI name, standard/maskable icons, theme colors and `/fan/` start URL/scope validate |
+| U0.2 | Add optional install experience | U0.1 | fan shell | Supported browser install guidance works; normal browser access remains complete when installation is unavailable/declined |
+| U0.3 | Scope service worker to fan static shell only | U0.1 | static assets, offline route | Cached shell/offline screen launches without connection; admin, media/range requests, signed URLs, thumbnails, feeds/search/detail/rights data bypass offline caches |
+| U0.4 | Add mobile and standalone interaction polish | U1.5 | fan navigation/player | Touch targets, safe areas, responsive playback and clip/player deep links work in browser and installed mode |
+| U0.5 | Add service-worker update and reconnect flow | U0.3 | versioned static caches | Update prompt preserves preferences/playback until accepted; activation clears old static caches; reconnect refreshes current publication state |
+| U0.6 | Verify installation and publication boundaries | U0.2–U0.5, U5.4 | browser/device walkthrough | HTTPS deployment, Android/iOS browser and standalone paths, offline fallback, deep links and withdrawal checks pass; no protected content is available offline |
+
+Push notifications and offline clip downloads are deferred. See fan PWA requirements in `design.md` and `docs/fan-app-and-search.md`.
 
 ## Phase U1 - Fan app shell and demo personas
 
@@ -547,6 +560,8 @@ Target a three-minute primary walkthrough. Use a pre-rendered, accurately labele
 16. Admin UX passes desktop/laptop visual QA, keyboard workflows, autosave/recovery and state-preserving live refresh; hot alert → playable review takes one click when the draft is ready.
 17. Authorized external signals highlight the correct hot clip with source, age, momentum baseline and why-now evidence. Duplicates and stale signals are suppressed, unavailable feeds are explicit, and rights-blocked clips stay blocked regardless of urgency.
 18. No club media leaves the team laptops: no cloud upload path exists, and the teardown log shows `files_left=0` per laptop after the event.
+
+19. Fan PWA installs where supported and launches standalone into `/fan/`; browser links remain usable without installation. Offline mode exposes only the static shell/fallback, and installed mode still enforces current publication/rights checks.
 
 ---
 

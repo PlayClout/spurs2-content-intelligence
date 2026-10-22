@@ -2,7 +2,7 @@
 
 **Spurs² Hackathon · October 22–23, 2026 · revised October 22**  
 **Challenge:** Assisted Auto-Production, with rights screening built into the production path  
-**Application form:** One responsive browser-based web app: editor dashboard plus fan routes under `/fan`; no native mobile app or installation planned.
+**Application form:** One responsive browser-based web app: editor dashboard plus an installable fan PWA under `/fan`. Fans can add it to their home screen or use it directly in the browser; no native mobile app or app-store release is required.
 **Primary user:** Club producer / social video editor  
 **Fan-facing output:** Personalized clip feed, favorite players, and natural-language search  
 **Status:** Implementation plan. The HTML brief is an explanatory prototype, not the completed product.
@@ -99,6 +99,18 @@ Enrichment runs automatically. Confirm supported source facts, surface uncertain
 Trims, crops, substitutions and compilations must recompute or revalidate affected tags against the actual visible final output. Preserve canonical metadata lineage across social/app renditions, while allowing different featured-player sets when the cut or crop changes who appears. Compilation tags derive from verified entries with chapter/time mappings. Corrections version the metadata and invalidate affected feed/search caches and index metadata; identity or factual changes require renewed editorial approval before the replacement becomes current.
 
 Fan preferences use the same canonical player, club and interest IDs. Feed ranking, favorite-player pages, search filters and explanation chips read the reviewed metadata on the current published app rendition. Test that two profiles get different ordering, a tagged player outside the final cut cannot trigger a match, and corrected/unknown identities cannot leave stale personalized results.
+
+### Fan PWA requirements (P0)
+
+Deliver `/fan` as an installable Progressive Web App in the existing Next app. Use the Spursx2 AI name, app icons including a maskable icon, theme/background colors, a `/fan/` start URL and scope, and standalone display. Provide install guidance appropriate to the browser and an in-browser experience when installation is unavailable or declined. Keep the editor/admin outside the fan service-worker scope.
+
+Build mobile-first navigation, touch targets, safe-area layouts, responsive media and deep links to published clips/player pages. The installed app and normal browser must use the same preference and publication services. Keep installation optional; a shared link must work without installing.
+
+Cache only the versioned static app shell and a neutral offline screen. Do not cache club video/audio, range responses, signed proxy/media URLs, thumbnails, personalized feeds/search results, clip details or publication/rights responses for offline use. The service worker must bypass protected/dynamic content; current server eligibility remains required for discovery and new playback. Offline mode explains that connection is required to load clips, rather than serving stale or withdrawn content. Reconnect refreshes publication state.
+
+Use HTTPS for the deployed PWA and test on supported Android and iOS browsers plus installed standalone mode; local development follows browser secure-context rules. Offer a clear update-available/reload flow without interrupting active playback or discarding preferences, and clean up obsolete static caches on activation. Push notifications and offline media downloads are deferred; they are not prerequisites for this PWA.
+
+Acceptance: manifest/icons/start URL validate; home-screen launch opens `/fan/` in standalone mode where supported; direct clip links work in browser and installed contexts; offline launch shows the cached shell/fallback without protected content; reconnection and service-worker upgrades work; withdrawal still blocks discovery and new playback in installed mode.
 
 ### Personalized fan journey
 
