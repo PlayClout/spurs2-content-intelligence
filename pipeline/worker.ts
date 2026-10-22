@@ -22,7 +22,7 @@ import * as sp from "../shared/clients/scoreplay";
 import { restrictionsFromScorePlay } from "../shared/clients/scoreplay-rights";
 import { evaluate } from "../shared/compliance";
 import type { Channel, Compliance } from "../shared/schemas";
-import { processMoment, renderDir, publicPathFor, type MomentInput, type ProcessedMoment, type Variant } from "./moment";
+import { processMoment, renderDir, publicPathFor, resolveSource, releaseSource, type MomentInput, type ProcessedMoment, type Variant } from "./moment";
 import { getRenderBackend } from "./render-backend";
 import { overlapRatio, SAME_PLAY } from "./watchlist";
 import { uploadRenderDir } from "../shared/storage";
@@ -234,18 +234,22 @@ async function handleRenderFinal(job: JobRow) {
   const win = trimOverride ?? { startSec: d.tightWindow.start, endSec: d.tightWindow.end };
   const slug = d.slug; // the SAME folder the drafts were rendered into (never recomputed from times)
   const outDir = renderDir(slug);
-  const fm = await sp.downloadFormats(d.scoreplay.mediaId);
-  const best = sp.bestSource(fm.data, "video");
-  const srcPath = best?.file_url?.startsWith("file:") ? new URL(best.file_url).pathname : join(outDir, `source-${d.scoreplay.mediaId}.mp4`);
   const backend = await getRenderBackend();
   const finals: Record<string, string> = {};
   const t0 = performance.now();
   if (d.variant.contentType === "reel") {
-    const r = await backend.render({
-      orgId: opp.orgId, sourcePath: srcPath, startSec: win.startSec, endSec: win.endSec, channel: "instagram_reel", mode: "final", cropXOffset: undefined,
-      ...({ club: d.orgKey ?? orgKeyFor(opp.sport), captionText: { headline: opp.headline }, outDir, slug: "reel", renderActions: d.content?.renderActions } as object),
-    } as never);
-    for (const c of channels) finals[c] = publicPathFor(slug, r.outPath);
+    // Re-fetch the source HERE: with several workers (Fargate + M5) the draft's worker may not be this one, and the
+    // draft step already deleted its transient copy. Released in finally: club footage never outlives the render.
+    const src = await resolveSource(d.scoreplay.mediaId, outDir);
+    try {
+      const r = await backend.render({
+        orgId: opp.orgId, sourcePath: src.local, startSec: win.startSec, endSec: win.endSec, channel: "instagram_reel", mode: "final", cropXOffset: undefined,
+        ...({ club: d.orgKey ?? orgKeyFor(opp.sport), captionText: { headline: opp.headline }, outDir, slug: "reel", renderActions: d.content?.renderActions } as object),
+      } as never);
+      for (const c of channels) finals[c] = publicPathFor(slug, r.outPath);
+    } finally {
+      await releaseSource(src);
+    }
   } else {
     for (const c of channels) finals[c] = d.variant.publicPath; // photo card is already final quality
   }

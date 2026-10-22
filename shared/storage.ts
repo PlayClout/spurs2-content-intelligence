@@ -51,13 +51,19 @@ async function s3() {
   return _client as import("@aws-sdk/client-s3").S3Client;
 }
 
-/** Upload every file in a finished render dir to the bucket. No-op in local mode. Returns uploaded keys. */
+/** Which files in a render dir may leave the machine: our OUTPUTS only. Transient club-footage copies
+ * (source-<id>.*) are never uploaded, whatever their extension (hackathon rule: content stays on the platform). */
+export function uploadableFiles(names: string[]): string[] {
+  return names.filter((f) => !f.startsWith("source-") && (f.split(".").pop()?.toLowerCase() ?? "") in MIME);
+}
+
+/** Upload every OUTPUT file in a finished render dir to the bucket. No-op in local mode. Returns uploaded keys. */
 export async function uploadRenderDir(slug: string, dir: string): Promise<string[]> {
   if (storageMode() !== "s3") return [];
   const { PutObjectCommand } = await import("@aws-sdk/client-s3");
   const client = await s3();
   const bucket = process.env.RENDER_S3_BUCKET!;
-  const files = (await readdir(dir)).filter((f) => f in MIME || f.split(".").pop()!.toLowerCase() in MIME);
+  const files = uploadableFiles(await readdir(dir));
   const keys: string[] = [];
   for (const f of files) {
     const key = keyFor(slug, f);

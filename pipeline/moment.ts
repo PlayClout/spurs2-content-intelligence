@@ -8,12 +8,12 @@
  *
  * Honesty: every input records whether it was real or simulated in `opportunity.delivery.inputs`.
  */
-import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { existsSync, createWriteStream } from "node:fs";
 import { pipeline as streamPipeline } from "node:stream/promises";
 import { Readable } from "node:stream";
 import { fileURLToPath } from "node:url";
-import { join } from "node:path";
+import { join, basename } from "node:path";
 import * as sp from "../shared/clients/scoreplay";
 import { restrictionsFromScorePlay } from "../shared/clients/scoreplay-rights";
 import { evaluate } from "../shared/compliance";
@@ -76,22 +76,34 @@ export interface ProcessedMoment {
 
 const abs = (p: string) => (p.startsWith("/") ? p : join(REPO_ROOT, p));
 
-async function resolveSource(mediaId: number, outDir: string) {
+/** Fetch a renderable source for a ScorePlay media (the brief: "fetch the proxy, keep work on your machine").
+ * Downloads are TRANSIENT working copies named source-<id>.* : callers delete them with releaseSource() as soon as
+ * their render is done, and storage.ts never uploads them. Club footage is not ours to keep (hackathon rule: content
+ * stays on the platform). Exported so render_final can re-fetch on whichever worker picks the job up. */
+export async function resolveSource(mediaId: number, outDir: string) {
   const media = (await sp.getMedia(mediaId)).data;
   const fm = await sp.downloadFormats(mediaId);
   const best = sp.bestSource(fm.data, "video");
   if (!best?.file_url) throw new Error(`ScorePlay media ${mediaId}: no downloadable video file (check can_do_media_download)`);
   let local: string;
+  let downloaded = false;
   if (best.file_url.startsWith("file:")) local = fileURLToPath(best.file_url);
   else {
+    await mkdir(outDir, { recursive: true });
     local = join(outDir, `source-${mediaId}${best.file_name.match(/\.[a-z0-9]+$/i)?.[0] ?? ".mp4"}`);
     if (!existsSync(local)) {
       const res = await fetch(best.file_url);
       if (!res.ok || !res.body) throw new Error(`download ${mediaId} -> ${res.status}`);
       await streamPipeline(Readable.fromWeb(res.body as never), createWriteStream(local));
     }
+    downloaded = true;
   }
-  return { media, mode: fm.mode, local };
+  return { media, mode: fm.mode, local, downloaded };
+}
+
+/** Delete a transient source copy (no-op for repo/local fixture files). Safe to call twice. */
+export async function releaseSource(src: { local: string; downloaded: boolean }) {
+  if (src.downloaded && basename(src.local).startsWith("source-")) await rm(src.local, { force: true });
 }
 
 async function analyzeWindow(input: MomentInput, window: { start: number; end: number }): Promise<{ manifest: MomentManifest; mode: "live" | "recorded-fixture" }> {
@@ -185,6 +197,7 @@ export async function processMoment(input: MomentInput, slug: string): Promise<P
     },
   ];
   await writeFile(join(outDir, "manifest.json"), JSON.stringify({ manifest, manifestMode, window, tight, content, compliance }, null, 2));
+  await releaseSource(src); // drafts are done: drop the transient club-footage copy before anything is uploaded
   await uploadRenderDir(slug, outDir); // s3 mode: push drafts to the bucket so any worker/UI serves them; no-op locally
 
   return {

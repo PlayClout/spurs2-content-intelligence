@@ -3,7 +3,7 @@
  * local mode is a strict no-op (so the M5 / test path never needs the AWS SDK or a bucket).
  *   npx tsx scripts/storage-test.ts
  */
-import { storageMode, uploadRenderDir, signedRenderUrl, s3ConfigComplete } from "../shared/storage";
+import { storageMode, uploadRenderDir, signedRenderUrl, s3ConfigComplete, uploadableFiles } from "../shared/storage";
 
 let fail = 0;
 const check = (ok: boolean, msg: string) => { console.log(`${ok ? "PASS" : "FAIL"}  ${msg}`); if (!ok) fail++; };
@@ -23,6 +23,11 @@ reset();
 const up = await uploadRenderDir("m-1-6", "/tmp/does-not-matter-local-noop");
 check(Array.isArray(up) && up.length === 0, "local uploadRenderDir is a no-op returning []");
 check((await signedRenderUrl("m-1-6", "reel.instagram_reel.final.mp4")) === null, "local signedRenderUrl returns null (route serves from disk)");
+
+// ── content rule: club footage (source-*) never leaves the machine, only our outputs do ─────
+const picked = uploadableFiles(["source-46000301.mp4", "source-46000302.mov", "reel.instagram_reel.draft.mp4", "reel.instagram_reel.draft.poster.jpg", "card.instagram_feed.jpg", "manifest.json", "card.grab.png"]);
+check(!picked.some((f) => f.startsWith("source-")), `source copies are never uploaded (uploadable: ${picked.join(", ")})`);
+check(picked.includes("reel.instagram_reel.draft.mp4") && picked.includes("card.instagram_feed.jpg") && !picked.includes("manifest.json"), "our rendered outputs ARE uploaded; non-media files are not");
 
 // ── config completeness gate ────────────────────────────────────────────────────────────
 reset();
