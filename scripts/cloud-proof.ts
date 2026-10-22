@@ -35,8 +35,12 @@ check(row?.status === "done", `job ${row?.status} in ${secs}s${row?.error ? ` ($
 
 // which host ran it: the Fargate worker's CloudWatch log names the slug (the M5 must be off, so it can only be cloud)
 const { execFileSync } = await import("node:child_process");
-const logs = execFileSync("aws", ["logs", "tail", "/ecs/spurs2-worker", "--since", "10m", "--format", "short", "--profile", "clout-ci", "--region", "us-east-1"], { encoding: "utf8", env: { ...process.env, HOME: "/Users/stu" } });
-const line = logs.split("\n").find((l) => l.includes(tag)) ?? "";
+let line = "";
+for (let i = 0; i < 8 && !line; i++) { // CloudWatch ingestion lags a few seconds behind the job finishing
+  const logs = execFileSync("aws", ["logs", "tail", "/ecs/spurs2-worker", "--since", "10m", "--format", "short", "--profile", "clout-ci", "--region", "us-east-1"], { encoding: "utf8", env: { ...process.env, HOME: "/Users/stu" } });
+  line = logs.split("\n").find((l: string) => l.includes(tag)) ?? "";
+  if (!line) await new Promise((r) => setTimeout(r, 5000));
+}
 check(line.includes("process_moment"), `Fargate CloudWatch log shows it processed this moment: ${line.replace(/^\S+\s+/, "").slice(0, 150)}`);
 
 const opps = await sql`select content_type, status, delivery->'inputs'->'videoUnderstanding'->>'mode' tl from opportunities where org_id = ${org.id}`;
@@ -52,6 +56,8 @@ const momentIds = (await sql`select distinct moment_id from opportunities where 
 await sql`delete from opportunities where org_id = ${org.id}`;
 await sql`delete from signals where org_id = ${org.id}`;
 if (momentIds.length) await sql`delete from moments where id in ${sql(momentIds)}`;
+await sql`delete from moments where asset_id in (select id from assets where org_id = ${org.id})`;
+await sql`delete from assets where org_id = ${org.id}`;
 await sql`delete from jobs where id = ${job.id}`;
 await sql`delete from orgs where id = ${org.id}`;
 await sql.end();
