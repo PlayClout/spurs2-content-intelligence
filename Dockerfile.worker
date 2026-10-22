@@ -12,7 +12,9 @@ WORKDIR /app
 # Install deps against the lockfile first for layer caching. The worker needs the ROOT package (pipeline/, shared/, scripts/),
 # not web/, so copy only the root manifests.
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --no-audit --no-fund
+# Full install (tsx is a devDependency but it IS the runtime: without it `npx tsx` downloads from npm on
+# every container start = slow boots and a hard dependency on the npm registry being reachable).
+RUN npm ci --no-audit --no-fund
 
 # App code the worker touches. web/ is intentionally excluded (that deploys to Vercel).
 COPY pipeline ./pipeline
@@ -25,5 +27,5 @@ ENV NODE_ENV=production
 ENV WORKER_HEALTH_PORT=8080
 EXPOSE 8080
 
-# tsx runs the TypeScript entrypoint directly (no build step). DATABASE_URL etc. come from the env at run time.
-CMD ["npx", "tsx", "pipeline/worker.ts"]
+# Run the local tsx binary directly (no npx network lookup). DATABASE_URL etc. come from the env at run time.
+CMD ["node_modules/.bin/tsx", "pipeline/worker.ts"]
