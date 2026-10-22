@@ -141,7 +141,7 @@
 
 ## 10. v3 build plan: three coding agents
 
-Each agent edits **only** its own paths. A change needed in another agent's file goes in the PR description as `REQUEST to A<n>`. Full kickoff prompts and contract signatures: `challenge1/team-split-3-agents.md`.
+Each agent edits **only** its own paths. Every `features.md` task row names its agent in the **Agent** column (Phase 0: the Owner lane column). A change needed in another agent's file goes in the PR description as `REQUEST to A<n>`. Full kickoff prompts and contract signatures: `challenge1/team-split-3-agents.md`.
 
 **Decisions this plan builds in:**
 - Every confirmed rights write sends allow-listed `rights:` tags to the ScorePlay source media, plus one `/video/logs` audit entry.
@@ -153,9 +153,9 @@ Each agent edits **only** its own paths. A change needed in another agent's file
 
 | Agent | Area | Owns (only these) | features.md task IDs |
 |---|---|---|---|
-| **A1** | Pipeline, single ScorePlay write path, local-only backend | `pipeline/**` (not `pipeline/rules/`), `shared/clients/scoreplay.ts`, `twelvelabs.ts`, `writeback.ts` (new), `shared/moment-manifest.ts`, `shared/storage.ts`, `infra/aws/**` (delete), `Dockerfile.worker`, `package.json`, `scripts/**` (not `rules-test`, `engine-test`, `seed`), `docs/TAXONOMY.md` | B14.2, B14.4 (test), B14.5, B14.6, B2.8, B2.9, B10.4, B10.6, B10.8, B10.9, B14b.6 (write side), B10.2/B10.7 (script), B12.1, B12.3, B5.1, B5.3, B8.3, B13.2, B6.4; T19 to T23 |
+| **A1** | Pipeline, single ScorePlay write path, local-only backend | `pipeline/**` (not `pipeline/rules/`), `shared/clients/scoreplay.ts`, `twelvelabs.ts`, `writeback.ts` (new), `shared/moment-manifest.ts`, `shared/storage.ts`, `infra/aws/**` (delete), `Dockerfile.worker`, `package.json`, `scripts/**` (not `rules-test`, `engine-test`, `seed`), `docs/TAXONOMY.md` | B14.2, B14.4 (test), B14.5, B14.6, B2.8, B2.9, B10.4, B10.6, B10.8, B10.9, B14b.6 (write side), B14b.7 (write-side tests), B10.2/B10.7 (script), B12.1, B12.3, B5.1, B5.3, B8.3, B13.2 (replay fixture only), B6.4; T19 to T23 |
 | **A2** | Rights engine, rule store, metadata stage, all DB schema, publication and fan libraries | `shared/rights/**` (new), `shared/db-schema.ts`, `shared/db/**`, `drizzle/**`, `shared/schemas.ts`, `shared/compliance.ts`, `shared/content-rules.ts`, `shared/clients/scoreplay-rights.ts`, `shared/publication.ts`, `shared/fan-ranking.ts`, `shared/fan-search.ts`, `pipeline/rules/**`, `scripts/rules-test.ts`, `engine-test.ts`, `seed.ts` | 0.1 to 0.4, 0.6, B2.1, B2.3, B2.6, B2.7, B2.10, B2.11 (tables), B2.12 to B2.16, B14b.1 to B14b.4, B14b.6 (payload), B14b.7, B4.1 to B4.3, B7.1, B7.3, B8.1, U3.1, B9.1, B9.3, B9.4 |
-| **A3** | Web app: editor desk, Rights Rules screen, operator controls, fan app and PWA, app lock | `web/**` (including `web/middleware.ts`, `web/public/**` and `web/app/renders/`) | B14.1, B14.3, A0.1, A0.2, A0.8, A1.2, A2.1 to A2.5, A2.7, B2.2, B2.4, B2.5, B2.11 (actions), A3.1, A3.5, A3b.1, A3b.5, A4.3, A4.4, A4.7 to A4.11, B14b.5, B4.4, B4.5, B8.7, U0.1, U0.3, U0.6, U1.1 to U1.3, U1.5, U2.1 to U2.4, U4.1 to U4.3, U5.1, U5.2, U5.4 |
+| **A3** | Web app: editor desk, Rights Rules screen, operator controls, fan app and PWA, app lock | `web/**` (including `web/middleware.ts`, `web/public/**` and `web/app/renders/`) | 0.5, B14.1, B14.3, A0.1, A0.2, A0.8, A1.2, A2.1 to A2.5, A2.7, B2.2, B2.4, B2.5, B2.11 (actions), A3.1, A3.5, A3b.1, A3b.5, A4.3, A4.4, A4.7 to A4.11, B14b.5, B4.4, B4.5, B8.7, U0.1, U0.3, U0.6, U1.1 to U1.3, U1.5, U2.1 to U2.4, U4.1 to U4.3, U5.1, U5.2, U5.4 |
 
 **Shared contracts.** Each owner merges these first, as types and stubs. Other agents import them and never redefine them.
 - **A2 owns:**
@@ -214,6 +214,6 @@ Each agent edits **only** its own paths. A change needed in another agent's file
 8. B8.7, replaced by seeded `featuredPlayerIds`.
 9. Compilation, replaced by a pre-rendered, labelled montage.
 
-**Already out of scope:** OpenCut (A5, B11), compilation and variant extras, rendition upload (B10.3, B10.5), live signals (B13.1, B13.3 to B13.6), admin polish (A0.3 to A0.7), metadata, PWA, player-page and search extras.
+**Already out of scope** (each deferred row still has a fallback owner in the `features.md` Agent column; A5.5 and B1.5 are Human): OpenCut (A5, B11), compilation and variant extras, rendition upload (B10.3, B10.5), live signals (B13.1, B13.3 to B13.6), admin polish (A0.3 to A0.7), metadata, PWA, player-page and search extras.
 
 **Never cut:** B14.1 to B14.3, B14.5, B14.6; B2.6, B2.10, B2.15; the rights and rules floor (A4.7, A4.8, B2.13, B2.14, B14b.1 to B14b.4, B14b.6 in dry run, B10.8, B10.9); publish, feed and withdraw with the fan-web gate; the REAL / SIMULATED labels.
