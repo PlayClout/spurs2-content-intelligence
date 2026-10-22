@@ -1,4 +1,4 @@
-# Clout Content Intelligence - Features and Build Plan
+# Spursx2 AI - Features and Build Plan
 
 Source of truth: `design.md`
 Goal: build the **Assisted Auto-Production Engine** described there: an editor validates AI-surfaced moments, publishes approved versions to an event-only fan catalog, and fans get personalized feeds plus natural-language clip search over that approved catalog.
@@ -22,7 +22,7 @@ Keep stack changes minimal. We already have most of what we need.
 - **Media processing:** current FFmpeg renderer in `pipeline/render-local.ts` and `render-backend.ts`.
 - **Storage:** current private S3 render storage in `shared/storage.ts` and `/renders` route.
 - **Partner integrations:** current ScorePlay and TwelveLabs clients in `shared/clients/`.
-- **UI/design:** current PlayClout / Clout dark token style in `web/app/globals.css`, current shadcn-style UI components, design-system guidance in `design-system/`.
+- **UI/design:** current PlayClout / Spursx2 AI dark token style in `web/app/globals.css`, current shadcn-style UI components, design-system guidance in `design-system/`.
 
 ### Add only what the design requires
 
@@ -296,7 +296,7 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 |---|---|---|---|---|
 | B10.1 | Keep writes held by default | current | `SCOREPLAY_WRITES` guard | No live metadata write without sign-off |
 | B10.2 | Run one safe write/delete test after taxonomy approval | ScorePlay sign-off | `writeMomentAsVideoLog` | Create, read back, delete succeeds |
-| B10.3 | Create `Clout AI Productions` collection after approval | ScorePlay sign-off | `uploadToEvent`, event API | Final outputs can be uploaded to ScorePlay |
+| B10.3 | Create `Spursx2 AI Productions` collection after approval | ScorePlay sign-off | `uploadToEvent`, event API | Final outputs can be uploaded to ScorePlay |
 | B10.4 | Store writeback state: pending/synced/failed | B4.1 | delivery JSON or new table | Admin can reconcile failures |
 | B10.5 | Sync publication/output refs | B4.2, B10.3 | ScorePlay media/details API | ScorePlay record links to exact output |
 
@@ -305,7 +305,7 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | ID | Task | Depends on | Reuse | Done when |
 |---|---|---|---|---|
 | B11.1 | Add `shared/editor-contracts.ts` | B5.1 | `EditManifest` from docs | OpenCut bridge has stable contract |
-| B11.2 | Add source binding table or JSON | B11.1 | `EditorProjectBinding` concept | Editor IDs map back to Clout source ranges |
+| B11.2 | Add source binding table or JSON | B11.1 | `EditorProjectBinding` concept | Editor IDs map back to Spursx2 AI source ranges |
 | B11.3 | Add server-side review gate | B11.1, B2.5 | render_final gate | OpenCut export cannot bypass approval |
 | B11.4 | Add unsupported edit rejection | B11.1 | render plan validator | Effects we cannot render are blocked clearly |
 

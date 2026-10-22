@@ -6,7 +6,7 @@
 import { createTweet, deleteTweet, uploadVideoForTweet } from "../shared/clients/publish";
 
 const video = process.argv[2] ?? "data/fallback-assets/poc/final_clip_9x16.mp4";
-const TEXT = "Clout Content Intelligence — pipeline test 🧪 (will be deleted)";
+const TEXT = "Spursx2 AI — pipeline test 🧪 (will be deleted)";
 
 async function main() {
   if (process.env.PUBLISH_LIVE !== "1") throw new Error("set PUBLISH_LIVE=1");

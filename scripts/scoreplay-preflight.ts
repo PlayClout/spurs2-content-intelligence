@@ -56,7 +56,7 @@ await step("GET /tag/search?query=goal", async () => { const t = await sp.tagSea
 if (writeMedia) {
   const companyId = (await sp.getMedia(writeMedia)).data.company_id;
   const ref = `preflight-${Date.now()}`;
-  const w = await step(`WRITE TEST POST /video/logs on media ${writeMedia}`, () => sp.writeMomentAsVideoLog({ mediaId: writeMedia, companyId, startSec: 1, endSec: 3, ref, label: "Clout preflight test (safe to delete)" }));
+  const w = await step(`WRITE TEST POST /video/logs on media ${writeMedia}`, () => sp.writeMomentAsVideoLog({ mediaId: writeMedia, companyId, startSec: 1, endSec: 3, ref, label: "Spursx2 AI preflight test (safe to delete)" }));
   if (w?.data.entry) {
     console.log(`      created log id=${w.data.entry.id}; read back ${w.data.entry.start_timestamp}-${w.data.entry.end_timestamp}ms`);
     const base = (process.env.SCOREPLAY_API_BASE || sp.DEFAULT_BASE).replace(/\/$/, "");

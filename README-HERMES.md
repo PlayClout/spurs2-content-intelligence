@@ -1,6 +1,6 @@
 # README-HERMES — UI pre-build handoff
 
-Pre-built producer UI for **Clout Content Intelligence** (Spurs² hackathon). Branch: `nova/architecture`.
+Pre-built producer UI for **Spursx2 AI** (Spurs² hackathon). Branch: `nova/architecture`.
 Read `docs/architecture.md` first — it is the product posture; this UI implements the three-pane producer surface from it.
 
 ## Run it

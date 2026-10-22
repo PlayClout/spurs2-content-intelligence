@@ -1,4 +1,4 @@
-# Clout Content Intelligence — Editor & Personalized Fan Web App Design
+# Spursx2 AI — Editor & Personalized Fan Web App Design
 
 **Spurs² Hackathon · October 22–23, 2026 · revised October 22**  
 **Challenge:** Assisted Auto-Production, with rights screening built into the production path  
@@ -253,7 +253,7 @@ flowchart TB
   Render --> Prepared[Final derivative + dedicated fan search index]
   Prepared --> Publish[Editor Publish: current approved version]
   Publish --> Catalog[Published and viewer-permitted catalog]
-  Profile[Favorite players + interests] --> FanRank[Clout personalization]
+  Profile[Favorite players + interests] --> FanRank[Spursx2 AI personalization]
   Catalog --> FanRank
   Catalog --> Search[Marengo retrieval + server post-validation]
   FanRank --> Fan[Personalized fan app]
@@ -261,7 +261,7 @@ flowchart TB
   Fan --> Play[Current rights / version check → approved playback]
 ```
 
-ScorePlay owns source media and source metadata. Clout owns evidence, policy decisions, ranking, project manifests, revisions, approvals, and job state. OpenCut owns editing mechanics through an adapter. The fan app consumes only Clout's published catalog, never OpenCut project files or the editor discovery index. Marengo retrieves; Clout personalizes and authorizes. Neither OpenCut nor a provider search hit grants publication permission.
+ScorePlay owns source media and source metadata. Spursx2 AI owns evidence, policy decisions, ranking, project manifests, revisions, approvals, and job state. OpenCut owns editing mechanics through an adapter. The fan app consumes only Spursx2 AI's published catalog, never OpenCut project files or the editor discovery index. Marengo retrieves; Spursx2 AI personalizes and authorizes. Neither OpenCut nor a provider search hit grants publication permission.
 
 | Entity | Core fields / invariant |
 |---|---|
@@ -274,7 +274,7 @@ ScorePlay owns source media and source metadata. Clout owns evidence, policy dec
 | `StatClaim` | Computed result, scope/query/proof/completeness, source/as-of times, exact wording, validation state, dependent outputs. |
 | `Recommendation` | Destination decision ID, rank version/breakdown/coverage, why-selected/why-rejected, source candidates. |
 | `Compilation`, `CompilationEntry` | Revision, destination, ordered source ranges, timeline position, transforms, claim/audio/graphic dependencies, decision IDs. |
-| `EditorProjectBinding` | Clout project/revision ↔ OpenCut project/scene/element IDs; preserve source-offset mapping and immutable parent lineage. |
+| `EditorProjectBinding` | Spursx2 AI project/revision ↔ OpenCut project/scene/element IDs; preserve source-offset mapping and immutable parent lineage. |
 | `Approval`, `ExportJob`, `EditorialEvent` | Actor, exact manifest/dependency/context/policy hash, transition times, recheck, audit, writeback/delivery state. |
 | `Player`, `FanProfile`, `FanPreference` | Canonical roster and provider mappings; fan-owned favorite-player IDs/interests; seeded demo identities are labeled. |
 | `Publication`, `PublicationVersion` | Current prepared/published/scheduled/withdrawn version, exact artifact/hash, reviewed tags, final-derivative indexed ID, approval/decision references, permitted audience and visibility window. |

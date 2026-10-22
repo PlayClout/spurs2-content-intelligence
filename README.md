@@ -1,4 +1,4 @@
-# Clout Content Intelligence — Spurs² Hackathon
+# Spursx2 AI — Spurs² Hackathon
 
 **Challenge 1: Assisted Auto-Production Engine** · Clout Labs · Austin, Oct 22–23 2026
 Partners: Tottenham Hotspur · San Antonio Spurs · ScorePlay · TwelveLabs

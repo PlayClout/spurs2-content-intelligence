@@ -39,9 +39,9 @@ Publishing to this frontend means release **inside the authorized hackathon demo
 
 **P1:** persistent authenticated profiles, saved clips, lightweight engagement feedback, optional entity search, multilingual queries/captions, better diversity and cold-start tuning. Do not turn P0 into a trained recommender or a new social network.
 
-## 3. Personalization belongs to Clout
+## 3. Personalization belongs to Spursx2 AI
 
-**Marengo retrieves footage matching a query. Clout chooses which published clips belong in a fan's feed and in what order.** A successful semantic-search integration is not evidence of a personalized recommender.
+**Marengo retrieves footage matching a query. Spursx2 AI chooses which published clips belong in a fan's feed and in what order.** A successful semantic-search integration is not evidence of a personalized recommender.
 
 Start with a transparent application score, calculated only after publication and viewer eligibility:
 

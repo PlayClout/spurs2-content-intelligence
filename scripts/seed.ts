@@ -15,7 +15,7 @@ import * as s from "../shared/db-schema";
 const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 const db = drizzle(client);
 
-// ── SVG poster generation (placeholder thumbnails, Clout-branded) ──
+// ── SVG poster generation (placeholder thumbnails, Spursx2 AI-branded) ──
 const POSTER_DIR = "web/public/posters";
 const posterPalettes: Record<string, [string, string]> = {
   basketball: ["#126BFF", "#7047EB"],
@@ -34,7 +34,7 @@ function writePoster(slug: string, title: string, sub: string, sport: string): s
   <rect x="1" y="1" width="638" height="358" fill="none" stroke="rgba(245,245,243,0.12)" stroke-width="2"/>
   <text x="40" y="190" font-family="Arial Narrow, sans-serif" font-size="44" font-weight="bold" font-style="italic" fill="#F5F5F3" text-transform="uppercase">${title.toUpperCase()}</text>
   <text x="40" y="230" font-family="Arial, sans-serif" font-size="20" fill="#8B93A3">${sub}</text>
-  <text x="40" y="320" font-family="Arial, sans-serif" font-size="14" letter-spacing="3" fill="#5AA2FF">CLOUT CONTENT INTELLIGENCE</text>
+  <text x="40" y="320" font-family="Arial, sans-serif" font-size="14" letter-spacing="3" fill="#5AA2FF">SPURSX2 AI</text>
   <polygon points="540,160 540,220 590,190" fill="rgba(245,245,243,0.85)"/>
   <circle cx="560" cy="190" r="46" fill="none" stroke="rgba(245,245,243,0.4)" stroke-width="3"/>
 </svg>`;

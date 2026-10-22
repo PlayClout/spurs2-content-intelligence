@@ -1,4 +1,4 @@
-# Tailoring OpenCut for the Clout Matchday Editor
+# Tailoring OpenCut for the Spursx2 AI Matchday Editor
 
 **Implementation instructions · October 22, 2026 · source inspected, integration not run**
 
@@ -15,37 +15,37 @@ The supplied URL, [OpenCut-app/OpenCut](https://github.com/OpenCut-app/OpenCut),
 
 For a future implementer, create an isolated worktree/feature branch and a separate local checkout of the pinned Classic source. Do **not** run an upstream installer from its README merely because it appears there. Use the team's existing toolchain, inspect the pinned package and lockfile, and run only the setup actually required for the editor evaluation. This planning update has not cloned or installed OpenCut.
 
-Keep the working Clout app and its lockfiles intact. The local app uses Next 16.4.2 / React 19.3; inspected Classic uses Next 16.1.3 / React 19, Bun, `opencut-wasm`, MediaBunny, and other workspace dependencies. A common framework name does not guarantee a drop-in merge. Read each checkout's applicable `AGENTS.md` before editing.
+Keep the working Spursx2 AI app and its lockfiles intact. The local app uses Next 16.4.2 / React 19.3; inspected Classic uses Next 16.1.3 / React 19, Bun, `opencut-wasm`, MediaBunny, and other workspace dependencies. A common framework name does not guarantee a drop-in merge. Read each checkout's applicable `AGENTS.md` before editing.
 
 ## 2. What the inspected source actually offers
 
 All upstream paths below are relative to **Classic**, not our repository, and are pinned in the links.
 
-| Upstream file | Observed seam | Clout adaptation |
+| Upstream file | Observed seam | Spursx2 AI adaptation |
 |---|---|---|
 | [`apps/web/src/core/index.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/index.ts) | `EditorCore.getInstance()` exposes project/media/timeline/command/renderer managers. | One editor bridge per active project. Do not operate on a second project through the same singleton concurrently. |
-| [`apps/web/src/editor/use-editor.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/editor/use-editor.ts) | React subscription hook over the managers. | Subscribe in Clout-specific panels; do not invent a separate competing timeline store. |
+| [`apps/web/src/editor/use-editor.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/editor/use-editor.ts) | React subscription hook over the managers. | Subscribe in Spursx2 AI-specific panels; do not invent a separate competing timeline store. |
 | [`core/managers/media-manager.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/managers/media-manager.ts) | `addMediaAsset({ projectId, asset })` saves a media asset, returns it or null. | Resolve a permitted short derivative into a browser `File` and reuse the returned media ID. Preserve source identity in a server-owned sidecar binding. Handle quota and null results. |
-| [`core/managers/project-manager.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/managers/project-manager.ts) | `createNewProject`, `loadProject`, `saveCurrentProject`, `updateSettings`, and `export`. | Create/load explicitly, persist Clout revision separately, and guard the export seam. Verify project/scene readiness before import. |
+| [`core/managers/project-manager.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/managers/project-manager.ts) | `createNewProject`, `loadProject`, `saveCurrentProject`, `updateSettings`, and `export`. | Create/load explicitly, persist Spursx2 AI revision separately, and guard the export seam. Verify project/scene readiness before import. |
 | [`core/managers/timeline-manager.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/core/managers/timeline-manager.ts) | Insert, trim, split, move, delete, and update operations issue commands. | Translate the application manifest into commands; persist edits back as canonical source ranges. |
 | [`commands/timeline/element/insert-element.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/commands/timeline/element/insert-element.ts) | `InsertElementCommand({ element, placement })`, generated IDs, explicit/auto placement. | Capture returned element/track IDs; verify placement succeeded. First visual insertion can change project canvas and FPS. Apply target format deliberately after initialization. |
 | [`commands/batch-command.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/commands/batch-command.ts) | Group commands into one undo/redo action. | Import a proposed montage as one user-undoable operation. This sequential command loop is **not a database transaction** or automatic rollback guarantee; validate first and verify the result. |
 | [`timeline/types.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/timeline/types.ts) | `SceneTracks` has a main video track, overlays and audio. Elements contain native-time positions/trims. | Map video, verified text overlays, and approved audio; reject unsupported features instead of silently flattening them incorrectly. |
 | [`wasm/media-time.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/wasm/media-time.ts) | `MediaTime` is a branded integer tick count, with `mediaTimeFromSeconds` / `mediaTimeToSeconds`. | **Never assign seconds directly to native timeline times** or guess the tick rate. Use the provided helpers and the source/project FPS rules. |
-| [`components/editor/export-button.tsx`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/components/editor/export-button.tsx) | Native export controls exist. | Replace the final-delivery path with Clout approval/recheck. Audit manager-level calls and other export actions as well as this button. |
-| [`media/types.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/media/types.ts), [`services/storage/types.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/services/storage/types.ts) | Browser `File`, media metadata, serialized project/scene storage. | Custom provenance is not proven to survive an ad hoc extra property. Use an explicit persisted Clout binding keyed by project/media/element IDs. |
+| [`components/editor/export-button.tsx`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/components/editor/export-button.tsx) | Native export controls exist. | Replace the final-delivery path with Spursx2 AI approval/recheck. Audit manager-level calls and other export actions as well as this button. |
+| [`media/types.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/media/types.ts), [`services/storage/types.ts`](https://github.com/OpenCut-app/opencut-classic/blob/cf5e79e919144200294fb9fed22a222592a0aeea/apps/web/src/services/storage/types.ts) | Browser `File`, media metadata, serialized project/scene storage. | Custom provenance is not proven to survive an ad hoc extra property. Use an explicit persisted Spursx2 AI binding keyed by project/media/element IDs. |
 
 ## 3. Integration boundary
 
-**Recommended starting point:** a separate local editor app from the pinned Classic checkout, with a dedicated Clout bridge and branding. Keep our producer dashboard, decision engine, job system, and FFmpeg worker as the product backend. Expose the editor through a route/reverse proxy or an explicit local launch link after evaluating its route/base-path behavior.
+**Recommended starting point:** a separate local editor app from the pinned Classic checkout, with a dedicated Spursx2 AI bridge and branding. Keep our producer dashboard, decision engine, job system, and FFmpeg worker as the product backend. Expose the editor through a route/reverse proxy or an explicit local launch link after evaluating its route/base-path behavior.
 
 Do not copy the upstream `apps/web` over our `web` directory. Do not replace our auth, database, publish adapter, global styles, or monorepo setup merely to make an editor page boot. Once a vertical slice works, selective vendoring into a route/package can be evaluated; keep the adapter API stable.
 
-If embedding with an iframe becomes useful, it is a transport option, not a native upstream capability: validate origin and message schema, require an authenticated session-bound project ID, use an exact target origin, and reject unknown commands. Same-origin embedding is simpler if routing works. Never use wildcard-origin messages to pass arbitrary URLs or provider keys. Browser autosave can remain a local recovery cache; the canonical approved manifest belongs to Clout's server.
+If embedding with an iframe becomes useful, it is a transport option, not a native upstream capability: validate origin and message schema, require an authenticated session-bound project ID, use an exact target origin, and reject unknown commands. Same-origin embedding is simpler if routing works. Never use wildcard-origin messages to pass arbitrary URLs or provider keys. Browser autosave can remain a local recovery cache; the canonical approved manifest belongs to Spursx2 AI's server.
 
 ## 4. Application-owned adapter contract
 
-These interfaces are **proposed Clout code**, not existing OpenCut exports. Put them outside upstream rendering internals, for example in `shared/editor-contracts.ts`, and implement a bridge inside the pinned editor app.
+These interfaces are **proposed Spursx2 AI code**, not existing OpenCut exports. Put them outside upstream rendering internals, for example in `shared/editor-contracts.ts`, and implement a bridge inside the pinned editor app.
 
 ```typescript
 type EditManifest = {
@@ -71,7 +71,7 @@ type EditManifest = {
   }>;
 };
 
-interface CloutEditorAdapter {
+interface Spursx2AIEditorAdapter {
   openProject(manifest: EditManifest): Promise<void>;
   importApprovedClip(entryId: string): Promise<void>;
   readCanonicalEdits(): Promise<EditManifest>;
@@ -80,7 +80,7 @@ interface CloutEditorAdapter {
 }
 ```
 
-Also persist `EditorProjectBinding`: Clout project/revision, editor project/scene IDs, upstream pin, schema version, and per-entry media/element/track IDs plus source-to-derivative mapping. Support text/audio/graphic dependency bindings before enabling those edits. Use JSON-compatible primitives for server transport; native tick values stay inside the bridge.
+Also persist `EditorProjectBinding`: Spursx2 AI project/revision, editor project/scene IDs, upstream pin, schema version, and per-entry media/element/track IDs plus source-to-derivative mapping. Support text/audio/graphic dependency bindings before enabling those edits. Use JSON-compatible primitives for server transport; native tick values stay inside the bridge.
 
 ### Import sequence
 
@@ -89,7 +89,7 @@ Also persist `EditorProjectBinding`: Clout project/revision, editor project/scen
 3. Initialize/load the project and active scene. Validate all entries before issuing commands; build a stable media-ID map. Deduplicate imports by derivative/version, not a volatile signed URL.
 4. Convert source seconds to **derivative-local** in/out, then to OpenCut `MediaTime`. Build commands with valid params and placement. Use `BatchCommand` through `editor.command.execute({ command })` for a grouped import, then inspect resulting elements and their assigned IDs.
 5. Establish the intended output canvas/FPS after first insertion, because upstream may adopt the first video's size and FPS. Validate that preview uses the selected format.
-6. Save both native recovery state and the canonical Clout manifest/binding. On import failure, clean up partial media/bindings and leave the previous project revision intact; the upstream batch loop does not supply this workflow transaction.
+6. Save both native recovery state and the canonical Spursx2 AI manifest/binding. On import failure, clean up partial media/bindings and leave the previous project revision intact; the upstream batch loop does not supply this workflow transaction.
 
 ### Time conversion that must not be skipped
 
@@ -109,7 +109,7 @@ Use upstream creation/default helpers for full element params; do not create a v
 
 ## 5. Tailor the editor to matchday work
 
-Preserve OpenCut's preview, timeline, trim/split/reorder, undo/redo, project recovery, and basic text/audio controls where the spike proves them. Add the following Clout surfaces in the fork, rather than scattering sports policy through core managers:
+Preserve OpenCut's preview, timeline, trim/split/reorder, undo/redo, project recovery, and basic text/audio controls where the spike proves them. Add the following Spursx2 AI surfaces in the fork, rather than scattering sports policy through core managers:
 
 - **Matchday tray:** ready clips scoped to current destination, player/play/zone/camera filters, source range, original/cleaned comparison. Held or blocked items have explanations and no unrestricted import action.
 - **Why panel:** rank components and missing inputs; observed vs fixture evidence; source/post references; stat proof/coverage; policy rule, context, and validity interval. A synthetic fixture is labeled in the editor too.
@@ -121,7 +121,7 @@ Preserve OpenCut's preview, timeline, trim/split/reorder, undo/redo, project rec
 Suggested future files inside the fork (these are **new**, not upstream paths):
 
 ```text
-apps/web/src/clout/
+apps/web/src/spursx2-ai/
   editor-bridge.ts
   manifest-adapter.ts
   source-bindings.ts
@@ -138,7 +138,7 @@ The browser is not a trusted policy engine. Upstream native export/download can 
 
 For P0, translate the supported cut into the existing `RenderBackend` / local FFmpeg worker: video ranges and order, selected output geometry, permitted source audio or mute, verified captions, and approved graphic/audio dependencies. The final job checks the manifest hash, revision, actor/org, every dependency and decision validity, then stores the exact output hash. Its delivery endpoint performs a current check before returning the file.
 
-Audit **both** the upstream export button and `project.export`, menu/keyboard/action paths, Clout direct download routes, and backend job entry points. Never add a browser “override compliance” switch. Record editor changes separately from an authorized rights exception.
+Audit **both** the upstream export button and `project.export`, menu/keyboard/action paths, Spursx2 AI direct download routes, and backend job entry points. Never add a browser “override compliance” switch. Record editor changes separately from an authorized rights exception.
 
 Support only operations the server renderer can reproduce. If an OpenCut effect, mask, speed change, transition, subtitle, or audio edit cannot round-trip into the canonical render plan, disable it for the initial integration or explicitly reject the export with a reason. Do not return a final render that differs silently from the preview. Browser-native full rendering can be evaluated after these constraints work; a future upstream headless API is not the fallback.
 
@@ -153,7 +153,7 @@ The new frontend is a **responsive fan web app** for phone and desktop browsers.
 1. Boot the pinned Classic web app using its actual workspace dependencies; verify WASM/media loads in the intended browser. No team backend or publish functionality is replaced.
 2. Import a tiny authorized MP4 derivative via the bridge; verify file metadata, playback, source/audio identity, and local storage behavior. Do not begin with a 2.6 GB full match.
 3. Insert three source-bounded entries, trim/reorder, undo and redo. Verify native tick conversions and canonical offsets.
-4. Save/reopen; restore provenance from the Clout binding. Refresh expired resolver references. Handle unavailable media without losing the edit manifest.
+4. Save/reopen; restore provenance from the Spursx2 AI binding. Refresh expired resolver references. Handle unavailable media without losing the edit manifest.
 5. Render the supported cut through our worker; compare order, duration, canvas, source audio/mute, and captions against preview. Unsupported edits must block export clearly.
 6. Expire a rights decision/change destination after editing. Verify import/review/release gate behavior, including direct calls, stale revisions, and cross-org IDs.
 

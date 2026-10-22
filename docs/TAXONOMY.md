@@ -1,4 +1,4 @@
-# Clout Content Intelligence: write-back taxonomy (DRAFT for ScorePlay sign-off)
+# Spursx2 AI: write-back taxonomy (DRAFT for ScorePlay sign-off)
 
 Team: spurs2-hack-12 · Challenge 1, Assisted Auto-Production · 2026-10-22
 
@@ -23,10 +23,10 @@ comment, so our writes are easy to find and remove.
 
 ```
 Premier League › Manchester United vs Tottenham Hotspur - Week 6 › Match
-   └── Clout AI Productions        (new, POST /event, parent_id = Match 1536077, external_id = "clout-ai-productions")
+   └── Spursx2 AI Productions        (new, POST /event, parent_id = Match 1536077, external_id = "clout-ai-productions")
 
 NBA › San Antonio Spurs vs Sacramento Kings - Preseason
-   └── Clout AI Productions        (same pattern, parent = the game collection)
+   └── Spursx2 AI Productions        (same pattern, parent = the game collection)
 ```
 
 Inherits the match's tags through your collection hierarchy (Premier League, 2026/27, Soccer, teams, Match Day).
@@ -48,7 +48,7 @@ Inherits the match's tags through your collection hierarchy (Premier League, 202
 
 ### Proposed NEW groups (small, flat)
 
-**A. `Clout: moment`**: what kind of moment the log marks. Fills the gaps in your in-game action lists.
+**A. `Spursx2 AI: moment`**: what kind of moment the log marks. Fills the gaps in your in-game action lists.
 
 | Option | Meaning |
 |---|---|
@@ -61,7 +61,7 @@ Inherits the match's tags through your collection hierarchy (Premier League, 202
 | key defensive play | tackle, block, steal, save |
 | skill moment | standout individual skill (not a scoring play) |
 
-**B. `Clout: production`**: why the moment was produced and for whom. This is the "how do you show why" layer.
+**B. `Spursx2 AI: production`**: why the moment was produced and for whom. This is the "how do you show why" layer.
 
 | Option | Meaning |
 |---|---|
@@ -88,7 +88,7 @@ we can do that instead.
     "log": {
       "start_offset": 4210.0,
       "end_offset": 4228.5,
-      "comment": "Solanke equaliser, 88'. Why: game event (goal) + fan reaction spike merged on the same play; TwelveLabs: 'Solanke turns and finishes low; away end erupts'. Audience: casual fan (9:16 reel). Rights: cleared. Output: media 13xxxxxxx in Clout AI Productions. [clout:9f2c1a]",
+      "comment": "Solanke equaliser, 88'. Why: game event (goal) + fan reaction spike merged on the same play; TwelveLabs: 'Solanke turns and finishes low; away end erupts'. Audience: casual fan (9:16 reel). Rights: cleared. Output: media 13xxxxxxx in Spursx2 AI Productions. [clout:9f2c1a]",
       "raw_tags": ["goal", "celebration", "ai recommended", "producer approved", "audience: casual fan", "signal: game event", "signal: fan reaction", "rights: cleared"],
       "player_ids": [736578]
     }
@@ -103,12 +103,12 @@ TwelveLabs saw* · *audience and format* · *rights verdict* · *output media id
 
 - **Name:** `<moment>_<player>_<format>.mp4`, e.g. `goal_solanke_9x16.mp4`, `goal_solanke_4x5.jpg`
 - **Description:** the same one-line reasoning as the log comment, plus `Source: media 130849784 @ 70:10–70:28`
-- **Tags:** sport, team, category (highlights / social media), format, `Clout: moment`, `Clout: production` options, player tags
+- **Tags:** sport, team, category (highlights / social media), format, `Spursx2 AI: moment`, `Spursx2 AI: production` options, player tags
 
 ## 6. Questions for you
 
-1. OK to create the two `Clout:` tag groups, or should we use `raw_tags` on logs only?
-2. OK to create the `Clout AI Productions` sub-collection under `Match` (and the Spurs game collection)?
+1. OK to create the two `Spursx2 AI:` tag groups, or should we use `raw_tags` on logs only?
+2. OK to create the `Spursx2 AI Productions` sub-collection under `Match` (and the Spurs game collection)?
 3. Live writes during judging: fine on this workspace?
 4. The San Antonio Spurs videos are on ScorePlay but **not in the TwelveLabs index** (58 Premier League videos only). Are they indexed somewhere, or should we index them ourselves?
 5. Logs on short edits (e.g. `solanke late goal.mp4`) or only on the full match? We plan to log on **the full match when the moment is in it**, and on the clip otherwise.

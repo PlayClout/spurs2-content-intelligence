@@ -38,7 +38,7 @@ export function TopChrome({
     <header className="flex h-14 items-center gap-4 border-b border-border bg-carbon/80 px-4 backdrop-blur">
       <Link href={`/?org=${orgId}`} className="flex items-center gap-2">
         <span className="display text-lg text-foreground">
-          Clout <span className="text-[var(--clout-electric-blue)]">Content Intelligence</span>
+          Spursx2 <span className="text-[var(--clout-electric-blue)]">AI</span>
         </span>
       </Link>
 

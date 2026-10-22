@@ -1,4 +1,4 @@
-# Clout Content Intelligence — Architecture (v2, product posture, 2026-10-20)
+# Spursx2 AI — Architecture (v2, product posture, 2026-10-20)
 
 **Guiding principle:** *The AI finds the moment, understands the opportunity, recommends the strategy, and produces the content. The producer makes the decision.*
 

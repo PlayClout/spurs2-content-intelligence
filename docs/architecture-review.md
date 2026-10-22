@@ -1,4 +1,4 @@
-# Clout Content Intelligence: Workflow & Architecture Review
+# Spursx2 AI: Workflow & Architecture Review
 
 Spurs² Hackathon, Challenge 1 (Assisted Auto-Production Engine)
 Prepared by Hermes for Stu + Nate, 2026-10-20. **Status: DRAFT for agreement. Nothing built yet.**

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Clout Content Intelligence",
+  title: "Spursx2 AI",
   description:
     "The AI finds the moment, understands the opportunity, recommends the strategy, and produces the content. The producer makes the decision.",
 };
