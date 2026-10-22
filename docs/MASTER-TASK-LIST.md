@@ -10,6 +10,8 @@
 - **This is the only plan.** Every task, status and decision lives here. After the briefing we update this list into v2; we don't start a new one.
 - **Status key:** DONE (verified by real execution) · NEXT (ready, no blockers) · BLOCKED (waiting on someone or something) · LATER (scheduled after a milestone) · CUT (descoped, kept for the record).
 - **Owners:** **H** = Hermes (primary developer, owns the code), **Stu**, **Nate**, **Nova** (QA and backup recording, own branches), **Org** = hackathon organizers.
+- **v3 update (after PRs #3 and #4):** the build plan is now **section 10**, split across three coding agents by file ownership. **A1**, **A2** and **A3** are those agents; **Human** marks tasks only a person can do. Task IDs in section 10 are `features.md` IDs: `features.md` holds each task's scope and "done when", and this list holds owners and status.
+- **Superseded by the local-only decision in `design.md`:** the cloud and hosted-URL items (M1, M2, T3 to T7, H3, the cloud-proof check) and live X posting (T13). ScorePlay write-back (T8, T10) is now part of B10 and B14b in section 10.
 - **Every milestone ends in something we can demo.** Nothing gets built for more than a few hours without being shown working end to end.
 
 ## 2. Where we are at 9:15 AM
@@ -136,3 +138,82 @@
 | Fri | Demo |
 
 **If time runs short, cut in this order:** live social, then the second sport, then the sponsor overlay, then the phone layout. We never cut the end-to-end workflow, the approval UI, or the honest REAL / SIMULATED labels.
+
+## 10. v3 build plan: three coding agents
+
+Each agent edits **only** its own paths. A change needed in another agent's file goes in the PR description as `REQUEST to A<n>`. Full kickoff prompts and contract signatures: `challenge1/team-split-3-agents.md`.
+
+**Decisions this plan builds in:**
+- Every confirmed rights write sends allow-listed `rights:` tags to the ScorePlay source media, plus one `/video/logs` audit entry.
+- Writes happen only after human confirmation. Dry run is the default, and there is a kill switch.
+- We never call `PUT /details`, never write `accessible_*` fields and never delete media.
+- If the key lacks `can_do_media_edit`, we write video logs only.
+
+### 10.1 Agents, owned paths and tasks
+
+| Agent | Area | Owns (only these) | features.md task IDs |
+|---|---|---|---|
+| **A1** | Pipeline, single ScorePlay write path, local-only backend | `pipeline/**` (not `pipeline/rules/`), `shared/clients/scoreplay.ts`, `twelvelabs.ts`, `writeback.ts` (new), `shared/moment-manifest.ts`, `shared/storage.ts`, `infra/aws/**` (delete), `Dockerfile.worker`, `package.json`, `scripts/**` (not `rules-test`, `engine-test`, `seed`), `docs/TAXONOMY.md` | B14.2, B14.4 (test), B14.5, B14.6, B2.8, B2.9, B10.4, B10.6, B10.8, B10.9, B14b.6 (write side), B10.2/B10.7 (script), B12.1, B12.3, B5.1, B5.3, B8.3, B13.2, B6.4; T19 to T23 |
+| **A2** | Rights engine, rule store, metadata stage, all DB schema, publication and fan libraries | `shared/rights/**` (new), `shared/db-schema.ts`, `shared/db/**`, `drizzle/**`, `shared/schemas.ts`, `shared/compliance.ts`, `shared/content-rules.ts`, `shared/clients/scoreplay-rights.ts`, `shared/publication.ts`, `shared/fan-ranking.ts`, `shared/fan-search.ts`, `pipeline/rules/**`, `scripts/rules-test.ts`, `engine-test.ts`, `seed.ts` | 0.1 to 0.4, 0.6, B2.1, B2.3, B2.6, B2.7, B2.10, B2.11 (tables), B2.12 to B2.16, B14b.1 to B14b.4, B14b.6 (payload), B14b.7, B4.1 to B4.3, B7.1, B7.3, B8.1, U3.1, B9.1, B9.3, B9.4 |
+| **A3** | Web app: editor desk, Rights Rules screen, operator controls, fan app and PWA, app lock | `web/**` (including `web/middleware.ts`, `web/public/**` and `web/app/renders/`) | B14.1, B14.3, A0.1, A0.2, A0.8, A1.2, A2.1 to A2.5, A2.7, B2.2, B2.4, B2.5, B2.11 (actions), A3.1, A3.5, A3b.1, A3b.5, A4.3, A4.4, A4.7 to A4.11, B14b.5, B4.4, B4.5, B8.7, U0.1, U0.3, U0.6, U1.1 to U1.3, U1.5, U2.1 to U2.4, U4.1 to U4.3, U5.1, U5.2, U5.4 |
+
+**Shared contracts.** Each owner merges these first, as types and stubs. Other agents import them and never redefine them.
+- **A2 owns:**
+  - `shared/rights/types.ts`: `RightsStatus` (5 states), `RightsDecision`, `RightsRecord`.
+  - `shared/rights/rule-schema.ts`: `RuleDef` and the `Condition` JSON DSL (no `eval`).
+  - `shared/rights/api.ts`: evaluate, build record, write payload, confirm, rules CRUD, lint, preview, activate.
+  - `shared/publication.ts`.
+  - DB tables, including write jobs and the kill-switch setting.
+- **A1 owns** `shared/clients/writeback.ts`: `enqueueWrite`, `canWrite`, `dryRun`, `writeStatus`, `setKillSwitch`, `ALLOW_LIST`.
+- **A3 owns** no shared contract. It builds against mocks of the contracts above until they merge.
+
+**Can start immediately:**
+- **A1:** B14.2, plus the `writeback.ts` stub.
+- **A2:** the contract and schema PR, then the engine as pure code on fixtures.
+- **A3:** B14.1 app lock, B14.3 and A1.2, then every screen on mocks.
+
+### 10.2 Order and merge sequence
+
+1. A1 PR 1: B14.2 (removes the S3 path and the `uploadRenderDir` calls), plus the `writeback.ts` stub.
+2. A2 PR 1: contracts and schema. Migrations are generated; a human pushes them.
+3. A3 PR 1: B14.1, B14.3, A1.2.
+4. A2 PR 2: engine, rule store with version pin, metadata stage (B2.x, B14b.1 to B14b.4, B14b.6 payload, B14b.7).
+5. A1 PR 2: pipeline wiring (B2.8, B2.9), write path (B10.4, B10.6, B10.8, B10.9, B14b.6 tags and log), T19 to T23, B14.5, B14.6.
+6. A3 PR 2: editor lanes and gates, Rights Rules screen, rights confirmation, dry-run and kill-switch view, all on the real APIs.
+7. A2 PR 3: publication lifecycle, ranking, search, seed.
+8. A3 PR 3: fan app and PWA, publish and withdraw, packaging, compilation tray.
+9. A1 PR 3: variants, compilation render, signal fixture.
+10. Human: push migrations, run a dry run end to end, make one live write with rollback, rehearse.
+
+**Merge rules:** rebase on `main` before each PR. A human merges. `npm test` stays green on `main`.
+
+### 10.3 Log follow-ups and human-only tasks
+
+| ID | Task | Owner | Depends on | Status | Done when |
+|---|---|---|---|---|---|
+| T19 | `raw_tags` on `/video/logs` auto-create tags, so they pass the one allow-list (B10.8) | A1 | B10.8 | NEXT | A tag not on the list is dropped and logged, never sent |
+| T20 | `clout-approved` at `pipeline/worker.ts:266` is not in the taxonomy: replace it with a taxonomy option or drop it | A1 | none | NEXT | No non-taxonomy tag is sent |
+| T21 | Rights log entry. It carries: verdict, rule-set version, engine version, "illustrative policy v0", run id, each element with evidence timestamps, provenance counts, who confirmed it and when, and the marker `[clout:rights:<mediaId>:<hash8>]`. `start`/`end` is the analysed range, and `raw_tags` holds allow-listed `rights:` options only | A2 builds, A1 sends | B14b.6 | NEXT | The dry-run payload shows every field; a retry creates no duplicate |
+| T22 | Update `docs/TAXONOMY.md:20` ("we never edit, re-tag or delete your original media") to: confirmed, allow-listed `rights:` tags only; only our own tags replaced; no details edits; no deletes. Update §3B `rights:` options to the 5 states | A1 text, Human tells ScorePlay | none | NEXT | Doc matches the write path; ScorePlay mentor told before the first live tag write |
+| T23 | Real writes need `SCOREPLAY_WRITES=1` plus the kill switch off; unset means dry run | A1 (`.env.example`), A3 (A4.11 note) | B10.9 | NEXT | Documented, and shown on the write panel |
+| T24 | ScorePlay `/whoami`: does `rights[]` include `can_do_media_edit`? If not, write video logs only | Human | key | NEXT (first) | Result posted; tag plan confirmed or set to logs only |
+| T25 | Secrets in the demo laptop `.env`; run `db:push` for each migration | Human | A2 PRs | NEXT | Agents never receive or commit secrets |
+| T26 | B1.6 real rights fields on 3 to 5 demo media; B10.2/B10.7 live write test on one media with delete rollback | Human | T24, A1 PR 2 | BLOCKED on T24 | Tag and log written, read back, deleted |
+| T27 | B14.7 one-time AWS teardown (needs the `clout-ci` profile) | Human | B14.2 | NEXT | Teardown logged |
+| T28 | A4.6 demo script, rehearsals, backup recording | Human | all | LATER | Runs clean; backup saved |
+
+### 10.4 Cut list (cut from the top first)
+
+1. B2.16 re-evaluation on rule activation.
+2. A4.9 rule preview. A4.8 stays a JSON editor.
+3. A0.2 Act now rail, replaced by one static fixture card.
+4. U0.3/U0.6 service worker, so the PWA install is manifest-only.
+5. B12.1/B12.3 variants, so only the existing reel profile renders.
+6. A4.10/A4.11 folded into A4.4; B14b.5 folded into the needs-review approve.
+7. Search, replaced by a labelled metadata filter over published clips.
+8. B8.7, replaced by seeded `featuredPlayerIds`.
+9. Compilation, replaced by a pre-rendered, labelled montage.
+
+**Already out of scope:** OpenCut (A5, B11), compilation and variant extras, rendition upload (B10.3, B10.5), live signals (B13.1, B13.3 to B13.6), admin polish (A0.3 to A0.7), metadata, PWA, player-page and search extras.
+
+**Never cut:** B14.1 to B14.3, B14.5, B14.6; B2.6, B2.10, B2.15; the rights and rules floor (A4.7, A4.8, B2.13, B2.14, B14b.1 to B14b.4, B14b.6 in dry run, B10.8, B10.9); publish, feed and withdraw with the fan-web gate; the REAL / SIMULATED labels.
