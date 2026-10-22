@@ -21,9 +21,9 @@ only tag IDs recorded as written by our own jobs may be replaced. Existing human
 Source-log writes carry a stable `[clout:<id>]` marker so retries can reconcile them.
 
 **Current build:** local-only renders; uploads, output collections and output details below are deferred proposals,
-not enabled endpoints. The A1 write contract currently supports approved source logs. Confirmed rights payloads
-and persistent queue/settings integration await A2's contracts; without a durable settings adapter all live sends
-are held. `SCOREPLAY_WRITES=1`, `SCOREPLAY_WRITE_KILL_SWITCH=0` and a false DB kill switch are all required.
+not enabled endpoints. The A1 write contract supports approved source logs and confirmed rights wire envelopes. A2 still supplies the
+confirmed-record builder and persistent queue/settings integration; without a durable settings adapter all live
+sends are held. `SCOREPLAY_WRITES=1`, `SCOREPLAY_WRITE_KILL_SWITCH=0` and a false DB kill switch are all required.
 The admin must show DRY RUN/held payloads, never pretend a fixture write reached ScorePlay.
 
 Write-back runs automatically in background jobs: approval queues the source log, and render completion queues each rendition upload plus tags/details and source/revision/channel references. No manual per-clip sync is required. Record pending/synced/held/failed state and stable provider IDs. Retries must reconcile existing writes and avoid duplicate logs/uploads. The workspace taxonomy sign-off gate holds live work until enabled; queued jobs then resume with current approval and rights checks.
@@ -131,7 +131,7 @@ TwelveLabs saw* · *audience and format* · *rights verdict* · *output media id
 
 `shared/clients/writeback.ts` exports the single tag/field allow-list and the queue/settings interface.
 Unknown `raw_tags` are dropped and logged, including `clout-approved`; unexpected write fields are rejected.
-Ordinary editorial source logs cannot emit `rights:` tags. The confirmed-rights sender must consume A2's payload,
+Ordinary editorial source logs cannot emit `rights:` tags. The confirmed-rights sender consumes A2's `RightsWritePayload` wire envelope,
 use `[clout:rights:<mediaId>:<hash8>]`, preserve analysis bounds, and carry rule-set/engine versions, policy label,
 run ID, evidence timecodes, provenance counts and confirmer/time. Only IDs our records created can be removed.
 If `/whoami` lacks `can_do_media_edit`, the rights integration must fall back to logs only.
@@ -141,3 +141,19 @@ before mutation; errors/missing settings hold the write. Fixture/seeded requests
 store must uniquely constrain the write key, atomically claim work, preserve provider IDs across restarts, and
 schedule retry/backoff. The A1 source-log primitive reads provider markers for reconciliation; it must not blindly
 retry an ambiguous POST.
+
+### Confirmed rights transport contract (A1)
+
+A2's confirmed-record builder produces `WriteRequest.kind="rights_record"` with a SHA-256 record revision,
+analysed source log range, actor/time, and `rights` audit fields: `tags`, `complete`, `ruleSetVersion`,
+`engineVersion`, `policyLabel="illustrative policy v0"`, `runId`, timed `elements` and `provenanceCounts`.
+The sender validates one state, rejects incomplete-cleared payloads, and serializes the audit with
+`[clout:rights:<mediaId>:<revisionHash8>]`. No actual rights rule is inferred by this transport.
+
+The store must implement `withJobLock` and `isCurrent` for every send. Rights tagging additionally requires
+`withMediaLock`, `getOwnedTags` and `saveOwnedTags`. These are durable DB operations, not process-memory
+ownership. `SCOREPLAY_RIGHTS_TAG_IDS` maps already-provisioned allow-listed names to positive unique option IDs.
+Only confirmed rights logs may contain `rights:` raw tags. Different human-owned state tags hold the job;
+no `can_do_media_edit` yields logs-only. Tags and audit are individually guarded immediately before mutation.
+Only audit POST attempts get the ambiguous-send checkpoint; partial tag retries can finish without duplicating
+the audit. Source logs also incorporate the exact approval revision into their marker.

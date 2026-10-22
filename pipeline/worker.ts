@@ -27,6 +27,7 @@ import { getRenderBackend } from "./render-backend";
 import { overlapRatio, SAME_PLAY } from "./watchlist";
 import { storageMode } from "../shared/storage";
 import { purgeLocalMedia } from "./local-media";
+import { workerHealth } from "./health";
 import { scoreFit } from "../shared/clients/decisions";
 import { generateCopy } from "../shared/copy";
 
@@ -318,13 +319,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     if (hp) {
       const http = await import("node:http");
       let lastOk = Date.now();
-      healthServer = http.createServer((_req, res) => {
-        const stale = Date.now() - lastOk > 120_000;
-        res.writeHead(stale ? 503 : 200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ worker: WORKER_ID, ok: !stale, lastLoopMsAgo: Date.now() - lastOk,
-          storage: storageMode(), scoreplay: sp.mode(), twelvelabs: process.env.TWELVELABS_API_KEY && process.env.MOCK_MODE !== "1" ? "live" : "fixture",
-          writes: sp.writesEnabled() ? "gated_by_database" : "held", lane: LANE,
-        }));
+      healthServer = http.createServer(async (_req, res) => {
+        const health = await workerHealth(WORKER_ID, LANE, lastOk);
+        res.writeHead(health.ok ? 200 : 503, { "content-type": "application/json", "cache-control": "no-store" });
+        res.end(JSON.stringify(health));
       }).listen(hp, () => log(`health endpoint on :${hp}`));
       (globalThis as { __markLoop?: () => void }).__markLoop = () => { lastOk = Date.now(); };
     }

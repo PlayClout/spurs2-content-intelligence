@@ -109,7 +109,7 @@ script = [
   () => json(200, true),
   () => json(200, { items: [{ id: 777, media_id: 46000301, comment: "Castle at the buzzer [clout:opp-live-1]", start_timestamp: 4500, end_timestamp: 13972 }], total: 1, page: 1, limit: 200 }),
 ];
-const live = await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-1" }, confirmation);
+const live = await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-1" }, confirmation, false, async () => true);
 const post = calls[1];
 check(calls[0].method === "GET" && calls[0].url === "https://media.dev.scoreplay.io/v1/media/46000301/logs?page=1&limit=200", "live: idempotency read hits GET /media/{id}/logs");
 check(post.method === "POST" && post.url === "https://media.dev.scoreplay.io/v1/video/logs", "live: POST /video/logs on configured base");
@@ -125,7 +125,7 @@ let e401 = ""; try { await sp.whoami(); } catch (e) { e401 = String((e as Error)
 check(e401.includes("401") && e401.includes("whoami"), "live: 401 surfaces with permission hint");
 calls.length = 0;
 script = [() => json(200, { items: [], total: 0, page: 1, limit: 200 }), () => json(500, { message: "INVALID_PAYLOAD" })];
-let e500 = ""; try { await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-2" }, confirmation); } catch (e) { e500 = String((e as Error).message); }
+let e500 = ""; try { await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-2" }, confirmation, false, async () => true); } catch (e) { e500 = String((e as Error).message); }
 check(e500.includes("500") && calls.length === 2, "live: 500 on /video/logs NOT retried (ScorePlay uses 500 for bad payloads)");
 calls.length = 0;
 script = [() => json(503, { message: "BUSY" }, { "Retry-After": "0" }), () => json(200, { media: [], count: 0 })];

@@ -21,7 +21,7 @@
  */
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
-import { canWrite, filterTags, type WriteRequest } from "./writeback";
+import { canWrite, filterTags, rightsTagIds, type WriteRequest } from "./writeback";
 
 export type Mode = "live" | "fixture";
 export interface Result<T> { mode: Mode; data: T; wouldSend?: unknown }
@@ -234,14 +234,14 @@ export interface MomentLog {
   playerIds?: number[];
 }
 
-export function buildVideoLogPayload(m: MomentLog) {
+export function buildVideoLogPayload(m: MomentLog, confirmedRights = false) {
   if (!Number.isFinite(m.startSec) || !Number.isFinite(m.endSec) || m.startSec < 0 || !(m.endSec > m.startSec)) throw new Error("video log: finite nonnegative startSec and endSec > startSec required");
   if (!Number.isSafeInteger(m.mediaId) || m.mediaId <= 0 || !Number.isSafeInteger(m.companyId) || m.companyId <= 0) throw new Error("video log: invalid media/company id");
   if (!m.ref || /[\[\]\r\n]/.test(m.ref)) throw new Error("video log: invalid marker reference");
   if (m.playerIds?.some((id) => !Number.isSafeInteger(id) || id <= 0)) throw new Error("video log: invalid player id");
   const keys = ["mediaId", "companyId", "startSec", "endSec", "ref", "label", "tags", "playerIds"];
   if (Object.keys(m).some((key) => !keys.includes(key))) throw new Error("video log: field outside write allow-list");
-  const tags = filterTags(m.tags);
+  const tags = filterTags(m.tags, confirmedRights);
   if (tags.dropped.length) console.warn("ScorePlay raw_tags dropped (not allowed):", tags.dropped.join(", "));
   return {
     company_id: m.companyId,
@@ -277,8 +277,8 @@ async function existingLog(mediaId: number, ref: string) {
  * Idempotent write-back. Skips the POST if a log with our marker already exists (webhook/worker retries are safe).
  * Live: POST then re-read to return the created entry (ScorePlay returns only `true`; preview urls arrive later).
  */
-export async function writeMomentAsVideoLog(m: MomentLog, confirmation?: Pick<WriteRequest, "confirmedBy" | "confirmedAt" | "source">, reconcileOnly = false): Promise<Result<{ created: boolean; entry: SPVideoLogEntry | null }>> {
-  const payload = buildVideoLogPayload(m);
+export async function writeMomentAsVideoLog(m: MomentLog, confirmation?: Pick<WriteRequest, "confirmedBy" | "confirmedAt" | "source"> & { kind?: WriteRequest["kind"] }, reconcileOnly = false, currentApproval?: () => Promise<boolean>): Promise<Result<{ created: boolean; entry: SPVideoLogEntry | null }>> {
+  const payload = buildVideoLogPayload(m, confirmation?.kind === "rights_record");
   const existing = await existingLog(m.mediaId, m.ref);
   if (existing) return { mode: mode(), data: { created: false, entry: existing } };
 
@@ -299,6 +299,7 @@ export async function writeMomentAsVideoLog(m: MomentLog, confirmation?: Pick<Wr
   }
   const gate = await canWrite();
   if (!gate.allowed) return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: gate.reason } };
+  if (!currentApproval || !await currentApproval()) return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: "Current approval unavailable or changed before send" } };
   const ok = await api<boolean>("/video/logs", { method: "POST", body: JSON.stringify(payload), retry: false });
   if (ok !== true) throw new ScorePlayError(200, "/video/logs", `unexpected response ${JSON.stringify(ok)}`);
   const entry = await existingLog(m.mediaId, m.ref);
@@ -377,4 +378,18 @@ export async function getRightsInputs(mediaId: number, opts: { teamSeasonId?: nu
     rightsCache.delete(key);
     return { status: "needs_review", mode: mode(), reason: "ScorePlay rights metadata read failed; no clearance inferred" };
   }
+}
+
+/** Narrow transport used only by the single confirmed-rights queue. Checks settings immediately before mutation. */
+export async function writeRightsTagOptions(mediaId: number, method: "POST" | "DELETE", ids: number[], owned: number[], confirmation: WriteRequest, currentApproval: () => Promise<boolean>) {
+  if (!["POST", "DELETE"].includes(method) || confirmation.kind !== "rights_record" || !confirmation.confirmedBy || !Number.isFinite(Date.parse(confirmation.confirmedAt)) || !["live", "cache"].includes(confirmation.source)) throw new Error("Tags require a confirmed live rights record");
+  const allowedIds = Object.values(rightsTagIds());
+  if (!Number.isSafeInteger(mediaId) || mediaId <= 0 || !ids.length || ids.some((id) => !allowedIds.includes(id) || (method === "DELETE" && !owned.includes(id)))) throw new Error("Tag mutation outside owned allow-list");
+  const body = { tag_option_ids: [...new Set(ids)] };
+  const gate = await canWrite();
+  if (!gate.allowed) return { sent: false as const, method, path: `/media/${mediaId}/tags`, body, held: gate.reason };
+  if (!await currentApproval()) return { sent: false as const, method, path: `/media/${mediaId}/tags`, body, held: "Approval changed before send" };
+  await api(`/media/${mediaId}/tags`, { method, body: JSON.stringify(body), retry: false });
+  clearRightsCache();
+  return { sent: true as const };
 }

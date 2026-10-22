@@ -4,10 +4,13 @@ import * as sp from "../shared/clients/scoreplay";
 
 const saved = { ...process.env };
 const jobs = new Map<string, WriteJob>(); let killed = false;
+const jobLocks = new Map<string, Promise<unknown>>();
 const adapter: WriteStore = {
+  withJobLock: async (id, work) => { const task = (jobLocks.get(id) ?? Promise.resolve()).then(work); jobLocks.set(id, task.catch(() => {})); return task; },
   insertOnce: async (key, request) => { if (!jobs.has(key)) jobs.set(key, { id: key, request, state: "pending", attempts: 0 }); return structuredClone(jobs.get(key)!); },
   get: async (key) => structuredClone(jobs.get(key) ?? null),
   update: async (key, change) => { Object.assign(jobs.get(key)!, change); },
+  isCurrent: async () => true,
   getKillSwitch: async () => killed,
   setKillSwitch: async (value) => { killed = value; },
 };
@@ -41,7 +44,7 @@ try {
   assert.equal((await enqueueWrite(request)).id, first.id);
   await setKillSwitch(true); await sendWrite(first.id);
   assert.equal((await writeStatus(first.id))!.state, "held"); assert.equal(mutations.length, 0);
-  await setKillSwitch(false); await sendWrite(first.id); await sendWrite(first.id);
+  await setKillSwitch(false); await Promise.all([sendWrite(first.id), sendWrite(first.id)]);
   assert.equal((await writeStatus(first.id))!.state, "synced"); assert.equal(mutations.length, 1);
   // New worker retries an ambiguous result: provider marker prevents a second POST.
   await adapter.update(first.id, { state: "failed" }); await sendWrite(first.id);
