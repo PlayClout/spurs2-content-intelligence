@@ -82,7 +82,7 @@ Quality targets for verification, not current performance claims: visible acknow
 
 ### Automatic ScorePlay write-back and channel packaging
 
-Approval of an exact clip revision automatically queues a source timeline log in ScorePlay with timecodes, evidence, tags and the approval reference. Once final renditions are ready, the worker automatically uploads them into the approved output collection and attaches source/revision/channel metadata. No per-clip sync action is required. Persist pending/synced/held/failed state and provider IDs; use idempotency keys, retry/backoff and reconciliation to avoid duplicate logs or uploads. Existing taxonomy/workspace sign-off holds live writes until configured, then queued eligible writes resume after current-state checks.
+Approval of an exact clip revision automatically queues a source timeline log in ScorePlay with timecodes, evidence, tags and the approval reference. Once final renditions are ready, the worker automatically uploads them into the approved output collection and attaches source/revision/channel metadata. No per-clip sync action is required. Persist pending/synced/held/failed state and provider IDs; use idempotency keys, retry/backoff and reconciliation to avoid duplicate logs or uploads. Existing taxonomy/workspace sign-off holds live writes until configured, then queued eligible writes resume after current-state checks. Source logs, rendition uploads and rights metadata (§4) share **one write-back module, one gate and one allow-list**; editorial approval queues the source log, while `rights:` tags are written only from a confirmed rights record, never inferred from the approval itself.
 
 The publisher/editor takes an approved clip into a channel packaging workspace and selects all relevant social destinations plus the fan app. Offer Instagram Reels/Stories/Feed, TikTok, YouTube Shorts/Highlights, X video/photo and an explicit owned fan-web profile where appropriate to the source. Suggest and preview a separate cut, duration, aspect/resolution, crop, caption/safe-zone placement, audio, poster and copy for each destination. Reuse `pipeline/channel-profiles.json` and extend it for the app rendition.
 
@@ -203,11 +203,81 @@ candidate → evaluate → cleared ───────────────
 - Bind approval and release permission to the edit-manifest hash, dependencies, source versions, context, and policy version. A trim expansion, added clip, restored audio, changed headline, or new destination invalidates approval.
 - The server authorizes render jobs and signed final-asset access. Hiding a browser export button or writing a ScorePlay tag is not access enforcement. Existing preview/download routes and all OpenCut export entry points must be audited.
 - If a source decision is revoked/expired, invalidate dependent recommendations, fan publications/search eligibility, projects, and new exports; revoke links under our control. Do not promise to recall downloaded copies or externally published media automatically.
-- Write the verdict, source timecoded evidence, selected/rejected ranges, remediation lineage, and output reference back to ScorePlay after taxonomy agreement. Record `pending / synced / failed`; reconcile ambiguous retries.
+- Write the confirmed verdict, source timecoded evidence, selected/rejected ranges, remediation lineage, and output reference back to ScorePlay through the gated write-back path below, after taxonomy agreement. Record `pending / synced / held / failed`; reconcile ambiguous retries.
+
+### Rights metadata stage: detect, infer, write back
+
+Most source media carry little or no rights metadata. This rules-engine stage runs per ScorePlay media item before the destination decision and has three steps. ScorePlay metadata is optional input; the media content (Pegasus facts) is the primary source for content fields.
+
+1. **Detect.** Read the item (`GET /media/{id}` with tags) and score it against the required-field checklist. Status is `complete`, `incomplete` (list the missing fields) or `absent`. An empty or `0` field is *missing*, never permission.
+2. **Infer.** For missing content fields only, derive values from cached Pegasus facts for the analysed range. Contract fields cannot be inferred from pixels; they stay `unknown` until ScorePlay or an authorized reviewer supplies them.
+3. **Write back.** After a person confirms the record, write it to ScorePlay through the single gated write-back path.
+
+| # | Required field | Kind | Source if missing | Complete when |
+|---|---|---|---|---|
+| F1 | Brands/logos (name, category, location, time range) | content | Pegasus `detectedSponsors` | A list or an explicit "none seen" for the analysed range |
+| F2 | On-screen text (odds/promo/other, time range) | content | Pegasus on-screen text | As F1 |
+| F3 | Music/audio (stadium or recorded music, commentary) | content | Pegasus `audioRisks` | As F1 |
+| F4 | Identifiable players | content | Pegasus `identifiablePeople` + roster | Players resolved to canonical IDs, or "none identifiable"; uncertain names stay uncertain |
+| F5 | Crowd faces / close-ups | content | Pegasus `crowdPrivacy` | Both booleans present |
+| F6 | Competition/broadcast markings | content | Pegasus `competitionMarkings` | As F1 |
+| F7 | Access window (`accessible_from` / `accessible_until`) | contract | none: ScorePlay or reviewer | Non-zero value, or reviewer-confirmed "no window restriction" |
+| F8 | Usage / custom terms | contract | none: ScorePlay or reviewer | Value present, or reviewer-confirmed |
+| F9 | Partner DRM windows (`external_accounts_drms`) | contract | none: ScorePlay or reviewer | Read succeeded; list or confirmed empty |
+| F10 | Sponsor and player tags on the source | contract | none (read only) | Read succeeded |
+
+**Precedence, field by field:** existing ScorePlay or human metadata beats inferred metadata. Inferred values fill gaps only and never overwrite an existing value. When existing and inferred values disagree (for example a sponsor tag Pegasus did not see, or a brand Pegasus saw that the tags omit), keep the existing value, record the conflict, and set the record to `needs_review`. Every field stores `provenance` (`existing_scoreplay`, `existing_human`, `inferred`, `inferred_confirmed`, `unknown`), evidence references with source time ranges, a categorical confidence (`observed`, `uncertain`; Pegasus returns no calibrated score, so no numbers are invented), and the confirming actor.
+
+**Unknown never clears.** Any required field still `unknown` or in conflict at confirmation time makes the written verdict `needs_review`, never `cleared`. An inferred-only record can be written as `cleared` only after an authorized reviewer confirms it. A desk decision that clears one destination is not a ScorePlay `rights: cleared` tag. An asset-wide tag reflects only what was analysed: if the analysed windows do not cover the whole asset, the record also carries `rights: partial coverage`. Seeded or fixture facts never produce live writes.
+
+**Per-item rights record (stored locally, summarised in ScorePlay):** media ID, analysed ranges, completeness status, fields with provenance/evidence/confidence, verdict state (`cleared`, `needs_remediation`, `needs_review`, `blocked`, `expired`), rule-set version, engine version, run ID, facts hash, source (`live`, `cache`, `fixture`, `seeded`), confirmer and confirmation time, and write-back state.
+
+**What is written to ScorePlay, and nothing else:**
+
+| Target | Endpoint | Use | Status |
+|---|---|---|---|
+| Rights state + provenance tags on the source media | `POST`/`DELETE /media/{id}/tags` with `tag_option_ids` | One state tag (`rights: cleared` / `needs remediation` / `needs review` / `blocked` / `expired`) plus `rights: inferred` and, when applicable, `rights: partial coverage` | Endpoint verified in the ScorePlay spec. Tag options are created once at setup (`POST /tag/options`, search first: no uniqueness rule) under one `Spursx2 AI: rights` tag filter |
+| Timecoded audit entry | `POST /video/logs` (`company_id` from the media, `start_offset`/`end_offset` in seconds) | One line per confirmed record: state, detected elements with times, provenance, rule-set version, run ID, confirmer, `[clout:rights-<mediaId>-<hash>]` marker; allow-listed `raw_tags` only, because `raw_tags` auto-create tags | Verified in the spec; existing `writeMomentAsVideoLog`/`findOurLog` pattern |
+| `PUT /media/{id}/details` | — | **Not used:** it overwrites `description` | Verified overwrite |
+| `accessible_from` / `accessible_until` | — | **Not written:** asset-wide, and expiry hides media for users. Read only | Verified writable, deliberately excluded |
+| Custom fields | — | No such endpoint | Verified absent |
+
+**Write rules:**
+- **Gate:** writes happen after human confirmation of the rights record. Writing inferred records before confirmation is an open decision; the default is no.
+- **Allow-list:** one list holds every tag and field we may write (the TAXONOMY groups plus the `rights:` options above); anything else is rejected before send.
+- **Idempotency:** the write key is `mediaId + rule-set version + facts hash + verdict`. Read current tags, then delete only `rights:` tags our own records wrote (stored tag IDs) and add the new ones. A `rights:` tag we did not write is existing human metadata: it wins, and a different inferred value becomes a conflict. Logs are skipped when our marker already exists. Retries and restarts never duplicate a log or tag. Tag writes fire `media.update`; ignore it when our stored record is unchanged.
+- **Dry-run and kill switch:** dry-run (the current held mode) records the exact payload that would be sent and labels it DRY RUN. A kill switch (an admin toggle stored in the database, plus an env override) is checked immediately before every send, including retries; when on, work moves to `held`.
+
+### Configurable rights rules
+
+Rules are data, not code. An admin **Rights rules** screen lists every rule with its label, `illustrative` or `verified` tag, scope, severity, effective dates and citation. Admins can enable or disable a rule, edit its parameters, territory and platform scope and its outcome (`block`, `review`, `remediate`), and add a new rule (for example a territory's gambling-advertising law, an AI-content disclosure duty or a music-licensing rule) without a code change. Saving creates a draft; **Validate** runs the schema and lint; **Preview** evaluates the draft against sample media using cached facts and shows which verdicts would change; **Activate** publishes a new immutable rule-set version.
+
+```typescript
+type RuleDef = {
+  id: string; label: string; status: "illustrative" | "verified";
+  citation?: { title: string; url?: string; clause?: string };
+  enabled: boolean;
+  scope: { territories: string[] | "*"; platforms: string[] | "*"; uses: string[] | "*" };
+  when: Condition;                       // over rights-record fields, Pegasus facts and context
+  outcome: "blocked" | "needs_review" | "needs_remediation" | "expired";
+  remedy?: "mute_audio" | "trim" | "hold_until";
+  effectiveFrom?: string; effectiveTo?: string; // UTC
+  params?: Record<string, string | number | boolean | string[]>;
+};
+type Condition =
+  | { all: Condition[] } | { any: Condition[] } | { not: Condition }
+  | { fact: string; op: "eq" | "neq" | "in" | "contains" | "exists" | "missing" | "lt" | "gt" | "before" | "after"; value?: unknown };
+```
+
+The condition language is that small JSON tree, evaluated by a pure interpreter; there is no `eval` and no user code. `fact` paths come from a fixed registry (for example `brands[].category`, `onScreenText[].kind`, `audio.music`, `players[].rosterStatus`, `media.accessibleUntil`, `context.territory`, `content.aiGenerated`). The lint rejects unknown paths, operator/type mismatches, empty scopes, `effectiveTo` before `effectiveFrom`, and `verified` without a citation.
+
+Storage: `rights_rule` (current draft rows, JSON definition), `rights_rule_set_version` (immutable: version number, rules JSON snapshot, content hash, activated by/at, note) and `rights_rule_audit` (who, when, action, rule ID, JSON diff). The six existing rules (access window, partner windows, brand category by territory, partner conflict, departed player, music) are seeded from `pipeline/rules/` as version 1, labelled `illustrative`.
+
+Engine contract: the evaluator is deterministic. It loads the **active** rule-set version at evaluation time, applies only rules whose scope and effective dates match the context, and pins `ruleSetVersion` on every decision and rights record. Deny beats allow (precedence `expired > blocked > needs_review > needs_remediation > cleared`), and a rule whose fact is `unknown` yields `needs_review`, never `cleared`. Activating a version queues re-evaluation of affected current decisions from cached facts only: no new Pegasus calls. A decision whose state changes supersedes the old one and follows the existing withdrawal and write-back rules. The LLM may explain a verdict; it never creates or changes one.
 
 ### Gaps in the existing code to fix
 
-`shared/compliance.ts` currently reports territory restrictions as reasons without evaluating a requested territory. `web/lib/actions.ts` blocks approval only for `blocked`; `unknown` and `restricted` are not a sufficient destination-clearance gate. The render worker also needs variant/context-aware checks and a revision binding. `shared/storage.ts` can still upload renders to S3 and `/renders` can redirect to a presigned bucket URL; both must be local-only. Extend the existing modules and tests; do not declare the new compliance behavior already implemented.
+`shared/compliance.ts` currently reports territory restrictions as reasons without evaluating a requested territory. `web/lib/actions.ts` blocks approval only for `blocked`; `unknown` and `restricted` are not a sufficient destination-clearance gate. The render worker also needs variant/context-aware checks and a revision binding. `shared/storage.ts` can still upload renders to S3 and `/renders` can redirect to a presigned bucket URL; both must be local-only. `shared/clients/scoreplay-rights.ts` emits restrictions only for fields that are present, so an item with no rights metadata produces no restriction and `evaluate()` returns `cleared`; there is no completeness check. `shared/content-rules.ts` already turns Pegasus facts into restrictions, but its rules are a fixed JSON file loaded at import, with no versioning, scope dates or per-field provenance. The final-render write-back sends `raw_tags: ["clout-approved", …]`, which is outside the taxonomy. Extend the existing modules and tests; do not declare the new compliance behavior already implemented.
 
 ## 5. Hype and relevance ranking
 
@@ -301,6 +371,8 @@ flowchart TB
   Rights -->|permitted remedy| Clean[Local derivative render + verification]
   Clean --> Rights
   Rights -->|cleared| Rank[Explainable candidate ranking]
+  RuleSet[Active rights rule-set version] --> Rights
+  Rights --> RMeta[Rights record: detect → infer → confirm → gated ScorePlay write-back]
   Facts[Verified game facts + stat claims] --> Rank
   Social[Authorized X sample / labeled fixtures] --> Rank
   Rank --> Desk[Producer desk + compilation planner]
@@ -327,6 +399,8 @@ ScorePlay owns source media and source metadata. Spursx2 AI owns evidence, polic
 | `SourceAsset` | Origin ScorePlay media/event/company, reconciled team media ID, rendition, version, TwelveLabs asset/indexed IDs, refreshable media reference. |
 | `Moment`, `Shot`, `MomentSource` | Canonical event/play, type, source-relative bounds, local analysis basis, player/team attribution, coarse zone, camera cues, evidence references. |
 | `PolicyRule`, `RightsDecision` | Versioned clause, approved issuer, context, matched timecodes, status, allowed actions, remedies, validity, fingerprint. |
+| `RightsRule`, `RuleSetVersion`, `RuleAudit` | JSON rule definition (scope, condition, outcome, effective dates, citation, illustrative/verified); immutable activated versions with content hash; who/when/diff audit. Decisions pin the version. |
+| `RightsRecord`, `WriteBackJob` | Per-media completeness, per-field value/provenance/evidence/confidence, verdict, rule-set and engine versions, run ID, confirmer; one write job queue for source logs, uploads and rights metadata with idempotency key and pending/synced/held/failed state. |
 | `Derivative`, `RemediationJob` | Parent source/ranges, transformation recipe, artifact hash, verification result, new rights evaluation. |
 | `Evidence`, `SocialCluster` | Observed/provider/fixture mode, source IDs/URLs, event time vs observed time, sample coverage, freshness, canonical entities. |
 | `StatClaim` | Computed result, scope/query/proof/completeness, source/as-of times, exact wording, validation state, dependent outputs. |
@@ -408,6 +482,8 @@ The detailed, source-linked tailoring instructions, actual extension points, tim
 | `pipeline/render-local.ts`, `render-backend.ts`, `channel-profiles.json` | Multi-entry render plan, approved audio/text/graphics, bounded proxy variants, per-format output checks. |
 | `shared/schemas.ts`, `shared/db-schema.ts` | Extend existing entities with decision/evidence/revision lineage. Migrate explicitly; do not rewrite unrelated tables. |
 | `shared/clients/publish.ts` | Keep simulated event distribution. Existing live-X functionality is not authorization to publish club footage. |
+| Proposed `shared/rights/metadata.ts`, `shared/rights/rules-store.ts`, `shared/rights/condition.ts` | Completeness checklist and field-by-field merge; rule-set versions and audit; safe JSON condition evaluator. |
+| `shared/clients/scoreplay.ts` write functions | The single write-back module: one gate (`writesEnabled` + kill switch + allow-list + current-state check), dry-run payloads, tag read-diff-write under the `rights:` prefix, marker-based log idempotency. |
 
 ## 10. Build order and bounded work packets
 
@@ -446,6 +522,8 @@ Work packets are instructions for future implementation, not a claim that separa
 16. **Viewer context:** social permission alone cannot publish to the fan app. Server-resolved entitlement/territory is checked for search, thumbnails, detail, and playback. Metadata fallback is labeled and no-match does not synthesize footage.
 17. **Admin polish:** hot queue → preview → package flow preserves edits/focus during live updates; keyboard navigation, autosave recovery, inline validation, reduced motion and laptop layouts pass visual/interaction QA.
 18. **Fast-response signals:** an authorized external signal resolves to the right clip with source, timestamps and evidence; duplicate/stale/wrong-match signals do not create repeated actionable alerts. Claim/snooze/dismiss work, and a blocked clip cannot become publishable because it is hot.
+19. **Rights metadata stage:** an item with no rights metadata is detected as `absent`; missing content fields are inferred from cached Pegasus facts with evidence; existing values are never overwritten and conflicts become `needs_review`; nothing is written before confirmation; the confirmed record writes only allow-listed `rights:` tags and one marked log, idempotently; dry-run and the kill switch stop live sends.
+20. **Configurable rules:** an admin disables a rule, edits a parameter and adds a JSON rule with a citation; validate and preview run before activation; activation creates an immutable version with an audit diff; affected decisions re-evaluate from cached facts and record the new version.
 
 
 **Three-minute demo:** outside signal spikes around a player/play → Act now surfaces the matching clip with source, freshness and why-now evidence → editor opens the draft, confirms metadata, adjusts and approves → publisher/editor prepares channel-specific social and app renditions → automatic ScorePlay source log and completed uploads enrich the library → editor publishes the app rendition → fan A sees a favorite-player match while fan B sees interest-driven ordering → natural-language search retrieves that same approved derivative. Follow one canonical moment and show its source/approval/output lineage throughout. ScorePlay completion must be backed by provider IDs; held/simulated writes remain labeled. If analysis/rendering is still running, use a clearly labeled prepared continuation. Keep the primary story focused; rights-block, withdrawal, compilation and recovery checks remain required follow-up proofs.
