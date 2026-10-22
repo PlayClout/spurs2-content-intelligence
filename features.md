@@ -27,10 +27,10 @@ Keep stack changes minimal. We already have most of what we need.
   - Admin/editor dashboard stays at `/`.
   - Fan app routes go under `/fan`.
   - No native app, no install flow.
-- **Database:** current Supabase Postgres through Drizzle schema in `shared/db-schema.ts`.
-- **Backend worker:** current `pipeline/worker.ts` running on AWS Fargate, with M5 as fallback.
+- **Database:** current Supabase Postgres through Drizzle schema in `shared/db-schema.ts`. Metadata only; no media or frames.
+- **Backend worker:** current `pipeline/worker.ts` running locally on team laptops (M5 primary). No cloud worker.
 - **Media processing:** current FFmpeg renderer in `pipeline/render-local.ts` and `render-backend.ts`.
-- **Storage:** current private S3 render storage in `shared/storage.ts` and `/renders` route.
+- **Storage:** local render storage on the worker laptop (`RENDER_STORAGE=local`), served by the `/renders` route behind the app lock. No cloud storage of club media.
 - **Partner integrations:** current ScorePlay and TwelveLabs clients in `shared/clients/`.
 - **UI/design:** current PlayClout / Spursx2 AI dark token style in `web/app/globals.css`, current shadcn-style UI components, design-system guidance in `design-system/`.
 
@@ -62,6 +62,7 @@ Keep stack changes minimal. We already have most of what we need.
 - No new auth provider for P0.
 - No full OpenCut merge.
 - No public posting of club content.
+- No cloud worker or cloud storage for club media (no Fargate, no S3). Source copies, renders and frame grabs stay on team laptops and are purged after the event.
 - No live ScorePlay writes until taxonomy is approved.
 - No AI-generated fan-requested cuts. Search returns approved published derivatives only.
 
@@ -112,7 +113,7 @@ Local interaction feedback target is 100ms; supported matched external signals s
 | A1.1 | Keep current three-pane layout as the base editor desk | 0.5 | `web/app/page.tsx`, `OpportunityCard`, `ReviewPane` | Existing queue/review/decision bar still builds |
 | A1.2 | Rename and label surface as editor/admin where useful | A1.1 | `TopChrome` | UI language matches design: editor validates, not fan viewer |
 | A1.3 | Keep org switcher and queue filters | A1.1 | `QueueFilters`, `listOpportunities` | Producer can filter by status, audience, sport |
-| A1.4 | Keep native video/image preview | A1.1 | `ReviewPane`, `/renders` route | Drafts/finals play from S3 signed URLs |
+| A1.4 | Keep native video/image preview | A1.1 | `ReviewPane`, `/renders` route | Drafts/finals play and seek from local `/renders` |
 | A1.5 | Keep trim and copy editing | A1.1 | `saveTrim`, `saveCopy` | Editor can adjust seconds and channel copy |
 | A1.6 | Keep approve/reject flow | A1.1 | `approveOpportunity`, `rejectOpportunity` | Approve queues final render; reject stores reason |
 
@@ -126,6 +127,7 @@ Local interaction feedback target is 100ms; supported matched external signals s
 | A2.4 | Add held lanes: Ready, Cleaning, Needs review, Blocked, Rejected | B2.2 | current status filters | Producer can inspect held clips and reasons |
 | A2.5 | Add context fields to the review header | B2.1 | `DestinationContext` | Shows platform, territory, use, language, release time, policy version |
 | A2.6 | Add current exact revision hash and approval state | B4.2 | publication/approval module | UI shows whether approval is current or invalidated |
+| A2.7 | Add rights findings panel with timecode seek and override reason row | A2.1, B2.10 | ReviewPane, compliance-badge | Each finding seeks the draft within 1 s; needs_review approval requires a reason |
 
 ## Phase A3 - Compilation / montage editor without overbuilding
 
@@ -135,7 +137,7 @@ Local interaction feedback target is 100ms; supported matched external signals s
 | A3.2 | Add reorder/remove controls | A3.1 | local component state then server action | Order persists in a `CompilationManifest` |
 | A3.3 | Add duration budget display | A3.1 | `channel-profiles.json` | UI shows target duration and over/under budget |
 | A3.4 | Add why-selected per compilation entry | B5.2 | recommendation evidence | Each entry explains why selected and why placed there |
-| A3.5 | Queue compilation render through worker | B5.3 | `pipeline/render-local.ts`, `jobs` | Three-clip montage renders locally/Fargate |
+| A3.5 | Queue compilation render through worker | B5.3 | `pipeline/render-local.ts`, `jobs` | Three-clip montage renders locally |
 | A3.6 | Keep FFmpeg fallback even if OpenCut spike fails | none | existing renderer | Demo does not depend on OpenCut |
 
 ## Phase A3b - Approved clip to every relevant destination
@@ -152,11 +154,12 @@ Local interaction feedback target is 100ms; supported matched external signals s
 
 | ID | Task | Depends on | Reuse | Done when |
 |---|---|---|---|---|
-| A4.1 | Keep demo Reset/Replay controls | current work | `DemoControls`, `resetDemo`, `replayDemo` | Hosted URL can reset and replay real timeline |
+| A4.1 | Keep demo Reset/Replay controls | current work | `DemoControls`, `resetDemo`, `replayDemo` | Locked demo URL can reset and replay real timeline |
 | A4.2 | Add worker/job status panel | B6.1 | `LatencyDrawer`, `listJobs` | Operator can see queued/running/failed jobs |
-| A4.3 | Add integration status panel | B1, B2 | `scoreplay-preflight`, `footage-map` output | Shows ScorePlay live, TwelveLabs live, S3, writes held |
+| A4.3 | Add integration status panel | B1, B2 | `scoreplay-preflight`, `footage-map` output | Shows ScorePlay live, TwelveLabs live, local storage, writes held |
 | A4.4 | Add taxonomy readiness panel | B1.4 | `docs/TAXONOMY.md`, held write payload | Shows writes held until sign-off |
 | A4.5 | Add safe requeue failed job action | B6.2 | `jobs` table | Failed demo jobs can be retried without DB shell |
+| A4.6 | Rehearse demo 3x and record backup video | all P0 | DemoControls | Under 4 min three times; purge run after each |
 
 ## Phase A5 - OpenCut spike as bounded admin feature
 
@@ -246,6 +249,7 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B1.3 | Preserve filename-based footage map | none | `scripts/build-footage-map.ts`, `data/footage-map.json` | 58/58 TwelveLabs videos match ScorePlay media |
 | B1.4 | Add warning for TwelveLabs custom ID mismatch | B1.3 | evidence already found | System knows organizer custom IDs do not resolve in our ScorePlay team instance |
 | B1.5 | Track missing Spurs/NBA index | B1.3 | `data/footage-map.json` | Admin sees Spurs videos are ScorePlay-only until index is supplied |
+| B1.6 | Check real rights fields on demo media | B1.3 | scoreplay-preflight, footage map | Note lists per rule "real" or "seed" for 3-5 demo clips |
 
 ## Phase B2 - Rights and destination context
 
@@ -256,6 +260,13 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B2.3 | Treat unknown as not cleared for fan distribution | B2.1 | compliance module | Unknown cannot publish to fan catalog |
 | B2.4 | Recheck at approval, render start and publish | B2.1 | `approveOpportunity`, `handleRenderFinal`, publication module | Changing context invalidates stale approval |
 | B2.5 | Bind approval to exact revision hash | B4.2 | `trimOverride`, render manifest | Editing trim/copy/dependencies invalidates approval |
+| B2.6 | Add rights rule engine `shared/rights/engine.ts` with illustrative policy v0 (`rights-rules.json`, `brands.json`) | B2.1 | `shared/compliance.ts`, `scoreplay-rights.ts` | Rules R1-R6 return the design.md `RightsStatus` per context; policy is labelled illustrative; engine is pure |
+| B2.7 | Add golden rights tests | B2.6 | `scripts/rules-test.ts` | Expired window → expired, unknown → needs_review, alcohol brand blocked in FR only, music → needs_remediation, truncated analysis → needs_review |
+| B2.8 | Extend Pegasus schema with brand location/time and on-screen text; treat truncation as not checked | B2.6 | `shared/moment-manifest.ts`, `pipeline/moment.ts` analyzeWindow | Two live windows return brand location + times; `finish_reason != stop` yields needs_review |
+| B2.9 | Add cached ScorePlay rights reads (`accessible_*`, partner DRMs, roster, external groups) | B1.6 | `shared/clients/scoreplay.ts` | Second load from cache; a failed read yields needs_review, never cleared |
+| B2.10 | Add `rights_decisions` + `rights_findings` tables; worker writes one decision per context | 0.1, B2.6 | `shared/db-schema.ts`, `handleProcessMoment` | New moment creates a decision with findings and timecodes; opportunity shows current status |
+| B2.11 | Add approval audit, reason codes and out-of-window recheck job | B2.4, B2.10 | `approveOpportunity`, `saveTrim`, `jobs` | Every approve/override/reject/trim writes an audit row; out-of-window trim re-analyzes before approve |
+| B2.12 | Seed labelled SIMULATED rights cases | B2.10 | `scripts/seed.ts` | Expired window, ended partner window, departed player and brand case show SIMULATED; nothing written to ScorePlay |
 
 ## Phase B3 - Discovery, candidate storage and rejected reasons
 
@@ -346,6 +357,7 @@ Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichmen
 | B10.5 | Automatically upload completed channel/app renditions and sync output refs | B4.2, B10.3, B12.3 | ScorePlay upload/media/details API | Every completed eligible rendition is linked to its exact source, approval revision, channel and artifact |
 | B10.6 | Add idempotent retries and reconciliation | B10.4, B10.5 | DB-recorded write-back IDs, jobs | Retry/restart cannot duplicate source logs or uploads; transient failures back off; held writes resume automatically after workspace enablement |
 | B10.7 | Verify automatic approval-to-ScorePlay flow | B10.6 | integration tests | One approval creates the source log, completed variants upload automatically, and repeated jobs do not duplicate records |
+| B10.8 | Enforce write-back tag allow-list from TAXONOMY.md | B10.1 | `buildVideoLogPayload`, `docs/TAXONOMY.md` | Unknown tags (e.g. `clout-approved`) are rejected before send |
 
 ## Phase B11 - OpenCut adapter backend
 
@@ -376,6 +388,18 @@ Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichmen
 | B13.4 | Add explainable urgency scoring and lifecycle | B13.3 | ranking, source evidence | Act now/Rising/Watch use sampled acceleration, baseline counts, freshness and confidence; thresholds/hysteresis/expiry suppress noise; rights remain separate |
 | B13.5 | Emit durable deduplicated admin alerts and ownership state | B13.4 | editorial events, queue updates | Canonical play cooldowns, meaningful-change escalation, claim/snooze/dismiss and stale-feed states work across editors |
 | B13.6 | Verify signal-to-action flow and timing | B13.5, A0.6 | replay/integration tests | Fresh signal highlights the correct clip; duplicates/stale/wrong-match signals do not alert repeatedly; ingestion-to-alert target and upstream lag are measured separately |
+
+## Phase B14 - Event compliance and local-only footage hygiene (blocking)
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| B14.1 | Lock the app: shared-password middleware on every route incl. `/fan`, `/renders` and server actions; robots noindex | none | `web/app/layout.tsx` | Unauthenticated request to `/`, `/fan`, `/renders/*` and server actions (incl. `resetDemo`) is refused, also from another laptop on the LAN |
+| B14.2 | No cloud uploads of club media: `RENDER_STORAGE=local` only; remove S3 upload/presign path, AWS SDK, `cloud-proof`, `s3-live-test` and `infra/aws` | none | `shared/storage.ts`, `pipeline/moment.ts`, `pipeline/worker.ts`, `scripts/storage-test.ts` | `RENDER_STORAGE=s3` throws at start-up; storage-test proves there is no upload path; no `@aws-sdk` in any `package.json` |
+| B14.3 | Serve renders locally from the worker laptop behind the app lock (localhost/LAN only) | B14.1, B14.2 | `/renders` route | Drafts/finals play and seek (206) from local disk; no redirect off the machine; refused without the lock |
+| B14.4 | Keep publishing simulated-only | current | `shared/clients/publish.ts`, `publishOpportunity` | No live posting path or client `mode`; a test asserts every publish returns `mode: "simulated"` |
+| B14.5 | Release source in `finally`; delete frame grab after card | none | `pipeline/moment.ts` processMoment, `pipeline/render-local.ts` | Forced throw leaves 0 `source-*`; no `*.grab.png` remains |
+| B14.6 | Purge script + start-up sweep + teardown log (render root, `out/real-proof`, TMPDIR) | B14.5 | `scripts/purge-local-media.ts` (new) | `--all` leaves 0 files; log line `files_left=0` per laptop |
+| B14.7 | One-time AWS teardown (owner: ______) | none | `aws` CLI with the `clout-ci` profile | Fargate service stopped and deleted; `renders/cloudproof-*` and bucket `clout-ci-renders-271825827331` emptied and deleted (`NoSuchBucket`); worker secret, ECR repo, log group and keys deleted; output logged with a CT timestamp |
 
 ---
 
@@ -426,7 +450,7 @@ First concrete tasks:
 
 ## Step 1: Do not break the current demo
 - Keep current editor dashboard compiling.
-- Keep worker live.
+- Keep worker live on the laptops.
 - Keep ScorePlay writes held.
 - Keep live posting disabled.
 - Keep real Tottenham replay working.
@@ -514,7 +538,7 @@ Target a three-minute primary walkthrough. Use a pre-rendered, accurately labele
 7. Withdrawn clip disappears from feed, search, detail and new playback.
 8. A blocked or unknown-rights clip cannot publish to the fan app.
 9. A three-clip compilation can be approved, rendered and published.
-10. Hosted demo remains event-only, simulated/live labels stay visible, and no external club-content posting happens by default.
+10. Demo runs locally behind the app lock and remains event-only, simulated/live labels stay visible, and no external club-content posting happens by default.
 11. Approval automatically queues the ScorePlay source log; eligible finished renditions upload automatically. No per-clip manual sync step exists. Held/failed writes are visible and retries do not duplicate records.
 12. Publisher/editor can turn one approved clip into all relevant social and fan-app variants, edit their cuts/framing/copy, approve changed revisions and render them together.
 13. Each variant passes its own destination limits and rights checks. App publication/search/playback references the approved app rendition; retrying one failed social rendition does not rerender successful outputs.
@@ -522,6 +546,7 @@ Target a three-minute primary walkthrough. Use a pre-rendered, accurately labele
 15. Trim/crop changes, compilation chapters and metadata corrections preserve accurate clip-level attribution across renditions. Correcting identity refreshes feed/search metadata without leaving stale personalized results.
 16. Admin UX passes desktop/laptop visual QA, keyboard workflows, autosave/recovery and state-preserving live refresh; hot alert → playable review takes one click when the draft is ready.
 17. Authorized external signals highlight the correct hot clip with source, age, momentum baseline and why-now evidence. Duplicates and stale signals are suppressed, unavailable feeds are explicit, and rights-blocked clips stay blocked regardless of urgency.
+18. No club media leaves the team laptops: no cloud upload path exists, and the teardown log shows `files_left=0` per laptop after the event.
 
 ---
 
