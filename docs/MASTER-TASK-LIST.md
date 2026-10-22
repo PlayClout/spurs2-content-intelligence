@@ -220,7 +220,7 @@ Each agent edits **only** its own paths. Every `features.md` task row names its 
 
 ### 10.5 A1 implementation progress (2026-10-22)
 
-Working branch: `codex/agent-1-pipeline`. Only A1 paths and this progress log are edited. DONE means executed verification; PARTIAL means helpers/contracts exist but the shared integration is not complete.
+Draft PR: [#8](https://github.com/PlayClout/spurs2-content-intelligence/pull/8). Working branch: `codex/agent-1-pipeline`. Only A1 paths and this progress log are edited. DONE means executed verification; PARTIAL means helpers/contracts exist but the shared integration is not complete.
 
 | Tasks | Status | Evidence / next step |
 |---|---|---|
