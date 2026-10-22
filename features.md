@@ -1,6 +1,6 @@
 # Clout Content Intelligence - Features and Build Plan
 
-Source of truth: `design.md`  
+Source of truth: `design.md`
 Goal: build the **Assisted Auto-Production Engine** described there: an editor validates AI-surfaced moments, publishes approved versions to an event-only fan catalog, and fans get personalized feeds plus natural-language clip search over that approved catalog.
 
 This is a task breakdown, not a fresh product spec. Reuse the current repo aggressively.
