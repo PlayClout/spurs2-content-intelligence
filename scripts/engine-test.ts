@@ -70,6 +70,9 @@ const hits = [
 check(overlapRatio({ start: 4, end: 12 }, { start: 0, end: 8.8 }) >= SAME_PLAY && overlapRatio({ start: 4, end: 12 }, { start: 8.8, end: 17.5 }) < SAME_PLAY, "overlapRatio: same-play threshold separates the two soccer segments");
 const { paddedWindow } = await import("../pipeline/render-local");
 check(paddedWindow(8.8, 17.53, 17.519987, 3).end <= 17.519987, "paddedWindow end never exceeds true duration (17.519987 must not round up to 17.520)");
+// cross-platform: Debian ffmpeg 5.1 reports the SAME file as 17.520000 / 13.973000 (rounded up). The window must
+// still land inside the true duration TwelveLabs holds (17.519987 / 13.972331).
+check(paddedWindow(8.8, 17.53, 17.52, 3).end < 17.519987 && paddedWindow(6, 12, 13.973, 3).end < 13.972331, "paddedWindow stays inside true duration even when Linux ffprobe rounds the duration up");
 const pick = pickNew(hits, fp, [{ mediaId: 1, window: { start: 6, end: 12 } }, { mediaId: 2, window: { start: 4, end: 12 } }]);
 check(pick?.hit.rank === 3 && pick.footage.scorePlayMediaId === 2, "pickNew: skips hits overlapping fired plays, takes best remaining (soccer 8.8-17.5s)");
 check(pickNew(hits, fp, [{ mediaId: 1, window: { start: 0, end: 14 } }, { mediaId: 2, window: { start: 0, end: 17.5 } }]) === null, "pickNew: nothing new -> null (no duplicate card)");

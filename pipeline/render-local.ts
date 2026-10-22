@@ -53,10 +53,13 @@ export async function probeSize(path: string): Promise<[number, number]> {
 
 export function paddedWindow(startSec: number, endSec: number, sourceDuration: number, pad = PAD_SEC) {
   const s = Math.max(0, startSec - pad);
-  const e = Math.min(sourceDuration, endSec + pad);
-  // round end DOWN: toFixed rounds half-up, and 17.519987 -> 17.520 exceeds the true duration (TwelveLabs 400s on it)
+  // Keep the end a hair (50ms, invisible) inside the measured duration. Different ffprobe builds report the same
+  // file differently (M5 ffmpeg 9: 13.972331s; Debian ffmpeg 5.1: 13.973000s), and TwelveLabs 400s on an end
+  // past ITS duration. Flooring alone can't undo a measurement that was already rounded up, so leave margin.
+  const e = Math.min(sourceDuration - END_MARGIN_SEC, endSec + pad);
   return { start: Number(s.toFixed(3)), end: Math.floor(e * 1000) / 1000 };
 }
+export const END_MARGIN_SEC = 0.05;
 
 type Profile = { kind?: string; width: number; height: number; encode: { crf: number; abitrate: string } };
 function profile(channel: string): Profile {
