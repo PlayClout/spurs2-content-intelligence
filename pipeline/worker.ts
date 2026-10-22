@@ -34,6 +34,9 @@ export const db = drizzle(client, { schema: s });
 const STALE_MS = 5 * 60_000;
 const POLL_MS = Number(process.env.WORKER_POLL_MS ?? 1000);
 const WORKER_ID = `${process.env.HOSTNAME ?? "m5"}:${process.pid}`;
+/** Workers only claim jobs in their lane (payload.lane, default "default"). Tests run in a private lane so the
+ * always-on production workers (Fargate, M5) can never steal a test's jobs, and vice versa. */
+const LANE = process.env.WORKER_LANE ?? "default";
 
 type JobRow = typeof s.jobs.$inferSelect;
 const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 19), ...a);
@@ -42,6 +45,7 @@ export async function claimJob(): Promise<JobRow | null> {
   const rows = await db.execute<JobRow>(sql`
     update jobs set status = 'running', started_at = now(), attempts = attempts + 1
     where id = (select id from jobs where status = 'queued' and type in ('process_moment','render_final')
+                and coalesce(payload->>'lane', 'default') = ${LANE}
                 order by queued_at for update skip locked limit 1)
     returning id, type, payload, status, error, attempts, queued_at as "queuedAt", started_at as "startedAt", finished_at as "finishedAt"`);
   return (rows as unknown as JobRow[])[0] ?? null;
@@ -248,11 +252,15 @@ async function handleRenderFinal(job: JobRow) {
   const renderMs = Math.round(performance.now() - t0);
   await uploadRenderDir(slug, outDir); // s3 mode: push the final (+ its poster) to the bucket; no-op locally
 
-  // ScorePlay write-back: the approved moment as a video log on its source media (idempotent per opportunity)
-  const wb = await sp.writeMomentAsVideoLog({
-    mediaId: d.scoreplay.mediaId, companyId: d.scoreplay.companyId, startSec: win.startSec, endSec: win.endSec,
-    ref: opp.id, label: `${opp.headline} (${opp.audience})`, tags: ["clout-approved", d.variant.contentType],
-  });
+  // ScorePlay write-back: the approved moment as a video log on its source media. Idempotent per opportunity, and the
+  // DB row is the record: a re-approve handled by ANY worker (another host, after a restart) never writes twice.
+  const prior = (d.scoreplayWriteBack as { logId?: number | null } | undefined)?.logId;
+  const wb = prior
+    ? { mode: sp.mode(), data: { created: false, entry: { id: prior } }, wouldSend: undefined }
+    : await sp.writeMomentAsVideoLog({
+        mediaId: d.scoreplay.mediaId, companyId: d.scoreplay.companyId, startSec: win.startSec, endSec: win.endSec,
+        ref: opp.id, label: `${opp.headline} (${opp.audience})`, tags: ["clout-approved", d.variant.contentType],
+      });
   await db.update(s.opportunities).set({
     status: "rendered", finalPaths: finals,
     compliance: { ...(opp.compliance as Compliance), status: recheck.status, reasons: recheck.reasons },

@@ -16,6 +16,7 @@ import { join } from "node:path";
 
 process.env.MOCK_MODE = "1"; // TwelveLabs: recorded fixture; ScorePlay: fixture (no key anyway)
 delete process.env.SCOREPLAY_API_KEY;
+process.env.WORKER_LANE = `e2e-${process.pid}`; // private lane: always-on workers (Fargate, M5) never touch test jobs
 process.env.RENDER_OUT_DIR = "out/e2e-renders"; // RELATIVE on purpose (like the default): must resolve against the repo, not cwd
 const w = await import("../pipeline/worker");
 const s = await import("../shared/db-schema");
@@ -37,6 +38,13 @@ const orgIds = [orgSpurs.id, orgThfc.id];
 const jobIds: string[] = [];
 
 try {
+  // ── 0. Lane isolation: a worker never claims another lane's job (prod workers vs tests) ───────────────────
+  const [foreign] = await db.insert(s.jobs).values({ type: "process_moment", payload: { lane: `other-${tag}`, note: "must not be claimed" }, status: "queued" }).returning();
+  jobIds.push(foreign.id);
+  const claimed = await w.claimJob();
+  const [fr] = await db.select().from(s.jobs).where(eq(s.jobs.id, foreign.id));
+  check(claimed === null && fr.status === "queued", "lane isolation: worker in lane A leaves lane B's job untouched");
+
   // ── 1. process_moment (Spurs, buzzer-beater) ───────────────────────────────────────
   const input = {
     orgKey: "san-antonio-spurs", competition: "NBA Regular Season", scorePlayMediaId: 46000301, startSec: 6, endSec: 12,
@@ -44,7 +52,7 @@ try {
     trigger: { kind: "game_event", text: "Game-winning dunk at the buzzer, Q4 0:00.3", simulated: true },
     manifestFixture: "data/fallback-assets/fixtures/twelvelabs-manifest.json",
   };
-  const [j1] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgSpurs.id, input, slug: `${tag}-spurs` }, status: "queued" }).returning();
+  const [j1] = await db.insert(s.jobs).values({ type: "process_moment", payload: { lane: process.env.WORKER_LANE, orgId: orgSpurs.id, input, slug: `${tag}-spurs` }, status: "queued" }).returning();
   jobIds.push(j1.id);
   const t0 = performance.now();
   await w.runOnce();
@@ -71,7 +79,7 @@ try {
   const repo = process.cwd();
   runFrom("/tmp");
   await db.update(s.opportunities).set({ status: "approved" }).where(eq(s.opportunities.id, reel!.id));
-  const [j2] = await db.insert(s.jobs).values({ type: "render_final", payload: { opportunityId: reel!.id, channels: reel!.channels, trimOverride: { startSec: 6.5, endSec: 12.5 } }, status: "queued" }).returning();
+  const [j2] = await db.insert(s.jobs).values({ type: "render_final", payload: { lane: process.env.WORKER_LANE, opportunityId: reel!.id, channels: reel!.channels, trimOverride: { startSec: 6.5, endSec: 12.5 } }, status: "queued" }).returning();
   jobIds.push(j2.id);
   await w.runOnce();
   runFrom(repo);
@@ -90,7 +98,7 @@ try {
 
   // idempotent re-run
   await db.update(s.opportunities).set({ status: "approved" }).where(eq(s.opportunities.id, reel!.id));
-  const [j3] = await db.insert(s.jobs).values({ type: "render_final", payload: { opportunityId: reel!.id, channels: reel!.channels, trimOverride: { startSec: 6.5, endSec: 12.5 } }, status: "queued" }).returning();
+  const [j3] = await db.insert(s.jobs).values({ type: "render_final", payload: { lane: process.env.WORKER_LANE, opportunityId: reel!.id, channels: reel!.channels, trimOverride: { startSec: 6.5, endSec: 12.5 } }, status: "queued" }).returning();
   jobIds.push(j3.id);
   await w.runOnce();
   const [r3] = await db.select().from(s.opportunities).where(eq(s.opportunities.id, reel!.id));
@@ -99,7 +107,7 @@ try {
   // ── 3b. Merge: a second trigger for the SAME play adds corroboration to the existing cards, no new analysis ──
   const before = await db.select().from(s.opportunities).where(eq(s.opportunities.orgId, orgSpurs.id));
   const momentsBefore = (await db.select().from(s.moments)).length;
-  const [jm] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgSpurs.id, input: { ...input, startSec: 7, endSec: 12, trigger: { kind: "social_reaction", text: "Castle mentions spiking", simulated: true } } }, status: "queued" }).returning();
+  const [jm] = await db.insert(s.jobs).values({ type: "process_moment", payload: { lane: process.env.WORKER_LANE, orgId: orgSpurs.id, input: { ...input, startSec: 7, endSec: 12, trigger: { kind: "social_reaction", text: "Castle mentions spiking", simulated: true } } }, status: "queued" }).returning();
   jobIds.push(jm.id);
   await w.runOnce();
   const after = await db.select().from(s.opportunities).where(eq(s.opportunities.orgId, orgSpurs.id));
@@ -112,7 +120,7 @@ try {
   check(typeof (before[0].generatedCopy as Record<string, string>).instagram_reel === "string" || typeof (before[0].generatedCopy as Record<string, string>).instagram_feed === "string", "cards carry generated copy");
 
   // ── 4. Tenant isolation: the SAME moment for two orgs must create separate rows, never touch each other ──
-  const [j6] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgThfc.id, input, slug: `${tag}-iso` }, status: "queued" }).returning();
+  const [j6] = await db.insert(s.jobs).values({ type: "process_moment", payload: { lane: process.env.WORKER_LANE, orgId: orgThfc.id, input, slug: `${tag}-iso` }, status: "queued" }).returning();
   jobIds.push(j6.id);
   await w.runOnce();
   const spursAfter = await db.select().from(s.opportunities).where(eq(s.opportunities.orgId, orgSpurs.id));
@@ -122,7 +130,7 @@ try {
 
   // ── 3. Expiry: THFC asset window ends 2026-10-24 17:00 UTC -> fake the clock past it ───
   const thfcInput = { ...input, orgKey: "tottenham-hotspur", competition: "Premier League", scorePlayMediaId: 46000302, headline: "North London is white", kicker: "Spurs 2 · Arsenal 1 · 88'", trigger: { kind: "social_reaction", text: "derby winner trending", simulated: true } };
-  const [j4] = await db.insert(s.jobs).values({ type: "process_moment", payload: { orgId: orgThfc.id, input: thfcInput, slug: `${tag}-thfc` }, status: "queued" }).returning();
+  const [j4] = await db.insert(s.jobs).values({ type: "process_moment", payload: { lane: process.env.WORKER_LANE, orgId: orgThfc.id, input: thfcInput, slug: `${tag}-thfc` }, status: "queued" }).returning();
   jobIds.push(j4.id);
   await w.runOnce();
   const [thfcReel] = await db.select().from(s.opportunities).where(sql`${s.opportunities.orgId} = ${orgThfc.id} and ${s.opportunities.contentType} = 'reel' and ${s.opportunities.delivery}->>'slug' = ${`${tag}-thfc`}`);
@@ -132,7 +140,7 @@ try {
   globalThis.Date = class extends RealDate { constructor(...a: unknown[]) { super(...((a.length ? a : [future]) as [number])); } static now() { return future; } } as DateConstructor;
   try {
     await db.update(s.opportunities).set({ status: "approved" }).where(eq(s.opportunities.id, thfcReel.id));
-    const [j5] = await db.insert(s.jobs).values({ type: "render_final", payload: { opportunityId: thfcReel.id, channels: thfcReel.channels }, status: "queued" }).returning();
+    const [j5] = await db.insert(s.jobs).values({ type: "render_final", payload: { lane: process.env.WORKER_LANE, opportunityId: thfcReel.id, channels: thfcReel.channels }, status: "queued" }).returning();
     jobIds.push(j5.id);
     await w.runOnce();
     const [after] = await db.select().from(s.opportunities).where(eq(s.opportunities.id, thfcReel.id));
