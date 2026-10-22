@@ -8,6 +8,7 @@
 import { stat, open } from "node:fs/promises";
 import { join, resolve, extname, sep } from "node:path";
 import { connection } from "next/server";
+import { storageMode, signedRenderUrl } from "@/../shared/storage";
 
 const ROOT = resolve(
   process.env.RENDER_OUT_DIR?.startsWith("/") ? process.env.RENDER_OUT_DIR : join(/*turbopackIgnore: true*/ process.cwd(), "..", process.env.RENDER_OUT_DIR ?? "out/renders"),
@@ -17,6 +18,14 @@ const TYPES: Record<string, string> = { ".mp4": "video/mp4", ".jpg": "image/jpeg
 export async function GET(req: Request, ctx: { params: Promise<{ path: string[] }> }) {
   await connection();
   const { path } = await ctx.params;
+
+  // s3 mode: the file lives in the bucket, not on this box. Redirect to a short-lived presigned URL
+  // (the browser then does its Range requests straight against S3). slug = first segment, file = last.
+  if (storageMode() === "s3" && path.length >= 2) {
+    const url = await signedRenderUrl(path[0], path[path.length - 1]);
+    if (url) return Response.redirect(url, 302);
+  }
+
   const file = resolve(ROOT, ...path);
   const type = TYPES[extname(file).toLowerCase()];
   if (!type || !file.startsWith(ROOT + sep)) return new Response("not found", { status: 404 });

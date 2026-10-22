@@ -30,6 +30,16 @@ export const FFPROBE = existsSync("/opt/homebrew/opt/ffmpeg-full/bin/ffprobe")
 /** Boundary pad around TwelveLabs timestamps (precision unverified; producer trims tighter). */
 export const PAD_SEC = 1.5;
 
+// Detect hardware encode once: present on macOS (M-series), absent in a Linux container -> libx264.
+import { execFileSync } from "node:child_process";
+export const HAS_VIDEOTOOLBOX = (() => {
+  try {
+    return execFileSync(FFMPEG, ["-hide_banner", "-encoders"], { encoding: "utf8" }).includes("h264_videotoolbox");
+  } catch {
+    return false;
+  }
+})();
+
 export async function probeDuration(path: string): Promise<number> {
   const { stdout } = await run(FFPROBE, ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path]);
   return Number(stdout.trim());
@@ -108,9 +118,12 @@ export class LocalFfmpegBackend implements RenderBackend {
 
     const draft = r.mode === "draft";
     const mute = r.renderActions?.includes("mute_audio") ?? false;
-    const venc = draft
+    // h264_videotoolbox is macOS-only hardware encode (fast drafts on the M5); in a Linux container it is
+    // absent, so fall back to libx264. RENDER_FORCE_SW=1 forces software even on macOS (parity testing).
+    const useHw = draft && HAS_VIDEOTOOLBOX && process.env.RENDER_FORCE_SW !== "1";
+    const venc = useHw
       ? ["-c:v", "h264_videotoolbox", "-b:v", "6M"]
-      : ["-c:v", "libx264", "-preset", "fast", "-crf", String(p.encode.crf || 20)];
+      : ["-c:v", "libx264", "-preset", draft ? "veryfast" : "fast", "-crf", String(draft ? 23 : p.encode.crf || 20)];
     const args = [
       "-y", "-hide_banner", "-loglevel", "error",
       "-ss", String(r.startSec), "-t", dur.toFixed(3), "-i", r.sourcePath,

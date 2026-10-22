@@ -14,10 +14,13 @@
     "test:scoreplay": "tsx scripts/scoreplay-test.ts",
     "test:rules": "tsx scripts/rules-test.ts",
     "test:engine": "tsx scripts/engine-test.ts",
+    "test:storage": "tsx scripts/storage-test.ts",
     "test:e2e": "tsx --env-file=.env scripts/pipeline-e2e.ts",
-    "test": "npm run test:rules && npm run test:scoreplay && npm run test:engine && npm run test:render && npm run test:e2e"
+    "test": "npm run test:rules && npm run test:scoreplay && npm run test:engine && npm run test:storage && npm run test:render && npm run test:e2e"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@aws-sdk/s3-request-presigner": "^3.1155.0",
     "@napi-rs/canvas": "^1.0.12",
     "@typesafe-ai/sdk": "^0.7.0",
     "drizzle-orm": "latest",

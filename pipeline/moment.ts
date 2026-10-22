@@ -21,6 +21,7 @@ import { evaluateContent, type ContentVerdict } from "../shared/content-rules";
 import { MANIFEST_PROMPT, PEGASUS_MANIFEST_SCHEMA, parseManifest, type MomentManifest } from "../shared/moment-manifest";
 import { getRenderBackend } from "./render-backend";
 import { paddedWindow, probeDuration } from "./render-local";
+import { uploadRenderDir } from "../shared/storage";
 import type { Channel } from "../shared/schemas";
 import type { CaptionText } from "./overlay";
 
@@ -184,6 +185,7 @@ export async function processMoment(input: MomentInput, slug: string): Promise<P
     },
   ];
   await writeFile(join(outDir, "manifest.json"), JSON.stringify({ manifest, manifestMode, window, tight, content, compliance }, null, 2));
+  await uploadRenderDir(slug, outDir); // s3 mode: push drafts to the bucket so any worker/UI serves them; no-op locally
 
   return {
     manifest, manifestMode, window, tightWindow: tight, content,

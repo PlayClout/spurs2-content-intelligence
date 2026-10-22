@@ -25,6 +25,7 @@ import type { Channel, Compliance } from "../shared/schemas";
 import { processMoment, renderDir, publicPathFor, type MomentInput, type ProcessedMoment, type Variant } from "./moment";
 import { getRenderBackend } from "./render-backend";
 import { overlapRatio, SAME_PLAY } from "./watchlist";
+import { uploadRenderDir } from "../shared/storage";
 import { scoreFit } from "../shared/clients/decisions";
 import { generateCopy } from "../shared/copy";
 
@@ -245,6 +246,7 @@ async function handleRenderFinal(job: JobRow) {
     for (const c of channels) finals[c] = d.variant.publicPath; // photo card is already final quality
   }
   const renderMs = Math.round(performance.now() - t0);
+  await uploadRenderDir(slug, outDir); // s3 mode: push the final (+ its poster) to the bucket; no-op locally
 
   // ScorePlay write-back: the approved moment as a video log on its source media (idempotent per opportunity)
   const wb = await sp.writeMomentAsVideoLog({
@@ -288,13 +290,29 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     await close();
   } else {
     log(`worker ${WORKER_ID} polling every ${POLL_MS}ms (scoreplay ${sp.mode()}, twelvelabs ${process.env.TWELVELABS_API_KEY && process.env.MOCK_MODE !== "1" ? "live" : "fixture"})`);
+    // tiny HTTP health endpoint so a container host (Fargate/Railway/etc.) can health-check the worker,
+    // which otherwise has no open port. Off unless WORKER_HEALTH_PORT is set.
+    let healthServer: import("node:http").Server | undefined;
+    const hp = Number(process.env.WORKER_HEALTH_PORT ?? process.env.PORT ?? 0);
+    if (hp) {
+      const http = await import("node:http");
+      let lastOk = Date.now();
+      healthServer = http.createServer((_req, res) => {
+        const stale = Date.now() - lastOk > 120_000;
+        res.writeHead(stale ? 503 : 200, { "content-type": "application/json" });
+        res.end(JSON.stringify({ worker: WORKER_ID, ok: !stale, lastLoopMsAgo: Date.now() - lastOk }));
+      }).listen(hp, () => log(`health endpoint on :${hp}`));
+      (globalThis as { __markLoop?: () => void }).__markLoop = () => { lastOk = Date.now(); };
+    }
     let stop = false;
     process.on("SIGINT", () => { stop = true; });
     process.on("SIGTERM", () => { stop = true; });
     while (!stop) {
       const n = await runOnce();
+      (globalThis as { __markLoop?: () => void }).__markLoop?.();
       if (!n) await new Promise((r) => setTimeout(r, POLL_MS));
     }
+    healthServer?.close();
     await close();
   }
 }
