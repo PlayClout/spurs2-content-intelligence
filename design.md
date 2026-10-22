@@ -66,6 +66,26 @@ OpenCut integration has a bounded P0 spike; its fuller editor is a desired produ
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
+### Automatic ScorePlay write-back and channel packaging
+
+Approval of an exact clip revision automatically queues a source timeline log in ScorePlay with timecodes, evidence, tags and the approval reference. Once final renditions are ready, the worker automatically uploads them into the approved output collection and attaches source/revision/channel metadata. No per-clip sync action is required. Persist pending/synced/held/failed state and provider IDs; use idempotency keys, retry/backoff and reconciliation to avoid duplicate logs or uploads. Existing taxonomy/workspace sign-off holds live writes until configured, then queued eligible writes resume after current-state checks.
+
+The publisher/editor takes an approved clip into a channel packaging workspace and selects all relevant social destinations plus the fan app. Offer Instagram Reels/Stories/Feed, TikTok, YouTube Shorts/Highlights, X video/photo and an explicit owned fan-web profile where appropriate to the source. Suggest and preview a separate cut, duration, aspect/resolution, crop, caption/safe-zone placement, audio, poster and copy for each destination. Reuse `pipeline/channel-profiles.json` and extend it for the app rendition.
+
+Each variant keeps its source lineage, destination context, recipe and revision hash. Material changes invalidate that variant's approval; the approved source does not grant blanket approval to a new cut or destination. Batch render approved eligible variants as independent jobs and validate actual output dimensions, duration and media constraints. Show per-destination progress and allow failed variants to retry independently. Automatically sync completed renditions to ScorePlay. Fan publication commits only the prepared app rendition and its dedicated search mapping. Preparing social assets does not itself post them externally; event restrictions still govern release.
+
+### Clip metadata is required for personalization
+
+Every clip must automatically acquire a structured, versioned metadata record before publication. Pull available source metadata from ScorePlay, reconcile canonical player/team IDs, and enrich the exact clip time range with TwelveLabs analysis. Source-level roster tags are candidates, not proof that every tagged player appears in an excerpt.
+
+Required fields include source/provider IDs and source ranges; club, opponent, match, competition and sport; clip-level featured players with roles where supported (scorer, assist, featured subject); play/event type; interest tags such as goals, saves, skills, crowd energy and behind-the-scenes; language, duration and destination variant; and publication/rights context. Store evidence references, provider, confidence, verification state and metadata version for inferred fields. Optional match-clock, score and statistical hooks require supporting data; never fill missing facts by guessing.
+
+Enrichment runs automatically. Confirm supported source facts, surface uncertain identities or conflicting evidence for editor correction, and record unknown/no-player explicitly. A clip can be reviewed and published without an identifiable player, but unknown or unverified identities must not match a favorite-player filter or produce a player-specific reason chip. Approval commits the metadata for that exact clip revision.
+
+Trims, crops, substitutions and compilations must recompute or revalidate affected tags against the actual visible final output. Preserve canonical metadata lineage across social/app renditions, while allowing different featured-player sets when the cut or crop changes who appears. Compilation tags derive from verified entries with chapter/time mappings. Corrections version the metadata and invalidate affected feed/search caches and index metadata; identity or factual changes require renewed editorial approval before the replacement becomes current.
+
+Fan preferences use the same canonical player, club and interest IDs. Feed ranking, favorite-player pages, search filters and explanation chips read the reviewed metadata on the current published app rendition. Test that two profiles get different ordering, a tagged player outside the final cut cannot trigger a match, and corrected/unknown identities cannot leave stale personalized results.
+
 ### Personalized fan journey
 
 - Choose a club, favorite players, and interests, with a skippable onboarding flow and an editable preference screen.
@@ -378,12 +398,13 @@ Work packets are instructions for future implementation, not a claim that separa
 7. **Ranking:** only eligible clips enter ready; missing X does not create imaginary counts; a viral blocked clip stays excluded with a reason. Editors can inspect the skipped moment.
 8. **Compilation:** three ordered clips render within the chosen duration; duplicates are explained; reorder/trim persists; invalidating one source blocks the dependent final output. Licensed audio/graphics are checked too.
 9. **OpenCut:** short-clip import, native-time conversion, grouped undo, save/reopen lineage, target canvas after insertion, and render-plan parity pass before broader integration.
-10. **Writeback/delivery:** exact source logs and output references are synced or explicitly pending/failed. No club video leaves the authorized event environment.
-11. **Personalized frontend:** two favorite/interest profiles see distinct ordering and evidence-backed why chips over the same eligible catalog. Skipping preferences yields a balanced feed.
-12. **Published-only search:** a natural-language Marengo query returns an editor-published playable derivative; drafts, future scheduled items, raw full matches, expired/withdrawn versions, and other clubs are excluded before and after retrieval.
-13. **Identity and query intent:** a whole-match player tag cannot create a verified clip tag. An explicit player query can differ from favorites; ambiguous names prompt a roster choice.
-14. **Publish/withdraw:** commit only a rendered, prepared/indexed approved version; replacing a version is atomic. Withdrawal removes it from feed/search/detail and prevents new playback grants even if the index/cache still contains a hit.
-15. **Viewer context:** social permission alone cannot publish to the fan app. Server-resolved entitlement/territory is checked for search, thumbnails, detail, and playback. Metadata fallback is labeled and no-match does not synthesize footage.
+10. **Writeback/delivery:** exact revision approval automatically queues source-log write-back and completed renditions automatically upload with source/revision/channel references. Held/failed states and idempotent retries are visible; no per-clip manual sync is required. No club video leaves the authorized event environment.
+11. **Channel packaging:** publisher/editor selects all relevant social and app destinations from an approved clip, previews/edits each cut and size, approves changed variant revisions and batch-renders destination-valid outputs. The app catalog/index/playback binds to the exact app rendition; individual channel failures retry independently.
+12. **Personalized frontend:** two favorite/interest profiles see distinct ordering and evidence-backed why chips over the same eligible catalog. Skipping preferences yields a balanced feed.
+13. **Published-only search:** a natural-language Marengo query returns an editor-published playable derivative; drafts, future scheduled items, raw full matches, expired/withdrawn versions, and other clubs are excluded before and after retrieval.
+14. **Identity and query intent:** a whole-match player tag cannot create a verified clip tag. An explicit player query can differ from favorites; ambiguous names prompt a roster choice.
+15. **Publish/withdraw:** commit only a rendered, prepared/indexed approved version; replacing a version is atomic. Withdrawal removes it from feed/search/detail and prevents new playback grants even if the index/cache still contains a hit.
+16. **Viewer context:** social permission alone cannot publish to the fan app. Server-resolved entitlement/territory is checked for search, thumbnails, detail, and playback. Metadata fallback is labeled and no-match does not synthesize footage.
 
 **Three-minute demo:** replay produces candidates → restricted clip is held with a reason → permitted cleaned derivative and sourced/fixture stat proof → editor adjusts a montage, approves and publishes the prepared version → fan A sees the new clip for a favorite player → fan B sees crowd-focused ordering → “Give me a clip of [player] scoring” returns a published playable match → withdrawal removes it from discovery/new playback. Show real render/source-log evidence and keep simulated inputs labeled. The personalized fan app is the frontend climax.
 

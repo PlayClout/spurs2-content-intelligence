@@ -11,13 +11,15 @@ Team: spurs2-hack-12 · Challenge 1, Assisted Auto-Production · 2026-10-22
 | Write | Endpoint | When | Volume (est.) |
 |---|---|---|---|
 | **Log** on the source video (start, end, reasoning, tags, players) | `POST /video/logs` (`start_offset` / `end_offset` in seconds) | Producer **approves** a recommended moment | 5 to 20 per match |
-| **Upload** of the finished clip or photo card | `POST /upload/event/{our sub-collection}` + complete | Same approval, after the final render | 1 to 2 files per approval |
+| **Upload** of the finished clip or photo card | `POST /upload/event/{our sub-collection}` + complete | Automatically after each approved destination rendition finishes rendering | One file per selected eligible social/app rendition |
 | **Tags + details** on the uploaded media | `POST /media/{id}/tags`, `PUT /media/{id}/details` | Right after the upload completes | per upload |
 | **One sub-collection** for our outputs | `POST /event` (once) | Setup, once per match collection | 1 |
 
 We **never** edit, re-tag or delete your original media. Writes only go to (a) new logs on the source timeline
 and (b) new media inside our own sub-collection. Every log we write carries the marker `[clout:<id>]` in its
 comment, so our writes are easy to find and remove.
+
+Write-back runs automatically in background jobs: approval queues the source log, and render completion queues each rendition upload plus tags/details and source/revision/channel references. No manual per-clip sync is required. Record pending/synced/held/failed state and stable provider IDs. Retries must reconcile existing writes and avoid duplicate logs/uploads. The workspace taxonomy sign-off gate holds live work until enabled; queued jobs then resume with current approval and rights checks.
 
 ## 2. The sub-collection
 

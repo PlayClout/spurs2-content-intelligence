@@ -5,6 +5,16 @@ Goal: build the **Assisted Auto-Production Engine** described there: an editor v
 
 This is a task breakdown, not a fresh product spec. Reuse the current repo aggressively.
 
+## Required approval-to-delivery workflow
+
+1. Editor approves an exact clip revision. Approval automatically queues ScorePlay source-log write-back; no separate sync button is required.
+2. Publisher/editor opens that approved clip in a channel packaging workspace, selects all relevant social destinations plus the fan app, and adjusts cuts, crop, duration, captions and copy per destination.
+3. The worker produces a distinct validated rendition for each eligible destination. Each variant retains its approved source lineage; material edits require approval of the changed variant revision.
+4. Finished renditions automatically upload to the approved ScorePlay output collection with source/revision/channel links and metadata. Sync runs asynchronously with idempotent retries and visible pending/synced/held/failed states.
+5. The editor explicitly publishes the prepared app rendition to the fan catalog. Social renditions are ready for export; external posting remains a separate action subject to event permissions.
+
+Automatic write-back is the normal workflow once the workspace taxonomy and write access are configured. The current event sign-off gate can hold queued writes; it does not introduce a manual write-back step for each clip.
+
 ---
 
 ## Technical stack additions
@@ -112,6 +122,16 @@ Admin frontend means the editor / producer dashboard and operator controls. This
 | A3.4 | Add why-selected per compilation entry | B5.2 | recommendation evidence | Each entry explains why selected and why placed there |
 | A3.5 | Queue compilation render through worker | B5.3 | `pipeline/render-local.ts`, `jobs` | Three-clip montage renders locally/Fargate |
 | A3.6 | Keep FFmpeg fallback even if OpenCut spike fails | none | existing renderer | Demo does not depend on OpenCut |
+
+## Phase A3b - Approved clip to every relevant destination
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| A3b.1 | Add publisher/editor channel packaging workspace for an approved clip | A1.6, B12.1 | `ReviewPane`, channel profiles | Editor can choose Instagram Reels/Stories/Feed, TikTok, YouTube Shorts/Highlights, X video/photo and fan app; unavailable destinations show reasons |
+| A3b.2 | Generate suggested cuts and framing per destination | A3b.1, B12.2 | trim controls, FFmpeg crop and captions | Editor previews duration, aspect, crop/safe zones, captions, poster and copy for each relevant output |
+| A3b.3 | Edit and approve variant revisions | A3b.2, B2.5 | revision approval | A changed cut/crop/audio/text is reviewed for that exact variant; unchanged approved variants stay valid |
+| A3b.4 | Add batch render and per-destination progress | A3b.3, B12.3 | jobs/latency UI | One action prepares all selected approved variants; one failed channel can retry independently |
+| A3b.5 | Show automatic ScorePlay sync and separate app publication | B10.4, B12.4 | publication actions, delivery status | Source log and output links sync automatically; app Publish is explicit; social outputs can be previewed/exported without posting |
 
 ## Phase A4 - Admin/operator controls
 
@@ -262,16 +282,20 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B6.3 | Add job stage telemetry | B6.1 | `jobs.startedAt/finishedAt`, latency drawer | UI shows ingest, analysis, rights, render timings |
 | B6.4 | Add current worker mode to health | B6.1 | worker logs/env summary | Admin sees ScorePlay live, TL live, writes held |
 
+## Clip metadata contract
+
+Every clip gets automatic ScorePlay metadata retrieval plus TwelveLabs enrichment scoped to its exact source range. Canonical player/team IDs and interest tags connect published clips to user preferences. Store evidence and verification status; editor review resolves uncertain identity before player-based personalization. Unknown/no-player is explicit and never silently mapped to a favorite. Carry reviewed metadata through the actual social/app rendition, revalidate after cuts/crops, and map compilation tags to chapters. See `design.md` and `docs/fan-app-and-search.md` for the full contract.
+
 ## Phase B7 - Fan ranking
 
 | ID | Task | Depends on | Reuse | Done when |
 |---|---|---|---|---|
-| B7.1 | Create `shared/fan-ranking.ts` | 0.2, B4.3 | current rank style | Implements design.md weights: favorite .45, interest .25, editor .15, recency .10, exploration .05 |
+| B7.1 | Create `shared/fan-ranking.ts` | 0.2, B4.3, B8.7 | current rank style | Implements design.md weights: favorite .45, interest .25, editor .15, recency .10, exploration .05 |
 | B7.2 | Add repeat penalties and diversity | B7.1 | publication source ranges | Feed avoids same play/player repetition |
 | B7.3 | Return explainable reason chips | B7.1 | preference data | UI can say why each clip is shown |
 | B7.4 | Add tests with two fan profiles | B7.1 | seeded demo personas | Same catalog orders differently for Fan A and Fan B |
 
-## Phase B8 - Player identity
+## Phase B8 - Clip metadata and player identity
 
 | ID | Task | Depends on | Reuse | Done when |
 |---|---|---|---|---|
@@ -279,6 +303,12 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B8.2 | Add alias mapping | B8.1 | player search utilities | Query names resolve deterministically or ask for choice |
 | B8.3 | Add clip-level `featuredPlayerIds` | B4.1, B8.1 | Pegasus evidence + editor review | Fan app does not rely on whole-match player tags |
 | B8.4 | Add tests for ambiguous/missing player | B8.2 | fan-search tests | No silent guessing |
+| B8.5 | Automatically enrich every clip with source and time-scoped metadata | B8.1, B1.3, B4.2 | ScorePlay metadata/player tags, TwelveLabs manifest | Each clip has canonical club/match/competition/sport, featured players/roles, event type, interests, language, duration, source ranges and variant context; unavailable facts are explicit |
+| B8.6 | Store per-field evidence, verification state and metadata version | B8.5 | delivery inputs, source lineage | Inherited source facts and inferred clip facts are distinguished; whole-match rosters cannot become verified excerpt tags |
+| B8.7 | Add editor metadata review/correction before publication | B8.6, A2.1 | review pane, player picker | Editor resolves uncertain/conflicting identity, accepts unknown/no-player where appropriate, and approves metadata with the exact clip revision |
+| B8.8 | Revalidate metadata after cuts/crops and across renditions/compilations | B8.6, B12.1, B5.1 | variant manifests, source-to-output mappings | A player removed by trim/crop cannot remain featured; verified compilation tags map to the relevant chapters |
+| B8.9 | Connect reviewed metadata to preference IDs and catalog updates | B8.7, B7.1 | canonical players/interests, publication lifecycle | Feed, player pages, search and why chips use the same current reviewed metadata; corrections invalidate stale caches/index metadata and require renewed approval for changed identity/facts |
+| B8.10 | Test metadata-to-personalization end to end | B8.8, B8.9 | two demo profiles, publication/search tests | Favorites/interests change feed order; wrong-player, outside-cut, ambiguous and corrected identities never yield stale player matches |
 
 ## Phase B9 - Fan search
 
@@ -297,8 +327,10 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B10.1 | Keep writes held by default | current | `SCOREPLAY_WRITES` guard | No live metadata write without sign-off |
 | B10.2 | Run one safe write/delete test after taxonomy approval | ScorePlay sign-off | `writeMomentAsVideoLog` | Create, read back, delete succeeds |
 | B10.3 | Create `Spursx2 AI Productions` collection after approval | ScorePlay sign-off | `uploadToEvent`, event API | Final outputs can be uploaded to ScorePlay |
-| B10.4 | Store writeback state: pending/synced/failed | B4.1 | delivery JSON or new table | Admin can reconcile failures |
-| B10.5 | Sync publication/output refs | B4.2, B10.3 | ScorePlay media/details API | ScorePlay record links to exact output |
+| B10.4 | Queue automatic write-back on approval and persist pending/synced/held/failed state | B4.2 | worker jobs, delivery JSON or new table | Approval creates a durable source-log job without a separate sync action; held/failed work stays visible |
+| B10.5 | Automatically upload completed channel/app renditions and sync output refs | B4.2, B10.3, B12.3 | ScorePlay upload/media/details API | Every completed eligible rendition is linked to its exact source, approval revision, channel and artifact |
+| B10.6 | Add idempotent retries and reconciliation | B10.4, B10.5 | DB-recorded write-back IDs, jobs | Retry/restart cannot duplicate source logs or uploads; transient failures back off; held writes resume automatically after workspace enablement |
+| B10.7 | Verify automatic approval-to-ScorePlay flow | B10.6 | integration tests | One approval creates the source log, completed variants upload automatically, and repeated jobs do not duplicate records |
 
 ## Phase B11 - OpenCut adapter backend
 
@@ -308,6 +340,16 @@ Backend means data model, integrations, analysis, rights, rendering, jobs, publi
 | B11.2 | Add source binding table or JSON | B11.1 | `EditorProjectBinding` concept | Editor IDs map back to Spursx2 AI source ranges |
 | B11.3 | Add server-side review gate | B11.1, B2.5 | render_final gate | OpenCut export cannot bypass approval |
 | B11.4 | Add unsupported edit rejection | B11.1 | render plan validator | Effects we cannot render are blocked clearly |
+
+## Phase B12 - Destination variants for social and fan app
+
+| ID | Task | Depends on | Reuse | Done when |
+|---|---|---|---|---|
+| B12.1 | Define variant manifest and explicit fan-app channel profile | B4.2, B2.1 | `channel-profiles.json`, render schema | Each destination has its own source trim, aspect/resolution, duration, crop, safe zones, audio/captions/copy and revision hash |
+| B12.2 | Build per-destination cut/size planner | B12.1 | TwelveLabs moment/framing evidence, existing profiles | Approved source yields appropriate social and app recipes; profile limits and uncertain crops are surfaced for review |
+| B12.3 | Fan out independent render jobs and validate outputs | B12.2, B2.4 | worker, FFmpeg, storage | All selected cleared destinations get separate files; dimensions/duration/audio/caption constraints are checked and failed variants retry independently |
+| B12.4 | Bind app publication/indexing to the app rendition | B12.3, B4.2, B9.2 | publication lifecycle | Fan playback/search uses the exact approved app artifact and its own index mapping; social variants retain separate lineage |
+| B12.5 | Verify multi-destination output end to end | B12.4, B10.6 | render/integration tests | One source produces social plus app variants, preserves lineage, respects destination limits and automatically syncs to ScorePlay |
 
 ---
 
@@ -397,13 +439,21 @@ Deliver:
 - no-results handling,
 - playback from approved derivative only.
 
-## Step 6: Add compilation support
+## Step 6: Package approved clips for social and the fan app
+Deliver:
+- channel selection and per-destination editing/previews,
+- channel-specific cuts, sizes, safe zones, captions and copy,
+- independent approved variant renders,
+- automatic ScorePlay source logs and output uploads with retry/status,
+- explicit publication of the app rendition; social export without automatic external posting.
+
+## Step 7: Add compilation support
 Deliver:
 - simple three-clip montage plan,
 - render through current FFmpeg pipeline,
 - publish as a fan catalog item.
 
-## Step 7: Consider OpenCut
+## Step 8: Consider OpenCut
 Only after the above works.
 
 Deliver:
@@ -426,6 +476,11 @@ Deliver:
 8. A blocked or unknown-rights clip cannot publish to the fan app.
 9. A three-clip compilation can be approved, rendered and published.
 10. Hosted demo remains event-only, simulated/live labels stay visible, and no external club-content posting happens by default.
+11. Approval automatically queues the ScorePlay source log; eligible finished renditions upload automatically. No per-clip manual sync step exists. Held/failed writes are visible and retries do not duplicate records.
+12. Publisher/editor can turn one approved clip into all relevant social and fan-app variants, edit their cuts/framing/copy, approve changed revisions and render them together.
+13. Each variant passes its own destination limits and rights checks. App publication/search/playback references the approved app rendition; retrying one failed social rendition does not rerender successful outputs.
+14. Every published clip has reviewed, versioned metadata from ScorePlay plus time-scoped TwelveLabs evidence. Verified featured-player and interest IDs drive preferences; whole-match rosters and uncertain identities cannot create false favorite-player matches.
+15. Trim/crop changes, compilation chapters and metadata corrections preserve accurate clip-level attribution across renditions. Correcting identity refreshes feed/search metadata without leaving stale personalized results.
 
 ---
 

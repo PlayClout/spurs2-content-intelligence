@@ -109,6 +109,18 @@ P0 fan filtering uses those reviewed clip tags before semantic retrieval. For am
 
 Marengo **entity search is beta** and can use reference images grouped by team plus entity references in a query. It is an optional refinement after validating the entity/roster mapping and actual retrieval quality; the fan app must not depend on its availability. Entity hits are evidence for editorial tagging, not automatic verification of every clip's identity. [Entity-search guide](https://docs.twelvelabs.io/v1.3/docs/guides/search/entity-search).
 
+### Clip metadata is required for personalization
+
+Every clip must automatically acquire a structured, versioned metadata record before publication. Pull available source metadata from ScorePlay, reconcile canonical player/team IDs, and enrich the exact clip time range with TwelveLabs analysis. Source-level roster tags are candidates, not proof that every tagged player appears in an excerpt.
+
+Required fields include source/provider IDs and source ranges; club, opponent, match, competition and sport; clip-level featured players with roles where supported (scorer, assist, featured subject); play/event type; interest tags such as goals, saves, skills, crowd energy and behind-the-scenes; language, duration and destination variant; and publication/rights context. Store evidence references, provider, confidence, verification state and metadata version for inferred fields. Optional match-clock, score and statistical hooks require supporting data; never fill missing facts by guessing.
+
+Enrichment runs automatically. Confirm supported source facts, surface uncertain identities or conflicting evidence for editor correction, and record unknown/no-player explicitly. A clip can be reviewed and published without an identifiable player, but unknown or unverified identities must not match a favorite-player filter or produce a player-specific reason chip. Approval commits the metadata for that exact clip revision.
+
+Trims, crops, substitutions and compilations must recompute or revalidate affected tags against the actual visible final output. Preserve canonical metadata lineage across social/app renditions, while allowing different featured-player sets when the cut or crop changes who appears. Compilation tags derive from verified entries with chapter/time mappings. Corrections version the metadata and invalidate affected feed/search caches and index metadata; identity or factual changes require renewed editorial approval before the replacement becomes current.
+
+Fan preferences use the same canonical player, club and interest IDs. Feed ranking, favorite-player pages, search filters and explanation chips read the reviewed metadata on the current published app rendition. Test that two profiles get different ordering, a tagged player outside the final cut cannot trigger a match, and corrected/unknown identities cannot leave stale personalized results.
+
 ## 6. Approval, publishing, withdrawal, and playback
 
 ```text
