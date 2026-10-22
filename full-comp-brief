@@ -1,0 +1,150 @@
+Spurs² Hackathon: Builder Brief
+The event
+Two days at UT Austin, Oct 22 to 23, building on the ScorePlay and Twelve Labs APIs to solve real content problems from Tottenham Hotspur and the San Antonio Spurs. Hosted by ScorePlay, Twelve Labs, The Players Fund, both clubs and the UT McCombs Business of Sports Institute.
+The objective: show what teams can build when a club's media is open infrastructure and AI can understand it. Both clubs want tools they can put to work.
+Format:
+10 teams of up to 5
+Thursday morning: onboarding and the brief
+Thursday afternoon to Friday 2pm: build
+Friday afternoon: presentations, judging and awards
+The two building blocks
+What's a MAM:
+A media asset management platform is where an organization stores, organizes and distributes its photos and video
+Every asset carries metadata: who's in it, the game, the date, rights, tags
+Teams search it, pull from it, and push content out to social, broadcast, partners and sponsors
+ScorePlay is the MAM here and the system of record
+If it's not on the asset in ScorePlay, the club doesn't know it
+Assets already carry player tags, so you can filter by who's in the shot
+Starting point: think of the MAM as the source of truth you read from and write back to
+What's video understanding:
+Video understanding models "watch" video the way a person does, across visuals, audio, speech and on-screen text, and turn it into data you can search and use
+Twelve Labs is the video understanding platform here. It has two models:
+Marengo: search your footage in plain language ("dunk in transition") and find the exact moment
+Pegasus: generate text from video, such as summaries, descriptions and tags
+Starting point: think of Twelve Labs as the analyst that watches everything and hands you structured answers
+How they fit together:
+ScorePlay holds the content and knows who's in it
+Twelve Labs understands what's happening in it
+Your app connects the two
+Example: filter ScorePlay for assets tagged with a player, then use Marengo to find the dunks in transition within those assets
+The typical loop: pull from ScorePlay, analyze with Twelve Labs, write results back to ScorePlay, then act on them
+What's on your platform
+Your setup:
+One ScorePlay platform per team, same content on every platform
+Everything already tagged and indexed by Twelve Labs
+Your team creates its own ScorePlay API keys
+Your team has its own Twelve Labs org and API key
+Tottenham Hotspur, Premier League vs Manchester United:
+Full match broadcast
+Match photos
+Press conference and interview clips
+Other approved assets from the club's match collection, in the same structure the Tottenham content team uses
+San Antonio Spurs, NBA playoff game:
+Full game broadcast
+Game photos
+Published edits for social and YouTube
+Metadata and reference data:
+Rosters and player headshots for both teams
+Main partner logos for both teams (front of shirt, sleeve, major sponsors)
+Basketball and soccer taxonomies for tagging and search
+Two content paths:
+Pre-indexed: all video sits in a Twelve Labs base index, ready to search
+Real-time: upload a new asset and send it to the model, the way a club would on match day
+Every Twelve Labs asset carries its ScorePlay asset ID in the custom ID field, so you can always get back to the record in ScorePlay
+The challenges
+Both problems come straight from the Tottenham and Spurs content teams. Pick one.
+Problem 1: Assisted Auto-Production Engine
+One game, a thousand outputs
+The problem:
+Teams produce large amounts of content but have limited bandwidth to use what they've captured
+The broadcast feed is one slice, alongside ISO cameras, press, stills and years of archive nobody has time to go back into
+What gets made is limited by how many people are available to make it
+Meanwhile the fans have already decided
+A player does something that never shows up in the stats, and the timeline is full of it before anyone in the building has found the clip
+The goal: build the system that decides what is worth making and then makes it, with a producer approving rather than searching.
+Take the hundreds to thousands of assets from a game and generate new content aimed at different audiences or fans
+One piece of footage becomes ten things, and none of them have to look alike
+Ten seconds or two minutes, aimed at a season ticket holder, a sponsor or a first-time viewer in another country
+Edit and transform the files how you see fit
+Keep a human in the loop: the system proposes, a person approves
+The value is the right five options in front of a producer in the time it used to take to find one
+Where it gets interesting: the signal that starts it can come from outside the video.
+Fan reactions on social media, so what gets proposed is a reaction to the crowd rather than a guess
+The video itself: the bench losing it, the visiting supporters, the second the venue goes quiet
+The archive: point the same engine at old footage and pull out what lands today
+Show your work, including what you left out:
+A producer's first question is always what did it skip, and why
+Show what was considered and rejected, with a reason, so a person can catch the gem the model missed
+If the system can defend why something will never be used, that is a storage decision as much as an editorial one
+Problem 2: Rights and Compliance
+Every clip, cleared
+The problem:
+Every piece of media a team puts out has rules attached: which country, which platform, which competition, whose face is in it, which sponsor is on the board, and when all of that expires
+Those rules live in documents someone signed two years ago, and the only way to check them is to ask a person who has read them
+That was manageable at ten posts a week, but content production is skyrocketing with AI
+The cost of getting it wrong is a breach, not a weak post
+The goal: something that reads the rules, applies them to the footage, then does something about it.
+Not a report a human has to action, but a decision that changes who can get the asset
+Build an interface that guides what can be published and what can't
+Check every asset against league and regional rules, then write the verdict and the reasoning back onto the asset
+Turn a contract nobody has time to read into a decision the platform enforces on its own
+Know in seconds what you can use, where, and for how long
+Treat a dubbed, subtitled or synthetic-commentary version as its own asset and review it on its own
+Make the answer auditable so administrative teams can review performance at scale
+Use the partner logos, rosters and taxonomies on your platform as your rule inputs
+Where it gets interesting:
+There is money in the archive nobody can safely touch, because the footage is fine in one market and not another
+Players who left two seasons ago and sponsors whose deals ended are still in the library, one careless download away from going out
+Some content is legally fine but should never circulate anyway
+Write your own rules rather than using something generic, and decide what your system does when it is not sure
+Think about where the answer lands, because a verdict nobody can act on is a spreadsheet
+What we expect you to build
+A working tool, not a slide
+Pick one challenge and one user (a producer, a rights manager, a social editor)
+Ship something they could use on Monday
+The workflow we recommend:
+Find your starting assets in ScorePlay by player, club, match or tag
+Analyze them on Twelve Labs: Marengo to search for moments, Pegasus to generate descriptions and tags
+Define your tagging taxonomy before you write anything back, with help from ScorePlay staff on site
+Write results back to ScorePlay as tags, details or timecoded actions on the asset
+Act on it: produce the content, flag the violation or surface it in your own front end
+Features we think you'll use most
+Everything you build runs on two APIs. Keep both docs open while you work.
+ScorePlay (developer.scoreplay.io)
+Auth is one header, X-ScorePlay-Api-Key
+The API reference has a "Try it" console, an OpenAPI file and a Postman collection
+Tag lookup: GET /tag/search resolves a player, club, sponsor or tag name to its ID
+Use it for: the first call in almost every workflow
+Media search: POST /media/search queries assets by player, club, stadium, competition or match, with AND, OR and exclude logic
+Use it for: finding your starting set
+Metadata writeback: write tags, details and timecoded video actions onto an asset, all searchable
+Use it for: storing what Twelve Labs found, compliance verdicts, production decisions
+Renditions: every asset comes in three tiers: original, compressed, thumbnail
+Use it for: picking the right size for processing vs display
+Dynamic image processing: resize, crop and face-aware centering through CDN URLs
+Use it for: producing formats for different platforms without a design step
+Upload: push new or derived assets into the platform
+Use it for: real-time ingest, saving the content you produce
+Webhooks: trigger your workflow when something changes
+Use it for: automating the loop, e.g. a new asset lands and goes straight to Twelve Labs
+Social publishing: push approved content to connected social channels from the platform
+Use it for: closing the loop from produce to approve to distribute, demo only with nothing leaving the event
+Twelve Labs (docs.twelvelabs.io)
+Marengo search: natural language search across your indexed video, returns the exact clip and timecode
+Use it for: finding moments, goals, dunks, celebrations, a sponsor board on screen
+Pegasus analyze: generates text from video, summaries, descriptions, tags, answers to a prompt
+Use it for: describing a clip, classifying it, checking it against a rule you describe
+Assets endpoint: upload new video for immediate use
+Use it for: the real-time content path
+Custom ID: every asset carries its ScorePlay asset ID
+Use it for: writing results back to the right record
+Usage terms and getting help
+Usage terms:
+Content stays on the platform and is for the hackathon only
+No downloading, posting or sharing outside the event
+Platforms are wiped after the event
+You'll accept the IP and image-rights terms when you confirm your spot
+Getting help:
+ScorePlay and Twelve Labs engineers are on the floor both days to help with auth, setup and architecture, to coach rather than build for you
+ScorePlay staff will help you design your tagging taxonomy before you write metadata
+Thursday morning onboarding covers API keys, search, upload and the ID mapping between the two platforms
