@@ -6,6 +6,10 @@ import { readFileSync } from "node:fs";
 import { templateCopy, generateCopy, __setCopyFetch } from "../shared/copy";
 import { overlapRatio, pickNew, SAME_PLAY, type Footage } from "../pipeline/watchlist";
 import { runTimeline, type Timeline } from "../pipeline/replay";
+import { canViewPublication, publicationStateAt, rightsStatusAllowsFanDistribution, type PublicationVersion } from "../shared/publication";
+import { DEMO_FAN_PERSONAS, rankForFan } from "../shared/fan-ranking";
+import { allowedIndexedAssetIds, buildFanSearchRequest, postValidateSearchHits } from "../shared/fan-search";
+import { DEMO_PLAYERS, resolveDemoPlayer } from "../shared/player-identity";
 
 process.env.DATABASE_URL ??= "postgres://unused@127.0.0.1:1/none"; // worker module builds a lazy client at import; never queried here
 const { rank } = await import("../pipeline/worker");
@@ -100,6 +104,54 @@ check(bad.length === 0, `every footage entry matches data/footage-map.json (Scor
 const outOfClip = real.events.filter((e) => e.kind !== "ai_watchlist").filter((e) => { const m = fmap.media.find((x) => x.scorePlayMediaId === real.footage[e.footage as string]?.scorePlayMediaId); return !m || e.start! < 0 || e.end! > m.durationSec + 1 || e.end! <= e.start!; });
 check(outOfClip.length === 0, `every trigger window lies inside its clip${outOfClip.length ? `: ${outOfClip.map((e) => e.headline)}` : ""}`);
 check(real.events.some((e) => e.kind === "ai_watchlist") && real.events.filter((e) => e.kind !== "ai_watchlist").every((e) => (e.text ?? "").length > 0), "real timeline has a watch-list event and every feed trigger has text");
+
+// ── publication lifecycle helpers (no DB) ───────────────────────────────────────────────
+const pubBase: PublicationVersion = {
+  version: 1,
+  orgId: "00000000-0000-4000-8000-000000000001",
+  state: "published",
+  approvedRevisionHash: "rev-1",
+  artifactId: "artifact-1",
+  artifactHash: "hash-1",
+  renderPath: "/renders/a.mp4",
+  durationSec: 12,
+  featuredPlayerIds: [],
+  interestTags: ["goal"],
+  claimIds: [],
+  rightsDecisionId: "00000000-0000-4000-8000-000000000002",
+  validFrom: "2026-10-22T12:00:00.000Z",
+  validUntil: "2026-10-23T12:00:00.000Z",
+  destination: { orgId: "00000000-0000-4000-8000-000000000001", platform: "fan_web", territories: ["US"], use: "owned_fan_web", language: "en", releaseAt: "2026-10-22T12:00:00.000Z", policyVersion: "demo-v1" },
+};
+const now = new Date("2026-10-22T13:00:00.000Z");
+check(publicationStateAt(pubBase, now) === "published", "publicationStateAt: currently published version is published");
+check(publicationStateAt({ ...pubBase, validFrom: "2026-10-24T00:00:00.000Z" }, now) === "scheduled", "publicationStateAt: future validFrom -> scheduled");
+check(publicationStateAt({ ...pubBase, validUntil: "2026-10-22T12:59:00.000Z" }, now) === "expired", "publicationStateAt: past validUntil -> expired");
+check(!canViewPublication({ ...pubBase, state: "withdrawn" }, { orgId: pubBase.orgId, territory: "US", use: "owned_fan_web" }, now).ok, "canViewPublication: withdrawn denied");
+check(!canViewPublication(pubBase, { orgId: pubBase.orgId, territory: "GB", use: "owned_fan_web" }, now).ok, "canViewPublication: wrong territory denied");
+check(canViewPublication(pubBase, { orgId: pubBase.orgId, territory: "US", use: "owned_fan_web" }, now).ok, "canViewPublication: matching viewer allowed");
+check(rightsStatusAllowsFanDistribution("cleared") && !rightsStatusAllowsFanDistribution("needs_review") && !rightsStatusAllowsFanDistribution("unknown"), "fan distribution: only cleared rights status can publish to fan catalog");
+
+// ── fan ranking and fan search guards (no DB / no provider calls) ───────────────────────
+const fanItems = [
+  { id: "solanke-goal", featuredPlayerIds: ["solanke"], interestTags: ["goal"], editorScore: 90, publishedAt: now, sourcePlayKey: "p1" },
+  { id: "crowd", featuredPlayerIds: [], interestTags: ["crowd"], editorScore: 75, publishedAt: now, sourcePlayKey: "p2" },
+];
+check(DEMO_FAN_PERSONAS.length === 2 && DEMO_FAN_PERSONAS[0].favoritePlayerIds.includes("solanke"), "demo personas: two seed-friendly fan preference profiles defined");
+check(rankForFan(fanItems, DEMO_FAN_PERSONAS[0], now)[0].item.id === "solanke-goal", "fan ranking: favorite/player interest leads for Fan A");
+check(rankForFan(fanItems, DEMO_FAN_PERSONAS[1], now)[0].item.id === "crowd", "fan ranking: interest match leads for Fan B");
+const searchItems = [
+  { publicationVersionId: "pv1", orgId: pubBase.orgId, indexedAssetId: "idx-1", state: "published" as const, canView: true },
+  { publicationVersionId: "pv2", orgId: pubBase.orgId, indexedAssetId: "idx-2", state: "withdrawn" as const, canView: true },
+  { publicationVersionId: "pv3", orgId: pubBase.orgId, indexedAssetId: "idx-3", state: "published" as const, canView: false },
+];
+const allowedIds = allowedIndexedAssetIds(searchItems);
+check(allowedIds.length === 1 && allowedIds[0] === "idx-1", "fan search: allowed ID set includes only viewable published derivatives");
+check(buildFanSearchRequest("index", "goal", []).ok === false, "fan search: empty allowed set refuses provider search");
+check(postValidateSearchHits([{ video_id: "idx-1", start: 0, end: 5, rank: 1 }, { video_id: "idx-2", start: 0, end: 5, rank: 2 }], searchItems).length === 1, "fan search: post-validation drops withdrawn/unviewable hits");
+check(DEMO_PLAYERS.some((p) => p.id === "solanke") && DEMO_PLAYERS.some((p) => p.id === "wembanyama"), "player identity: soccer and basketball demo players defined");
+check(resolveDemoPlayer("Sávio").status === "resolved" && resolveDemoPlayer("wemby").status === "resolved", "player identity: aliases resolve deterministically");
+check(resolveDemoPlayer("unknown player").status === "not_found", "player identity: unknown player does not guess silently");
 
 console.log(`\n${fail ? `${fail} FAILED` : "ALL PASS"}`);
 process.exit(fail ? 1 : 0);

@@ -1,0 +1,76 @@
+{
+  "version": "illustrative-v0",
+  "label": "Illustrative demo rights rules v0 - not club policy",
+  "illustrative": true,
+  "rules": [
+    {
+      "id": "R1-RIGHTS-ABSENT",
+      "name": "No confirmed rights metadata",
+      "enabled": true,
+      "status": "needs_review",
+      "severity": "warning",
+      "scope": { "use": ["owned_social", "owned_fan_web", "paid", "partner"] },
+      "condition": { "fact": "rights.policy.unknown", "op": "eq", "value": true },
+      "rationale": "Rights metadata is missing or unconfirmed. Do not distribute until reviewed.",
+      "remedies": ["confirm_rights_record"]
+    },
+    {
+      "id": "R2-EXPIRED-WINDOW",
+      "name": "Rights window expired",
+      "enabled": true,
+      "status": "expired",
+      "severity": "block",
+      "scope": { "use": ["owned_social", "owned_fan_web", "paid", "partner"] },
+      "condition": { "fact": "rights.window.expired", "op": "eq", "value": true },
+      "rationale": "The selected release time is outside the allowed rights window.",
+      "citation": "Illustrative event policy v0",
+      "remedies": ["choose_valid_release_time", "exclude_clip"]
+    },
+    {
+      "id": "R3-MUSIC-REMEDIATION",
+      "name": "Music requires cleanup",
+      "enabled": true,
+      "status": "needs_remediation",
+      "severity": "warning",
+      "scope": { "use": ["owned_social", "owned_fan_web"] },
+      "condition": { "fact": "content.audio.music", "op": "eq", "value": true },
+      "rationale": "Audible music was detected. Remove or replace the affected audio before distribution.",
+      "citation": "Illustrative event policy v0",
+      "remedies": ["mute_audio", "replace_with_cleared_audio"]
+    },
+    {
+      "id": "R4-ALCOHOL-FR",
+      "name": "Alcohol brand in France",
+      "enabled": true,
+      "status": "blocked",
+      "severity": "block",
+      "scope": { "territories": ["FR"], "use": ["owned_social", "owned_fan_web", "paid", "partner"] },
+      "condition": { "fact": "content.brand.category", "op": "eq", "value": "alcohol" },
+      "rationale": "Alcohol branding is blocked for the selected territory in this illustrative policy.",
+      "citation": "Illustrative event policy v0",
+      "remedies": ["choose_different_territory", "exclude_clip"]
+    },
+    {
+      "id": "R5-TRUNCATED-ANALYSIS",
+      "name": "Analysis incomplete",
+      "enabled": true,
+      "status": "needs_review",
+      "severity": "warning",
+      "scope": { "use": ["owned_social", "owned_fan_web", "paid", "partner"] },
+      "condition": { "fact": "content.analysis.truncated", "op": "eq", "value": true },
+      "rationale": "The AI response was truncated, so the clip was not fully checked.",
+      "remedies": ["rerun_analysis", "human_review"]
+    },
+    {
+      "id": "R6-CLEARED-WINDOW",
+      "name": "Confirmed active rights window",
+      "enabled": true,
+      "status": "cleared",
+      "severity": "info",
+      "scope": { "use": ["internal_preview"] },
+      "condition": { "fact": "rights.window.active", "op": "eq", "value": true },
+      "rationale": "The rights window is active for internal preview.",
+      "citation": "Illustrative event policy v0"
+    }
+  ]
+}

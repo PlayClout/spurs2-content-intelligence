@@ -9,6 +9,9 @@ import { readFileSync } from "node:fs";
 import { evaluateContent } from "../shared/content-rules";
 import { evaluate } from "../shared/compliance";
 import { parseManifest, PEGASUS_MANIFEST_SCHEMA } from "../shared/moment-manifest";
+import { evaluateRights, lintRuleSet, reevaluateRightsDecisions } from "../shared/rights/engine";
+import rightsRuleSet from "../pipeline/rules/rights-rules.json" with { type: "json" };
+import { assessCompleteness, buildRightsRecord, buildRightsWritePayload, mergeRightsFields } from "../shared/rights/metadata";
 
 let fail = 0;
 const check = (ok: boolean, msg: string) => { console.log(`${ok ? "PASS" : "FAIL"}  ${msg}`); if (!ok) fail++; };
@@ -77,6 +80,30 @@ check(threw.includes("crowdPrivacy"), "parseManifest rejects malformed fields wi
 check(PEGASUS_MANIFEST_SCHEMA.required[0] === Object.keys(PEGASUS_MANIFEST_SCHEMA.properties)[0], "json_schema: first declared property is required (TwelveLabs constraint)");
 const ts = PEGASUS_MANIFEST_SCHEMA.properties.moments.items.properties.start;
 check(ts.type === "timestamp" && ts.format === "seconds", "json_schema: timestamps declare format (else 400, per Nova's empirical test)");
+
+// ── D: A2 rights rule engine (illustrative policy v0, pure/no DB) ───────────────────────
+const baseCtx = { orgId: "00000000-0000-4000-8000-000000000001", platform: "fan_web", territories: ["US"], use: "owned_fan_web" as const, language: "en", releaseAt: "2026-10-22T12:00:00.000Z", policyVersion: "illustrative-v0" };
+check(Object.values(lintRuleSet(rightsRuleSet as never)).every((errs) => (errs as string[]).length === 0), "rights rules v0 lint clean (known facts, scoped rules, cleared rule cited)");
+check(evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m1", context: baseCtx, facts: { rights: { window: { expired: true } } } }).status === "expired", "rights engine: expired window -> expired");
+check(evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m2", context: baseCtx, facts: { rights: { policy: { unknown: true } } } }).status === "needs_review", "rights engine: unknown policy -> needs_review");
+check(evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m3", context: baseCtx, facts: { content: { audio: { music: true } } } }).status === "needs_remediation", "rights engine: music -> needs_remediation");
+check(evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m4", context: { ...baseCtx, territories: ["FR"] }, facts: { content: { brand: { category: "alcohol" } } } }).status === "blocked", "rights engine: alcohol brand blocked in FR only");
+check(evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m5", context: baseCtx, facts: { content: { analysis: { truncated: true } } } }).status === "needs_review", "rights engine: truncated analysis -> needs_review");
+const clearedDecision = evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m6", context: { ...baseCtx, use: "internal_preview" }, facts: { rights: { window: { active: true } } } });
+check(clearedDecision.status === "cleared", "rights engine: active window clears internal preview only");
+const reviewDecision = evaluateRights({ orgId: baseCtx.orgId, subjectType: "asset", subjectId: "m7", context: baseCtx, facts: { rights: { policy: { unknown: true } } } });
+check(reevaluateRightsDecisions({ decisions: [reviewDecision], factsBySubject: { "asset:m7": { rights: { window: { expired: true } } } }, ruleSet: rightsRuleSet as never })[0].status === "expired", "rights engine: re-evaluation supersedes from cached facts");
+
+// ── E: rights metadata merge/write contract (pure/no live write) ─────────────────────────
+const existing = { usage: { value: "owned", provenance: "existing_scoreplay" as const }, valid_until: { value: "2026-10-24", provenance: "existing_scoreplay" as const } };
+const inferred = { usage: { value: "paid", provenance: "inferred" as const }, allowed_territories: { value: ["US"], provenance: "inferred" as const } };
+const merged = mergeRightsFields(existing, inferred);
+check(merged.usage.provenance === "conflict" && merged.allowed_territories.provenance === "inferred", "rights metadata: existing conflict flagged; inferred fills gaps");
+check(assessCompleteness({}) === "absent" && assessCompleteness(merged) === "conflict", "rights metadata: absent/conflict completeness states");
+const record = buildRightsRecord(130849867, { usage: { value: "owned", provenance: "human_confirmed" }, allowed_territories: { value: ["US"], provenance: "human_confirmed" }, allowed_uses: { value: ["owned_fan_web"], provenance: "human_confirmed" }, valid_from: { value: "2026-10-22", provenance: "human_confirmed" }, valid_until: { value: "2026-10-24", provenance: "human_confirmed" }, policy_version: { value: "v0", provenance: "human_confirmed" } }, { by: "editor", at: "2026-10-22T12:00:00.000Z" });
+const payload = buildRightsWritePayload(record);
+check(record.completeness === "complete" && record.state === "cleared", "rights metadata: complete confirmed record becomes cleared");
+check(payload.rawTags.includes("rights:cleared") && payload.comment.includes("[clout:rights:130849867:"), "rights metadata: write payload uses allow-listed rights tags and marker");
 
 console.log(`\n${fail ? `${fail} FAILED` : "ALL PASS"}`);
 process.exit(fail ? 1 : 0);
