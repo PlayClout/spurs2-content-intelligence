@@ -5,12 +5,14 @@
  */
 import type { Channel } from "../shared/schemas";
 
+export type RenderChannel = Channel | "fan_app";
+
 export interface RenderRequest {
   orgId: string;
   sourcePath: string;
   startSec: number;
   endSec: number;
-  channel: Channel; // resolves against pipeline/channel-profiles.json
+  channel: RenderChannel; // resolves against pipeline/channel-profiles.json
   caption?: string;
   cropXOffset?: number; // from Pegasus subject position; default center
   mode: "draft" | "final"; // draft = stream-copy rough cut; final = frame-accurate + profile encode

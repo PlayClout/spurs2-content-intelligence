@@ -191,11 +191,11 @@ Each agent edits **only** its own paths. Every `features.md` task row names its 
 
 | ID | Task | Owner | Depends on | Status | Done when |
 |---|---|---|---|---|---|
-| T19 | `raw_tags` on `/video/logs` auto-create tags, so they pass the one allow-list (B10.8) | A1 | B10.8 | NEXT | A tag not on the list is dropped and logged, never sent |
-| T20 | `clout-approved` at `pipeline/worker.ts:266` is not in the taxonomy: replace it with a taxonomy option or drop it | A1 | none | NEXT | No non-taxonomy tag is sent |
+| T19 | `raw_tags` on `/video/logs` auto-create tags, so they pass the one allow-list (B10.8) | A1 | B10.8 | DONE (source-log tests) | A tag not on the list is dropped and logged, never sent |
+| T20 | `clout-approved` at `pipeline/worker.ts:266` is not in the taxonomy: replace it with a taxonomy option or drop it | A1 | none | DONE | No non-taxonomy tag is sent |
 | T21 | Rights log entry. It carries: verdict, rule-set version, engine version, "illustrative policy v0", run id, each element with evidence timestamps, provenance counts, who confirmed it and when, and the marker `[clout:rights:<mediaId>:<hash8>]`. `start`/`end` is the analysed range, and `raw_tags` holds allow-listed `rights:` options only | A2 builds, A1 sends | B14b.6 | NEXT | The dry-run payload shows every field; a retry creates no duplicate |
-| T22 | Update `docs/TAXONOMY.md:20` ("we never edit, re-tag or delete your original media") to: confirmed, allow-listed `rights:` tags only; only our own tags replaced; no details edits; no deletes. Update §3B `rights:` options to the 5 states | A1 text, Human tells ScorePlay | none | NEXT | Doc matches the write path; ScorePlay mentor told before the first live tag write |
-| T23 | Real writes need `SCOREPLAY_WRITES=1` plus the kill switch off; unset means dry run | A1 (`.env.example`), A3 (A4.11 note) | B10.9 | NEXT | Documented, and shown on the write panel |
+| T22 | Update `docs/TAXONOMY.md:20` ("we never edit, re-tag or delete your original media") to: confirmed, allow-listed `rights:` tags only; only our own tags replaced; no details edits; no deletes. Update §3B `rights:` options to the 5 states | A1 text, Human tells ScorePlay | none | A1 DONE; human pending | Doc matches the write path; ScorePlay mentor told before the first live tag write |
+| T23 | Real writes need `SCOREPLAY_WRITES=1` plus the kill switch off; unset means dry run | A1 (`.env.example`), A3 (A4.11 note) | B10.9 | A1 DONE; A3 pending | Documented, and shown on the write panel |
 | T24 | ScorePlay `/whoami`: does `rights[]` include `can_do_media_edit`? If not, write video logs only | Human | key | NEXT (first) | Result posted; tag plan confirmed or set to logs only |
 | T25 | Secrets in the demo laptop `.env`; run `db:push` for each migration | Human | A2 PRs | NEXT | Agents never receive or commit secrets |
 | T26 | B1.6 real rights fields on 3 to 5 demo media; B10.2/B10.7 live write test on one media with delete rollback | Human | T24, A1 PR 2 | BLOCKED on T24 | Tag and log written, read back, deleted |
@@ -217,3 +217,31 @@ Each agent edits **only** its own paths. Every `features.md` task row names its 
 **Already out of scope** (each deferred row still has a fallback owner in the `features.md` Agent column; A5.5 and B1.5 are Human): OpenCut (A5, B11), compilation and variant extras, rendition upload (B10.3, B10.5), live signals (B13.1, B13.3 to B13.6), admin polish (A0.3 to A0.7), metadata, PWA, player-page and search extras.
 
 **Never cut:** B14.1 to B14.3, B14.5, B14.6; B2.6, B2.10, B2.15; the rights and rules floor (A4.7, A4.8, B2.13, B2.14, B14b.1 to B14b.4, B14b.6 in dry run, B10.8, B10.9); publish, feed and withdraw with the fan-web gate; the REAL / SIMULATED labels.
+
+### 10.5 A1 implementation progress (2026-10-22)
+
+Working branch: `codex/agent-1-pipeline`. Only A1 paths and this progress log are edited. DONE means executed verification; PARTIAL means helpers/contracts exist but the shared integration is not complete.
+
+| Tasks | Status | Evidence / next step |
+|---|---|---|
+| B14.2 | A1 DONE; A3 cleanup pending | S3 uploader removed, cloud config throws at startup, worker upload calls and cloud infra/scripts/container removed; root AWS packages removed. `test:storage` passes. REQUEST to A3: remove AWS SDK from `web/package.json`/lockfile and the `/renders` redirect branch. A1 retains a null-only `signedRenderUrl` compatibility export and legacy return type until A3 removes that branch. |
+| B14.4 | DONE | `test:publish` confirms simulated-only publishing, no external ref. |
+| B14.5 | DONE | `test:hygiene`: forced processing/download/photo failures remove source copies/frame grabs; success removes frame grabs too. |
+| B14.6 | DONE (implementation/tests) | Startup sweeps stale transient files; `purge:media --all` covers configured render root, proof/test outputs and app-owned TMPDIR subfolder only. Isolated purge test proves `files_left=0` and no symlink target traversal. Human event teardown not run. |
+| B10.8, T19, T20 | DONE for current source-log path | Single allow-list drops/reports unknown raw tags; rejects unexpected fields; worker now sends `producer approved`. Editorial logs cannot emit rights-state tags. Rights tag sender awaits A2 payload. |
+| T22, T23 | A1 DONE; human/A3 pending | Taxonomy documents five states, provenance and own-tag-only replacement. `.env.example` defaults writes off and kill switch on. Mentor sign-off and A3 admin panel remain separate. |
+| B10.4, B10.6, B10.9, B10.2/B10.7 scripts | PARTIAL | `writeback.ts` contract, pure dry-run builder, queue/store port, source-log sender, duplicate key/provider-marker reconciliation and send-time gates tested with fake transport/store. Missing DB/settings adapter holds every live write. Ambiguous POST attempts reconcile instead of blindly resending. Preflight labels held writes honestly. A2 must implement `WriteStore` with atomic claims, unique keys, persisted provider IDs and retry scheduling; A3 must enqueue on approval with actor/revision. |
+| B14b.6/B14b.7, T21 | WAITING ON A2 | Confirmed RightsRecord payload/API not on main. No inferred rights tag sender or source-tag edits implemented; no guessed/redefined A2 contracts. |
+| B2.8 | PARTIAL | Brand location/time + on-screen-text schema/prompt, source-time normalization, finish-reason/coverage flags and tests added. Legacy/truncated/missing-coverage manifests are not checked; pipeline marks cards needs_review and blocks approval through the legacy compliance gate. Two live-window checks and A2 evaluator integration pending. |
+| B2.9 | DONE helper; A2 integration pending | Scoped/TTL rights reads for media, season roster and external groups; failure/absent season becomes needs_review, never clearance. Cache hit and failed-refresh tests pass. Metadata facts flow into delivery for the A2 stage. |
+| B8.3 | PARTIAL | `featuredPlayerIds` delivered as an explicit empty list pending editor-confirmed clip IDs; no whole-match roster copied into featured players. Requires A2 canonical identity + A3 metadata review integration. |
+| B5.1, B12.1 | DONE contracts/helpers | A1 pipeline variant/compilation manifests, explicit fan_app profile, exact recipe hashes and destination/policy/source lineage. Composition approval binds ordered entries. A2 still needs fan_app in shared channel schemas; A3 needs to call these helpers with current server authorization. |
+| B5.3, B12.3 | PARTIAL | Real FFmpeg helpers validate dimensions/duration, isolate failed variants and render ordered muted compositions with temp cleanup. `test:production` validates social/app outputs and montage. Durable job/UI wiring waits for A2/A3 approval contracts; 20–45s demo rehearsal is not claimed. |
+| B13.2 | DONE (replay fixture only) | Synthetic sampled counts/baseline/window are explicitly fixture data, attached only when a social replay event fires. Live/historical outside-source collection remains deferred. Existing replay tests pass. |
+| B6.1, B6.4 | IMPLEMENTED; DB verification pending | Claims now respect queued_at <= now(); health JSON includes storage, provider modes, held/gated writes and lane. Full worker/health verification needs DATABASE_URL. |
+
+**Validation:** `test:unit` passes (rules, ScorePlay, engine/replay, storage, simulated publish, hygiene, write gates, metadata). Existing `test:render` passes including dimensions, caption placement and actual audio removal. `test:production` passes on synthetic footage. TypeScript passes for A1 code/tests with bundler resolution and Node types. Full `npm test` reaches `test:e2e` and stops because `.env` is absent; no DB/E2E success claimed. Node dependencies and FFmpeg were installed locally for validation.
+
+**Integration handoffs:** A2's `agent2/contracts-publication-rights` branch is visible but unmerged; no A2-owned files copied or edited. REQUEST to A2: supply the durable WriteStore/settings adapter, confirmed-rights payload and current approval/evaluation APIs; add fan_app to shared channel schema. REQUEST to A3: remove web AWS dependency/redirect, surface needs_review/analysis coverage, supply teamSeasonId and reviewed featured-player IDs, enqueue confirmed writes on approval, and call variant/compilation helpers with current authorization. The referenced `challenge1/team-split-3-agents.md` is not present on main.
+
+**Human-only work not performed:** no credentials received, migrations pushed, live ScorePlay mutations, AWS teardown or new club-media downloads. Changes must be reviewed/merged by a human; no direct main push.

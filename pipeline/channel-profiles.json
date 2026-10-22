@@ -73,5 +73,13 @@
     "captions": { "burnIn": true, "position": "lower-third", "fontSize": 56 },
     "copy": { "maxChars": 280, "hashtags": true, "tone": "punchy" },
     "encode": { "vcodec": "mjpeg", "crf": 0, "preset": "", "acodec": "", "abitrate": "" }
+  },
+  "fan_app": {
+    "label": "Fan app", "aspect": "16:9", "width": 1920, "height": 1080,
+    "maxDurationSec": 180, "targetDurationSec": [10, 45],
+    "safeZone": { "top": 0, "bottom": 0, "left": 0, "right": 0 },
+    "captions": { "burnIn": false, "position": "none", "fontSize": 0 },
+    "copy": { "maxChars": 2200, "hashtags": false, "tone": "editorial" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
   }
 }

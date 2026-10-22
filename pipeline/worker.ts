@@ -25,9 +25,12 @@ import type { Channel, Compliance } from "../shared/schemas";
 import { processMoment, renderDir, publicPathFor, resolveSource, releaseSource, type MomentInput, type ProcessedMoment, type Variant } from "./moment";
 import { getRenderBackend } from "./render-backend";
 import { overlapRatio, SAME_PLAY } from "./watchlist";
-import { uploadRenderDir } from "../shared/storage";
+import { storageMode } from "../shared/storage";
+import { purgeLocalMedia } from "./local-media";
 import { scoreFit } from "../shared/clients/decisions";
 import { generateCopy } from "../shared/copy";
+
+storageMode();
 
 const client = postgres(process.env.DATABASE_URL!, { prepare: false, max: 3 });
 export const db = drizzle(client, { schema: s });
@@ -44,7 +47,7 @@ const log = (...a: unknown[]) => console.log(new Date().toISOString().slice(11, 
 export async function claimJob(): Promise<JobRow | null> {
   const rows = await db.execute<JobRow>(sql`
     update jobs set status = 'running', started_at = now(), attempts = attempts + 1
-    where id = (select id from jobs where status = 'queued' and type in ('process_moment','render_final')
+    where id = (select id from jobs where status = 'queued' and queued_at <= now() and type in ('process_moment','render_final')
                 and coalesce(payload->>'lane', 'default') = ${LANE}
                 order by queued_at for update skip locked limit 1)
     returning id, type, payload, status, error, attempts, queued_at as "queuedAt", started_at as "startedAt", finished_at as "finishedAt"`);
@@ -186,18 +189,18 @@ async function handleProcessMoment(job: JobRow) {
       score: ranking.score, scoreBreakdown: ranking.breakdown,
       headline: input.headline.toUpperCase(), generatedCopy: copy.copy,
       compliance: complianceStamp(p, v.channels, p.scoreplay.mode === "live" ? "scoreplay_metadata" : "scoreplay_fixture"),
-      status: "draft_ready",
+      status: p.requiresReview ? "needs_review" : "draft_ready",
       draftPaths: Object.fromEntries(v.channels.map((c) => [c, v.posterPublicPath])),
       finalPaths: {},
       delivery: {
-        variant: v, inputs: { ...inputs, copy: { source: copy.backend === "haiku" ? `Claude ${copy.model}` : "template", real: copy.backend === "haiku", note: copy.error ? `fallback: ${copy.error}` : "producer edits before publish" } },
+        variant: v, requiresReview: p.requiresReview, rightsInputs: p.rightsInputs, featuredPlayerIds: p.featuredPlayerIds, inputs: { ...inputs, copy: { source: copy.backend === "haiku" ? `Claude ${copy.model}` : "template", real: copy.backend === "haiku", note: copy.error ? `fallback: ${copy.error}` : "producer edits before publish" } },
         content: p.content, window: p.window, tightWindow: p.tightWindow, scoreplay: p.scoreplay, processMs, slug: runSlug, orgKey: input.orgKey,
         draftVideo: v.contentType === "reel" ? v.publicPath : null, triggers: [input.trigger], triggerWindows: [{ start: input.startSec, end: input.endSec }], ranking,
       },
       expiresAt: new Date(Date.now() + 48 * 3600_000),
     }).onConflictDoUpdate({
       target: s.opportunities.dedupeKey,
-      set: { status: "draft_ready", delivery: sql`excluded.delivery`, draftPaths: sql`excluded.draft_paths`, compliance: sql`excluded.compliance`, score: sql`excluded.score`, scoreBreakdown: sql`excluded.score_breakdown`, generatedCopy: sql`excluded.generated_copy` },
+      set: { status: p.requiresReview ? "needs_review" : "draft_ready", delivery: sql`excluded.delivery`, draftPaths: sql`excluded.draft_paths`, compliance: sql`excluded.compliance`, score: sql`excluded.score`, scoreBreakdown: sql`excluded.score_breakdown`, generatedCopy: sql`excluded.generated_copy` },
       // belt and braces: never let a dedupe collision touch another org's row (the key includes orgId too)
       setWhere: sql`${s.opportunities.orgId} = excluded.org_id`,
     }).returning();
@@ -214,7 +217,9 @@ async function handleRenderFinal(job: JobRow) {
   if (!opportunityId) throw new Error(`render_final payload has no opportunityId (got ${JSON.stringify(job.payload).slice(0, 120)}); placeholder/seed job, nothing to render`);
   const [opp] = await db.select().from(s.opportunities).where(eq(s.opportunities.id, opportunityId));
   if (!opp) throw new Error(`opportunity ${opportunityId} not found`);
+  if (!["approved", "rendering", "rendered"].includes(opp.status)) throw new Error("Final render requires an approved opportunity");
   const d = (opp.delivery ?? {}) as { variant?: Variant; tightWindow?: { start: number; end: number }; scoreplay?: ProcessedMoment["scoreplay"]; content?: ProcessedMoment["content"]; slug?: string; orgKey?: string; [k: string]: unknown };
+  if (d.requiresReview) throw new Error("Needs review: analysis/rights evidence is incomplete");
   if (!d.variant || !d.scoreplay || !d.tightWindow || !d.slug) {
     // seeded demo cards have no pipeline provenance: mark honestly instead of pretending to render
     await db.update(s.opportunities).set({ status: "rendered", delivery: { ...d, final: { skipped: "seed card without pipeline provenance (demo fixture)" } } }).where(eq(s.opportunities.id, opp.id));
@@ -232,6 +237,10 @@ async function handleRenderFinal(job: JobRow) {
   }
 
   const win = trimOverride ?? { startSec: d.tightWindow.start, endSec: d.tightWindow.end };
+  const analysed = d.window as { start: number; end: number } | undefined;
+  if (!Number.isFinite(win.startSec) || !Number.isFinite(win.endSec) || win.startSec < 0 || win.endSec <= win.startSec || !analysed || win.startSec < analysed.start || win.endSec > analysed.end) {
+    throw new Error("Trim requires analysis/review of the entire requested source window");
+  }
   const slug = d.slug; // the SAME folder the drafts were rendered into (never recomputed from times)
   const outDir = renderDir(slug);
   const backend = await getRenderBackend();
@@ -254,7 +263,6 @@ async function handleRenderFinal(job: JobRow) {
     for (const c of channels) finals[c] = d.variant.publicPath; // photo card is already final quality
   }
   const renderMs = Math.round(performance.now() - t0);
-  await uploadRenderDir(slug, outDir); // s3 mode: push the final (+ its poster) to the bucket; no-op locally
 
   // ScorePlay write-back: the approved moment as a video log on its source media. Idempotent per opportunity, and the
   // DB row is the record: a re-approve handled by ANY worker (another host, after a restart) never writes twice.
@@ -263,7 +271,7 @@ async function handleRenderFinal(job: JobRow) {
     ? { mode: sp.mode(), data: { created: false, entry: { id: prior } }, wouldSend: undefined }
     : await sp.writeMomentAsVideoLog({
         mediaId: d.scoreplay.mediaId, companyId: d.scoreplay.companyId, startSec: win.startSec, endSec: win.endSec,
-        ref: opp.id, label: `${opp.headline} (${opp.audience})`, tags: ["clout-approved", d.variant.contentType],
+        ref: opp.id, label: `${opp.headline} (${opp.audience})`, tags: ["producer approved"],
       });
   await db.update(s.opportunities).set({
     status: "rendered", finalPaths: finals,
@@ -295,6 +303,7 @@ export async function runOnce(): Promise<number> {
 export async function close() { await client.end(); }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  log("startup media sweep", await purgeLocalMedia());
   await requeueStale();
   if (process.argv.includes("--once")) {
     const n = await runOnce();
@@ -312,7 +321,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       healthServer = http.createServer((_req, res) => {
         const stale = Date.now() - lastOk > 120_000;
         res.writeHead(stale ? 503 : 200, { "content-type": "application/json" });
-        res.end(JSON.stringify({ worker: WORKER_ID, ok: !stale, lastLoopMsAgo: Date.now() - lastOk }));
+        res.end(JSON.stringify({ worker: WORKER_ID, ok: !stale, lastLoopMsAgo: Date.now() - lastOk,
+          storage: storageMode(), scoreplay: sp.mode(), twelvelabs: process.env.TWELVELABS_API_KEY && process.env.MOCK_MODE !== "1" ? "live" : "fixture",
+          writes: sp.writesEnabled() ? "gated_by_database" : "held", lane: LANE,
+        }));
       }).listen(hp, () => log(`health endpoint on :${hp}`));
       (globalThis as { __markLoop?: () => void }).__markLoop = () => { lastOk = Date.now(); };
     }

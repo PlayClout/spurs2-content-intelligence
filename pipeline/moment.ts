@@ -21,7 +21,7 @@ import { evaluateContent, type ContentVerdict } from "../shared/content-rules";
 import { MANIFEST_PROMPT, PEGASUS_MANIFEST_SCHEMA, parseManifest, type MomentManifest } from "../shared/moment-manifest";
 import { getRenderBackend } from "./render-backend";
 import { paddedWindow, probeDuration } from "./render-local";
-import { uploadRenderDir } from "../shared/storage";
+import { storageMode } from "../shared/storage";
 import type { Channel } from "../shared/schemas";
 import type { CaptionText } from "./overlay";
 
@@ -35,6 +35,7 @@ export const renderDir = (slug: string) => join(OUT_ROOT.startsWith("/") ? OUT_R
 export const publicPathFor = (slug: string, file: string) => `${PUBLIC_PREFIX}/${slug}/${file.split("/").pop()}`;
 
 export interface MomentInput {
+  teamSeasonId?: number; // explicit current roster, never infer season from a filename
   orgKey: string; // club-themes key
   competition: string; // "NBA Regular Season" | "Premier League" | ...
   scorePlayMediaId: number;
@@ -44,7 +45,10 @@ export interface MomentInput {
   kicker?: string;
   statLine?: string;
   /** what triggered it, for the explainability panel */
-  trigger: { kind: "game_event" | "social_reaction" | "ai_watchlist"; text: string; simulated: boolean };
+  trigger: { kind: "game_event" | "social_reaction" | "ai_watchlist"; text: string; simulated: boolean;
+    mode?: "live" | "replay" | "fixture";
+    evidence?: { provider: string; observedAtReplaySec: number; currentCount: number; baselineCount: number; windowSec: number; synthetic: true };
+  };
   twelvelabsAssetId?: string; // when the source is already uploaded to TwelveLabs
   /** recorded manifest fixture to use when TwelveLabs is not live (path relative to repo root) */
   manifestFixture?: string;
@@ -65,6 +69,9 @@ export interface Variant {
 
 export interface ProcessedMoment {
   manifest: MomentManifest;
+  requiresReview: boolean;
+  rightsInputs: sp.RightsInputs;
+  featuredPlayerIds: number[];
   manifestMode: "live" | "recorded-fixture";
   window: { start: number; end: number };
   tightWindow: { start: number; end: number };
@@ -94,7 +101,12 @@ export async function resolveSource(mediaId: number, outDir: string) {
     if (!existsSync(local)) {
       const res = await fetch(best.file_url);
       if (!res.ok || !res.body) throw new Error(`download ${mediaId} -> ${res.status}`);
-      await streamPipeline(Readable.fromWeb(res.body as never), createWriteStream(local));
+      try {
+        await streamPipeline(Readable.fromWeb(res.body as never), createWriteStream(local));
+      } catch (error) {
+        await rm(local, { force: true });
+        throw error;
+      }
     }
     downloaded = true;
   }
@@ -144,68 +156,75 @@ const REEL_CHANNELS: Channel[] = ["instagram_reel", "tiktok", "youtube_short"];
 const CARD_CHANNELS: Channel[] = ["instagram_feed", "x_photo"];
 
 export async function processMoment(input: MomentInput, slug: string): Promise<ProcessedMoment> {
+  storageMode();
   const outDir = renderDir(slug);
   await mkdir(outDir, { recursive: true });
 
   // 1) source + ScorePlay rights fields
   const src = await resolveSource(input.scorePlayMediaId, outDir);
-  const srcDur = await probeDuration(src.local);
+  try {
+    const srcDur = await probeDuration(src.local);
 
-  // 2) one windowed TwelveLabs analyze around the trigger
-  const window = paddedWindow(input.startSec, input.endSec, srcDur, 3);
-  const { manifest, mode: manifestMode } = await analyzeWindow(input, window);
-  const tight = tighten(manifest, window);
-  const renderWin = paddedWindow(tight.start, tight.end, srcDur);
+    // 2) one windowed TwelveLabs analyze around the trigger
+    const window = paddedWindow(input.startSec, input.endSec, srcDur, 3);
+    const { manifest, mode: manifestMode } = await analyzeWindow(input, window);
+    const rightsInputs = await sp.getRightsInputs(input.scorePlayMediaId, { teamSeasonId: input.teamSeasonId });
+    const requiresReview = manifest.analysisStatus !== "checked" || rightsInputs.status === "needs_review";
+    // Populated by editor-confirmed clip metadata, never copied from a whole-match roster or guessed from names.
+    const featuredPlayerIds: number[] = [];
+    const tight = tighten(manifest, window);
+    const renderWin = paddedWindow(tight.start, tight.end, srcDur);
 
-  // 3) rights: what the AI saw (content rules) + ScorePlay fields -> per-channel gate
-  const content = evaluateContent(manifest, { orgKey: input.orgKey, competition: input.competition, eventDate: src.media.date ? new Date(src.media.date * 1000).toISOString() : undefined }, [...REEL_CHANNELS, ...CARD_CHANNELS]);
-  const spRestrictions = restrictionsFromScorePlay(src.media);
-  const allChannels = [...REEL_CHANNELS, ...CARD_CHANNELS];
-  const gate = evaluate(allChannels, [...content.restrictions, ...spRestrictions]);
-  const compliance = allChannels.map((c) => ({
-    channel: c,
-    status: gate.allowedChannels.includes(c) ? gate.status : "blocked",
-    reasons: gate.reasons,
-  }));
+    // 3) rights: what the AI saw (content rules) + ScorePlay fields -> per-channel gate
+    const content = evaluateContent(manifest, { orgKey: input.orgKey, competition: input.competition, eventDate: src.media.date ? new Date(src.media.date * 1000).toISOString() : undefined }, [...REEL_CHANNELS, ...CARD_CHANNELS]);
+    const spRestrictions = restrictionsFromScorePlay(src.media);
+    const allChannels = [...REEL_CHANNELS, ...CARD_CHANNELS];
+    const gate = evaluate(allChannels, [...content.restrictions, ...spRestrictions]);
+    const compliance = allChannels.map((c) => ({
+      channel: c,
+      status: !requiresReview && gate.allowedChannels.includes(c) ? gate.status : "blocked",
+      reasons: requiresReview ? [...gate.reasons, "Needs review: incomplete analysis or ScorePlay rights evidence"] : gate.reasons,
+    }));
 
-  // 4) drafts: two audiences, two formats, club brand
-  const backend = await getRenderBackend();
-  const caption: CaptionText = { kicker: input.kicker, headline: input.headline };
-  const reel = await backend.render({
-    orgId: input.orgKey, sourcePath: src.local, startSec: renderWin.start, endSec: renderWin.end,
-    channel: "instagram_reel", caption: input.headline, cropXOffset: manifest.subjectX, mode: "draft",
-    ...({ club: input.orgKey, captionText: caption, outDir, slug: "reel", renderActions: content.renderActions } as object),
-  } as never) as Awaited<ReturnType<typeof backend.render>> & { audioMuted?: boolean };
-  const peak = manifest.moments.length ? (manifest.moments[0].start + manifest.moments[0].end) / 2 : (renderWin.start + renderWin.end) / 2;
-  const card = await backend.render({
-    orgId: input.orgKey, sourcePath: src.local, startSec: tight.start, endSec: tight.end,
-    channel: "instagram_feed", mode: "final", cropXOffset: manifest.subjectX,
-    ...({ club: input.orgKey, captionText: caption, outDir, slug: "card", statLine: input.statLine, grabAtSec: peak } as object),
-  } as never);
+    // 4) drafts: two audiences, two formats, club brand
+    const backend = await getRenderBackend();
+    const caption: CaptionText = { kicker: input.kicker, headline: input.headline };
+    const reel = await backend.render({
+      orgId: input.orgKey, sourcePath: src.local, startSec: renderWin.start, endSec: renderWin.end,
+      channel: "instagram_reel", caption: input.headline, cropXOffset: manifest.subjectX, mode: "draft",
+      ...({ club: input.orgKey, captionText: caption, outDir, slug: "reel", renderActions: content.renderActions } as object),
+    } as never) as Awaited<ReturnType<typeof backend.render>> & { audioMuted?: boolean };
+    const peak = manifest.moments.length ? (manifest.moments[0].start + manifest.moments[0].end) / 2 : (renderWin.start + renderWin.end) / 2;
+    const card = await backend.render({
+      orgId: input.orgKey, sourcePath: src.local, startSec: tight.start, endSec: tight.end,
+      channel: "instagram_feed", mode: "final", cropXOffset: manifest.subjectX,
+      ...({ club: input.orgKey, captionText: caption, outDir, slug: "card", statLine: input.statLine, grabAtSec: peak } as object),
+    } as never);
 
-  const pub = (p: string) => publicPathFor(slug, p);
-  const variants: Variant[] = [
-    {
-      audience: "casual", contentType: "reel", channels: REEL_CHANNELS, previewChannel: "instagram_reel",
-      publicPath: pub(reel.outPath), posterPublicPath: pub(reel.posterPath), renderMs: reel.renderMs, durationSec: reel.durationSec, audioMuted: reel.audioMuted,
-      why: "Casual and global fans discover moments in sound-off vertical feeds: short, captioned, action kept in frame.",
-    },
-    {
-      audience: "superfan", contentType: "milestone_graphic", channels: CARD_CHANNELS, previewChannel: "instagram_feed",
-      publicPath: pub(card.outPath), posterPublicPath: pub(card.outPath), renderMs: card.renderMs, durationSec: 0,
-      why: "Core supporters share the still: a branded card with the stat line travels in feeds, group chats and X.",
-    },
-  ];
-  await writeFile(join(outDir, "manifest.json"), JSON.stringify({ manifest, manifestMode, window, tight, content, compliance }, null, 2));
-  await releaseSource(src); // drafts are done: drop the transient club-footage copy before anything is uploaded
-  await uploadRenderDir(slug, outDir); // s3 mode: push drafts to the bucket so any worker/UI serves them; no-op locally
+    const pub = (p: string) => publicPathFor(slug, p);
+    const variants: Variant[] = [
+      {
+        audience: "casual", contentType: "reel", channels: REEL_CHANNELS, previewChannel: "instagram_reel",
+        publicPath: pub(reel.outPath), posterPublicPath: pub(reel.posterPath), renderMs: reel.renderMs, durationSec: reel.durationSec, audioMuted: reel.audioMuted,
+        why: "Casual and global fans discover moments in sound-off vertical feeds: short, captioned, action kept in frame.",
+      },
+      {
+        audience: "superfan", contentType: "milestone_graphic", channels: CARD_CHANNELS, previewChannel: "instagram_feed",
+        publicPath: pub(card.outPath), posterPublicPath: pub(card.outPath), renderMs: card.renderMs, durationSec: 0,
+        why: "Core supporters share the still: a branded card with the stat line travels in feeds, group chats and X.",
+      },
+    ];
+    await writeFile(join(outDir, "manifest.json"), JSON.stringify({ manifest, manifestMode, window, tight, content, compliance }, null, 2));
 
-  return {
-    manifest, manifestMode, window, tightWindow: tight, content,
-    scoreplay: {
-      mode: src.mode, mediaId: src.media.ID, companyId: src.media.company_id, eventId: src.media.event_id,
-      rightsFieldsUsed: spRestrictions.map((r) => r.rule.match(/\(ScorePlay media \d+: ([a-z_]+)/)?.[1] ?? r.kind),
-    },
-    variants, compliance,
-  };
+    return {
+      manifest, manifestMode, window, tightWindow: tight, content, requiresReview, rightsInputs, featuredPlayerIds,
+      scoreplay: {
+        mode: src.mode, mediaId: src.media.ID, companyId: src.media.company_id, eventId: src.media.event_id,
+        rightsFieldsUsed: spRestrictions.map((r) => r.rule.match(/\(ScorePlay media \d+: ([a-z_]+)/)?.[1] ?? r.kind),
+      },
+      variants, compliance,
+    };
+  } finally {
+    await releaseSource(src);
+  }
 }

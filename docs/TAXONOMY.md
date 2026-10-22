@@ -15,9 +15,16 @@ Team: spurs2-hack-12 · Challenge 1, Assisted Auto-Production · 2026-10-22
 | **Tags + details** on the uploaded media | `POST /media/{id}/tags`, `PUT /media/{id}/details` | Right after the upload completes | per upload |
 | **One sub-collection** for our outputs | `POST /event` (once) | Setup, once per match collection | 1 |
 
-We **never** edit, re-tag or delete your original media. Writes only go to (a) new logs on the source timeline
-and (b) new media inside our own sub-collection. Every log we write carries the marker `[clout:<id>]` in its
-comment, so our writes are easy to find and remove.
+We never change source descriptions/details or `accessible_*` fields and never delete media.
+After a person confirms a rights record, allow-listed `rights:` tags may be added to its source;
+only tag IDs recorded as written by our own jobs may be replaced. Existing human/provider tags are preserved.
+Source-log writes carry a stable `[clout:<id>]` marker so retries can reconcile them.
+
+**Current build:** local-only renders; uploads, output collections and output details below are deferred proposals,
+not enabled endpoints. The A1 write contract currently supports approved source logs. Confirmed rights payloads
+and persistent queue/settings integration await A2's contracts; without a durable settings adapter all live sends
+are held. `SCOREPLAY_WRITES=1`, `SCOREPLAY_WRITE_KILL_SWITCH=0` and a false DB kill switch are all required.
+The admin must show DRY RUN/held payloads, never pretend a fixture write reached ScorePlay.
 
 Write-back runs automatically in background jobs: approval queues the source log, and render completion queues each rendition upload plus tags/details and source/revision/channel references. No manual per-clip sync is required. Record pending/synced/held/failed state and stable provider IDs. Retries must reconcile existing writes and avoid duplicate logs/uploads. The workspace taxonomy sign-off gate holds live work until enabled; queued jobs then resume with current approval and rights checks.
 
@@ -75,9 +82,14 @@ Inherits the match's tags through your collection hierarchy (Premier League, 202
 | signal: fan reaction | triggered by social / fan reaction |
 | signal: ai watch-list | found by TwelveLabs search, no data feed logged it |
 | rights: cleared | passed our rights check |
-| rights: restricted | allowed on some channels only (reason in the comment) |
+| rights: needs remediation | a permitted transformation is required |
+| rights: needs review | evidence or contract terms are missing/conflicting |
+| rights: blocked | not permitted for the evaluated context |
+| rights: expired | permission window ended |
+| rights: inferred | provenance: contains model-derived content facts |
+| rights: partial coverage | analysed windows do not cover the full source |
 
-That's **17 new options in 2 groups**. If you'd rather we put these in `raw_tags` on logs only (no new tag groups),
+The allow-list includes the five rights states plus two provenance tags; rights tags require a confirmed rights record and are never inferred from editorial approval alone. If you'd rather we put these in `raw_tags` on logs only (no new tag groups),
 we can do that instead.
 
 ## 4. The log, field by field (`POST /video/logs`)
@@ -91,7 +103,7 @@ we can do that instead.
       "start_offset": 4210.0,
       "end_offset": 4228.5,
       "comment": "Solanke equaliser, 88'. Why: game event (goal) + fan reaction spike merged on the same play; TwelveLabs: 'Solanke turns and finishes low; away end erupts'. Audience: casual fan (9:16 reel). Rights: cleared. Output: media 13xxxxxxx in Spursx2 AI Productions. [clout:9f2c1a]",
-      "raw_tags": ["goal", "celebration", "ai recommended", "producer approved", "audience: casual fan", "signal: game event", "signal: fan reaction", "rights: cleared"],
+      "raw_tags": ["goal", "celebration", "ai recommended", "producer approved", "audience: casual fan", "signal: game event", "signal: fan reaction"],
       "player_ids": [736578]
     }
   }]
@@ -114,3 +126,18 @@ TwelveLabs saw* · *audience and format* · *rights verdict* · *output media id
 3. Live writes during judging: fine on this workspace?
 4. The San Antonio Spurs videos are on ScorePlay but **not in the TwelveLabs index** (58 Premier League videos only). Are they indexed somewhere, or should we index them ourselves?
 5. Logs on short edits (e.g. `solanke late goal.mp4`) or only on the full match? We plan to log on **the full match when the moment is in it**, and on the clip otherwise.
+
+## 7. A1 implementation gates and handoff
+
+`shared/clients/writeback.ts` exports the single tag/field allow-list and the queue/settings interface.
+Unknown `raw_tags` are dropped and logged, including `clout-approved`; unexpected write fields are rejected.
+Ordinary editorial source logs cannot emit `rights:` tags. The confirmed-rights sender must consume A2's payload,
+use `[clout:rights:<mediaId>:<hash8>]`, preserve analysis bounds, and carry rule-set/engine versions, policy label,
+run ID, evidence timecodes, provenance counts and confirmer/time. Only IDs our records created can be removed.
+If `/whoami` lacks `can_do_media_edit`, the rights integration must fall back to logs only.
+
+Dry run builds the payload without network calls. The DB kill switch is read at send time and again immediately
+before mutation; errors/missing settings hold the write. Fixture/seeded requests cannot send live. A2's durable
+store must uniquely constrain the write key, atomically claim work, preserve provider IDs across restarts, and
+schedule retry/backoff. The A1 source-log primitive reads provider markers for reconciliation; it must not blindly
+retry an ambiguous POST.

@@ -3,6 +3,7 @@
  * as the moments "happen". Game/social triggers are SIMULATED feeds (labeled). The ai_watchlist trigger runs a real
  * TwelveLabs search at fire time (or its recorded response in MOCK mode) and is labeled REAL.
  */
+import socialFixture from "./fixtures/social-replay.json" with { type: "json" };
 import type { MomentInput } from "./moment";
 import { search, pickNew, type Footage, type Window } from "./watchlist";
 
@@ -53,11 +54,13 @@ export async function runTimeline(
       input = base(tl, f, ev, hit.start, hit.end, {
         kind: "ai_watchlist",
         text: `TwelveLabs watch-list "${ev.query}" hit #${hit.rank} at ${hit.start.toFixed(1)}-${hit.end.toFixed(1)}s (${mode === "live" ? "live search" : "recorded live search"})`,
-        simulated: false,
+        simulated: false, mode: mode === "live" ? "live" : "replay",
       });
       note = input.trigger.text;
     } else {
-      input = base(tl, pool[0], ev, ev.start!, ev.end!, { kind: ev.kind, text: `${ev.text} (simulated feed)`, simulated: true });
+      input = base(tl, pool[0], ev, ev.start!, ev.end!, { kind: ev.kind, text: `${ev.text} (simulated feed)`, simulated: true, mode: "fixture",
+        ...(ev.kind === "social_reaction" ? { evidence: { ...socialFixture.sample, synthetic: true as const, observedAtReplaySec: ev.at } } : {}),
+      });
       note = ev.text!;
     }
     fired.push({ mediaId: input.scorePlayMediaId, window: { start: input.startSec, end: input.endSec } });

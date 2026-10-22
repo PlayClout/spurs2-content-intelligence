@@ -12,7 +12,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { existsSync } from "node:fs";
-import { mkdir, stat } from "node:fs/promises";
+import { mkdir, stat, rm } from "node:fs/promises";
 import { join, dirname, basename } from "node:path";
 import type { RenderBackend, RenderRequest, RenderResult } from "./render-backend";
 import { channelGeom, renderCaptionOverlay, renderPhotoCard, type CaptionText } from "./overlay";
@@ -144,19 +144,24 @@ export class LocalFfmpegBackend implements RenderBackend {
   private async renderPhoto(r: LocalRenderRequest) {
     const outPath = join(r.outDir, `${r.slug}.${r.channel}.jpg`);
     let still = r.stillPath;
-    if (!still) {
-      still = join(r.outDir, `${r.slug}.grab.png`);
-      const at = r.grabAtSec ?? (r.startSec + r.endSec) / 2;
-      await run(FFMPEG, ["-y", "-hide_banner", "-loglevel", "error", "-ss", at.toFixed(3), "-i", r.sourcePath, "-frames:v", "1", still]);
+    const temporary = !still;
+    try {
+      if (!still) {
+        still = join(r.outDir, `${r.slug}.grab.png`);
+        const at = r.grabAtSec ?? (r.startSec + r.endSec) / 2;
+        await run(FFMPEG, ["-y", "-hide_banner", "-loglevel", "error", "-ss", at.toFixed(3), "-i", r.sourcePath, "-frames:v", "1", still]);
+      }
+      await renderPhotoCard(outPath, still, r.channel, r.club, {
+        ...(r.captionText ?? { headline: "" }),
+        statLine: r.statLine,
+        focusX: r.cropXOffset,
+      });
+      const sz = (await stat(outPath)).size;
+      if (!sz) throw new Error(`photo card empty: ${outPath}`);
+      return { outPath, posterPath: outPath, durationSec: 0 };
+    } finally {
+      if (temporary && still) await rm(still, { force: true });
     }
-    await renderPhotoCard(outPath, still, r.channel, r.club, {
-      ...(r.captionText ?? { headline: "" }),
-      statLine: r.statLine,
-      focusX: r.cropXOffset,
-    });
-    const sz = (await stat(outPath)).size;
-    if (!sz) throw new Error(`photo card empty: ${outPath}`);
-    return { outPath, posterPath: outPath, durationSec: 0 };
   }
 }
 

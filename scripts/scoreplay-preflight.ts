@@ -57,7 +57,9 @@ if (writeMedia) {
   const companyId = (await sp.getMedia(writeMedia)).data.company_id;
   const ref = `preflight-${Date.now()}`;
   const w = await step(`WRITE TEST POST /video/logs on media ${writeMedia}`, () => sp.writeMomentAsVideoLog({ mediaId: writeMedia, companyId, startSec: 1, endSec: 3, ref, label: "Spursx2 AI preflight test (safe to delete)" }));
-  if (w?.data.entry) {
+  if (w?.wouldSend) {
+    console.log("      DRY RUN / HELD: no mutation sent; durable queue/settings and taxonomy sign-off required");
+  } else if (w?.data.created && w.data.entry) {
     console.log(`      created log id=${w.data.entry.id}; read back ${w.data.entry.start_timestamp}-${w.data.entry.end_timestamp}ms`);
     const base = (process.env.SCOREPLAY_API_BASE || sp.DEFAULT_BASE).replace(/\/$/, "");
     const del = await fetch(`${base}/media/${writeMedia}/logs`, { method: "DELETE", headers: { "X-ScorePlay-Api-Key": process.env.SCOREPLAY_API_KEY!, "Content-Type": "application/json" }, body: JSON.stringify({ log_ids: [w.data.entry.id] }) });

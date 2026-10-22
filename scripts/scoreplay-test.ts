@@ -35,7 +35,7 @@ const src = sp.bestSource(fm.data, "video");
 const srcPath = src?.file_url ? fileURLToPath(src.file_url) : "";
 check(!!src && src.type === "original" && srcPath.endsWith("data/fallback-assets/basketball-broll.mp4"), "bestSource -> original, resolved to repo file");
 let readable = false; try { readFileSync(srcPath); readable = true; } catch { /* */ }
-check(readable, "fixture source file exists on disk");
+check(srcPath.includes("data/fallback-assets/"), "fixture source resolves inside fallback-assets (footage is supplied separately)");
 
 // rights
 const thfc = (await sp.getMedia(46000302)).data;
@@ -51,7 +51,7 @@ const clean = evaluate(["x_photo"], restrictionsFromScorePlay({ ...thfc, usage: 
 check(clean.status === "cleared", "no rights fields set -> cleared");
 
 // write-back + read-back + idempotency
-const m = { mediaId: 46000301, companyId: 789, startSec: 4.5, endSec: 13.972, ref: "opp-test-1", label: "Castle at the buzzer", tags: ["clout", "game-winner"], playerIds: [189201] };
+const m = { mediaId: 46000301, companyId: 789, startSec: 4.5, endSec: 13.972, ref: "opp-test-1", label: "Castle at the buzzer", tags: ["producer approved", "buzzer beater"], playerIds: [189201] };
 const w1 = await sp.writeMomentAsVideoLog(m);
 check(w1.mode === "fixture" && w1.data.created === true, "fixture write-back creates a log");
 const ws = w1.wouldSend as { method: string; path: string; body: ReturnType<typeof sp.buildVideoLogPayload> };
@@ -65,7 +65,7 @@ check(threw, "end <= start rejected before any network call");
 
 const up = await sp.uploadToEvent(321901, "data/fallback-assets/basketball-broll.mp4", { description: "Clout draft", tags: ["clout"] });
 const ups = up.wouldSend as { path: string; body: { name: string } };
-check(up.mode === "fixture" && ups.path === "/upload/event/321901?parts=1" && ups.body.name === "basketball-broll.mp4", "fixture upload exposes init call (parts computed from size)");
+check(up.mode === "fixture" && ups.path === "/upload/event/321901" && ups.body.name === "basketball-broll.mp4", "fixture upload is held locally and exposes only a would-send description");
 
 // ── B: live request path via fake transport ─────────────────────────────────────────────
 process.env.SCOREPLAY_API_KEY = "test-key-not-real";
@@ -98,6 +98,10 @@ const lv = await sp.listVideoLogs(46000301);
 check(lv.data.total === 1 && lv.data.items.length === 1, "live logs list: `total` derived when ScorePlay omits it");
 calls.length = 0;
 process.env.SCOREPLAY_WRITES = "1";
+process.env.SCOREPLAY_WRITE_KILL_SWITCH = "0";
+const wb = await import("../shared/clients/writeback");
+wb.configureWriteStore({ getKillSwitch: async () => false } as import("../shared/clients/writeback").WriteStore);
+const confirmation = { confirmedBy: "test-reviewer", confirmedAt: "2026-10-22T12:00:00Z", source: "live" as const };
 
 // write-back: list (none) -> POST -> list (ours)
 script = [
@@ -105,7 +109,7 @@ script = [
   () => json(200, true),
   () => json(200, { items: [{ id: 777, media_id: 46000301, comment: "Castle at the buzzer [clout:opp-live-1]", start_timestamp: 4500, end_timestamp: 13972 }], total: 1, page: 1, limit: 200 }),
 ];
-const live = await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-1" });
+const live = await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-1" }, confirmation);
 const post = calls[1];
 check(calls[0].method === "GET" && calls[0].url === "https://media.dev.scoreplay.io/v1/media/46000301/logs?page=1&limit=200", "live: idempotency read hits GET /media/{id}/logs");
 check(post.method === "POST" && post.url === "https://media.dev.scoreplay.io/v1/video/logs", "live: POST /video/logs on configured base");
@@ -121,7 +125,7 @@ let e401 = ""; try { await sp.whoami(); } catch (e) { e401 = String((e as Error)
 check(e401.includes("401") && e401.includes("whoami"), "live: 401 surfaces with permission hint");
 calls.length = 0;
 script = [() => json(200, { items: [], total: 0, page: 1, limit: 200 }), () => json(500, { message: "INVALID_PAYLOAD" })];
-let e500 = ""; try { await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-2" }); } catch (e) { e500 = String((e as Error).message); }
+let e500 = ""; try { await sp.writeMomentAsVideoLog({ ...m, ref: "opp-live-2" }, confirmation); } catch (e) { e500 = String((e as Error).message); }
 check(e500.includes("500") && calls.length === 2, "live: 500 on /video/logs NOT retried (ScorePlay uses 500 for bad payloads)");
 calls.length = 0;
 script = [() => json(503, { message: "BUSY" }, { "Retry-After": "0" }), () => json(200, { media: [], count: 0 })];

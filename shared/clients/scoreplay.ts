@@ -19,9 +19,9 @@
  *  - formats/download needs `can_do_media_download`; file_url is presigned, valid 24h.
  *  - Upload: POST /upload/event/{eventId}?parts=N -> PUT parts to presigned urls -> POST /upload/complete/{mediaId}.
  */
-import { readFile, stat } from "node:fs/promises";
-import { open } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
+import { canWrite, filterTags, type WriteRequest } from "./writeback";
 
 export type Mode = "live" | "fixture";
 export interface Result<T> { mode: Mode; data: T; wouldSend?: unknown }
@@ -75,7 +75,7 @@ export function mode(): Mode {
 }
 /** Live WRITES are opt-in: until SCOREPLAY_WRITES=1 (set after ScorePlay signs off our taxonomy, docs/TAXONOMY.md),
  * live write calls return the exact request as `wouldSend` and send nothing. Reads are unaffected. */
-export const writesEnabled = () => mode() === "live" && process.env.SCOREPLAY_WRITES === "1";
+export const writesEnabled = () => mode() === "live" && process.env.SCOREPLAY_WRITES === "1" && process.env.SCOREPLAY_WRITE_KILL_SWITCH === "0";
 
 let fetchImpl: typeof fetch = (...a) => fetch(...a);
 /** test seam: swap the transport to exercise the live request path without a key */
@@ -235,7 +235,14 @@ export interface MomentLog {
 }
 
 export function buildVideoLogPayload(m: MomentLog) {
-  if (!(m.endSec > m.startSec)) throw new Error("video log: endSec must be > startSec");
+  if (!Number.isFinite(m.startSec) || !Number.isFinite(m.endSec) || m.startSec < 0 || !(m.endSec > m.startSec)) throw new Error("video log: finite nonnegative startSec and endSec > startSec required");
+  if (!Number.isSafeInteger(m.mediaId) || m.mediaId <= 0 || !Number.isSafeInteger(m.companyId) || m.companyId <= 0) throw new Error("video log: invalid media/company id");
+  if (!m.ref || /[\[\]\r\n]/.test(m.ref)) throw new Error("video log: invalid marker reference");
+  if (m.playerIds?.some((id) => !Number.isSafeInteger(id) || id <= 0)) throw new Error("video log: invalid player id");
+  const keys = ["mediaId", "companyId", "startSec", "endSec", "ref", "label", "tags", "playerIds"];
+  if (Object.keys(m).some((key) => !keys.includes(key))) throw new Error("video log: field outside write allow-list");
+  const tags = filterTags(m.tags);
+  if (tags.dropped.length) console.warn("ScorePlay raw_tags dropped (not allowed):", tags.dropped.join(", "));
   return {
     company_id: m.companyId,
     video_logs: [{
@@ -244,7 +251,7 @@ export function buildVideoLogPayload(m: MomentLog) {
         start_offset: Number(m.startSec.toFixed(3)),
         end_offset: Number(m.endSec.toFixed(3)),
         comment: `${m.label} [${CLOUT_MARKER}${m.ref}]`,
-        ...(m.tags?.length ? { raw_tags: m.tags } : {}),
+        ...(tags.allowed.length ? { raw_tags: tags.allowed } : {}),
         ...(m.playerIds?.length ? { player_ids: m.playerIds } : {}),
       },
     }],
@@ -255,57 +262,58 @@ export function findOurLog(items: SPVideoLogEntry[], ref: string) {
   return items.find((x) => x.comment?.includes(`[${CLOUT_MARKER}${ref}]`)) ?? null;
 }
 
+/** Never conclude "not found" from only the first page. */
+async function existingLog(mediaId: number, ref: string) {
+  for (let page = 1; page <= 100; page++) {
+    const r = (await listVideoLogs(mediaId, page)).data;
+    const found = findOurLog(r.items, ref);
+    if (found) return found;
+    if (mode() === "fixture" || r.items.length < 200) return null;
+  }
+  throw new Error("Log pagination incomplete; refusing a duplicate-prone write");
+}
+
 /**
  * Idempotent write-back. Skips the POST if a log with our marker already exists (webhook/worker retries are safe).
  * Live: POST then re-read to return the created entry (ScorePlay returns only `true`; preview urls arrive later).
  */
-export async function writeMomentAsVideoLog(m: MomentLog): Promise<Result<{ created: boolean; entry: SPVideoLogEntry | null }>> {
+export async function writeMomentAsVideoLog(m: MomentLog, confirmation?: Pick<WriteRequest, "confirmedBy" | "confirmedAt" | "source">, reconcileOnly = false): Promise<Result<{ created: boolean; entry: SPVideoLogEntry | null }>> {
   const payload = buildVideoLogPayload(m);
-  const existing = findOurLog((await listVideoLogs(m.mediaId)).data.items, m.ref);
+  const existing = await existingLog(m.mediaId, m.ref);
   if (existing) return { mode: mode(), data: { created: false, entry: existing } };
 
+  if (reconcileOnly && mode() === "live") return { mode: "live", data: { created: false, entry: null }, wouldSend: {
+    method: "POST", path: "/video/logs", body: payload, held: "Previous attempt ambiguous; reconcile provider marker before any resend",
+  } };
   if (mode() === "fixture" || !writesEnabled()) {
     if (mode() === "live") return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: "SCOREPLAY_WRITES!=1 (awaiting taxonomy sign-off)" } };
     const entry: SPVideoLogEntry = {
       id: nextFixtureLogId++, media_id: m.mediaId, name: m.label, comment: payload.video_logs[0].log.comment,
-      start_timestamp: Math.round(m.startSec * 1000), end_timestamp: Math.round(m.endSec * 1000), tags: m.tags ?? [],
+      start_timestamp: Math.round(m.startSec * 1000), end_timestamp: Math.round(m.endSec * 1000), tags: payload.video_logs[0].log.raw_tags ?? [],
     };
     fixtureLogs.set(m.mediaId, [...(fixtureLogs.get(m.mediaId) ?? []), entry]);
     return { mode: "fixture", data: { created: true, entry }, wouldSend: { method: "POST", path: "/video/logs", body: payload } };
   }
+  if (!confirmation?.confirmedBy || !Number.isFinite(Date.parse(confirmation.confirmedAt)) || !["live", "cache"].includes(confirmation.source)) {
+    return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: "Requires confirmed live record through write-back queue" } };
+  }
+  const gate = await canWrite();
+  if (!gate.allowed) return { mode: "live", data: { created: false, entry: null }, wouldSend: { method: "POST", path: "/video/logs", body: payload, held: gate.reason } };
   const ok = await api<boolean>("/video/logs", { method: "POST", body: JSON.stringify(payload), retry: false });
   if (ok !== true) throw new ScorePlayError(200, "/video/logs", `unexpected response ${JSON.stringify(ok)}`);
-  const entry = findOurLog((await listVideoLogs(m.mediaId)).data.items, m.ref);
-  return { mode: "live", data: { created: true, entry } };
+  const entry = await existingLog(m.mediaId, m.ref);
+  return { mode: "live", data: { created: true, entry }, ...(entry ? {} : { wouldSend: {
+    method: "POST", path: "/video/logs", body: payload, held: "POST accepted; awaiting provider marker reconciliation (do not resend)",
+  } }) };
 }
 
-// ── Write-back: rendered asset -> new media in the source event ────────────────────────────
-const PART = 8 * 1024 * 1024; // S3 multipart minimum is 5 MB for all but the last part
-
+/** Rendered media uploads are deferred. Club files stay on the local laptop. */
 export async function uploadToEvent(eventId: number, filePath: string, meta: { description?: string; tags?: string[] }): Promise<Result<{ mediaId: number | null }>> {
-  const size = (await stat(filePath)).size;
-  const parts = Math.max(1, Math.ceil(size / PART));
-  const createBody = { name: basename(filePath), ...(meta.description ? { description: meta.description } : {}), ...(meta.tags?.length ? { raw_tags: meta.tags } : {}) };
-  if (!writesEnabled()) {
-    return { mode: mode(), data: { mediaId: null }, wouldSend: { method: "POST", path: `/upload/event/${eventId}?parts=${parts}`, body: createBody, thenPutParts: parts, thenComplete: "/upload/complete/{media_id}", ...(mode() === "live" ? { held: "SCOREPLAY_WRITES!=1 (awaiting taxonomy sign-off)" } : {}) } };
-  }
-  const init = await api<{ upload_id: string; key: string; urls: { url: string; parts_number: number }[]; media_id: number }>(
-    `/upload/event/${eventId}?parts=${parts}`, { method: "POST", body: JSON.stringify(createBody), retry: false });
-  const fh = await open(filePath, "r");
-  const done: { parts_number: number; etag: string }[] = [];
-  try {
-    for (const u of [...init.urls].sort((a, b) => a.parts_number - b.parts_number)) {
-      const offset = (u.parts_number - 1) * PART;
-      const len = Math.min(PART, size - offset);
-      const buf = Buffer.alloc(len);
-      await fh.read(buf, 0, len, offset);
-      const put = await fetchImpl(u.url, { method: "PUT", body: buf });
-      if (!put.ok) throw new ScorePlayError(put.status, `PUT part ${u.parts_number}`, await put.text());
-      done.push({ parts_number: u.parts_number, etag: (put.headers.get("ETag") ?? "").replace(/"/g, "") });
-    }
-  } finally { await fh.close(); }
-  await api(`/upload/complete/${init.media_id}`, { method: "POST", body: JSON.stringify({ key: init.key, upload_id: init.upload_id, parts_number: done.length, parts: done }), retry: false });
-  return { mode: "live", data: { mediaId: init.media_id } };
+  const tags = filterTags(meta.tags);
+  return { mode: mode(), data: { mediaId: null }, wouldSend: {
+    method: "POST", path: `/upload/event/${eventId}`, held: "Media uploads disabled: local-only event build",
+    body: { name: basename(filePath), description: meta.description, raw_tags: tags.allowed },
+  } };
 }
 
 /** Permission check against GET /whoami. Only `can_do_media_download` is named in the spec for our reads;
@@ -322,4 +330,51 @@ export async function preflightRights() {
     canWriteLogs: "unknown (undocumented permission; prove with a write test)" as const,
     canUpload: "unknown (undocumented permission; prove with a write test)" as const,
   };
+}
+
+export interface SPRosterPlayer { ID: number; full_name: string; external_id?: string }
+export interface SPExternalGroup { id: number; name: string; active: boolean }
+export type RightsInputs = {
+  status: "available"; mode: Mode; media: SPMedia; roster: SPRosterPlayer[]; externalGroups: SPExternalGroup[]; fetchedAt: string;
+} | { status: "needs_review"; mode: Mode; reason: string };
+const rightsCache = new Map<string, { until: number; value: RightsInputs }>();
+export function clearRightsCache() { rightsCache.clear(); }
+/** Cached read facts only. "available" never means cleared. Failures are not cached or replaced by empty facts. */
+export async function getRightsInputs(mediaId: number, opts: { teamSeasonId?: number; refresh?: boolean; ttlMs?: number } = {}): Promise<RightsInputs> {
+  const key = JSON.stringify([base(), process.env.SCOREPLAY_API_KEY, mode(), mediaId, opts.teamSeasonId]);
+  const cached = rightsCache.get(key);
+  if (!opts.refresh && cached && cached.until > Date.now()) return structuredClone(cached.value);
+  try {
+    if (!Number.isSafeInteger(mediaId) || mediaId <= 0 || (opts.teamSeasonId !== undefined && (!Number.isSafeInteger(opts.teamSeasonId) || opts.teamSeasonId <= 0))) throw new Error("Invalid rights lookup IDs");
+    const media = (await getMedia(mediaId)).data;
+    if (media.ID !== mediaId || !Number.isSafeInteger(media.company_id) || media.company_id <= 0) throw new Error("Malformed media evidence");
+    let roster: SPRosterPlayer[] = [], externalGroups: SPExternalGroup[] = [];
+    if (mode() === "fixture") {
+      roster = [...new Map(Object.values((await fixtures()).tagSearch).flatMap((t) => t.players).map((p) => [p.ID, p])).values()];
+    } else {
+      // Explicit season avoids silently treating the cross-season roster as current.
+      if (!opts.teamSeasonId) return { status: "needs_review", mode: mode(), reason: "Current teamSeasonId is required for roster evidence" };
+      for (let page = 1; ; page++) {
+        const rows = await api<SPRosterPlayer[]>(`/players?team_season_id=${opts.teamSeasonId}&page=${page}&limit=100`);
+        if (!Array.isArray(rows)) throw new Error("Malformed roster response");
+        roster.push(...rows);
+        if (rows.length < 100) break;
+        if (page >= 100) throw new Error("Roster pagination limit reached; incomplete evidence");
+      }
+      for (let page = 1; ; page++) {
+        const r = await api<{ items: SPExternalGroup[]; total?: number }>(`/external-groups?page=${page}&limit=100`);
+        if (!Array.isArray(r.items)) throw new Error("Malformed external-groups response");
+        externalGroups.push(...r.items);
+        if (r.items.length < 100 || (r.total !== undefined && externalGroups.length >= r.total)) break;
+        if (page >= 100) throw new Error("External-group pagination limit reached; incomplete evidence");
+      }
+    }
+    const value: RightsInputs = { status: "available", mode: mode(), media, roster, externalGroups, fetchedAt: new Date().toISOString() };
+    if (rightsCache.size >= 200) rightsCache.clear();
+    rightsCache.set(key, { until: Date.now() + Math.max(0, Math.min(opts.ttlMs ?? 60_000, 60_000)), value });
+    return structuredClone(value);
+  } catch {
+    rightsCache.delete(key);
+    return { status: "needs_review", mode: mode(), reason: "ScorePlay rights metadata read failed; no clearance inferred" };
+  }
 }
