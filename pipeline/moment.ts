@@ -71,7 +71,7 @@ export interface ProcessedMoment {
   manifest: MomentManifest;
   requiresReview: boolean;
   rightsInputs: sp.RightsInputs;
-  featuredPlayerIds: number[];
+  featuredPlayerIds: string[];
   manifestMode: "live" | "recorded-fixture";
   window: { start: number; end: number };
   tightWindow: { start: number; end: number };
@@ -171,7 +171,7 @@ export async function processMoment(input: MomentInput, slug: string): Promise<P
     const rightsInputs = await sp.getRightsInputs(input.scorePlayMediaId, { teamSeasonId: input.teamSeasonId });
     const requiresReview = manifest.analysisStatus !== "checked" || rightsInputs.status === "needs_review";
     // Populated by editor-confirmed clip metadata, never copied from a whole-match roster or guessed from names.
-    const featuredPlayerIds: number[] = [];
+    const featuredPlayerIds: string[] = [];
     const tight = tighten(manifest, window);
     const renderWin = paddedWindow(tight.start, tight.end, srcDur);
 

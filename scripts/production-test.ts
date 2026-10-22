@@ -30,5 +30,22 @@ try {
   await assert.rejects(renderCompilation({ ...approvedMontage, entries: [...entries].reverse() }, root, async () => true, async () => true), /exact ordered revision/);
   const over = { ...montage, targetDurationSec: 1 };
   await assert.rejects(renderCompilation({ ...over, approvedHash: compilationHash(over) }, root, async () => true, async () => true), /budget/);
+  // Demo-length composition and pixel checks prove actual order, not just total duration.
+  const storySource = join(root, "story-source.mp4");
+  execFileSync(FFMPEG, ["-v", "error", "-f", "lavfi", "-i", "color=red:s=320x180:r=30:d=7",
+    "-f", "lavfi", "-i", "color=green:s=320x180:r=30:d=7", "-f", "lavfi", "-i", "color=blue:s=320x180:r=30:d=7",
+    "-filter_complex", "[0:v][1:v][2:v]concat=n=3:v=1:a=0[v]", "-map", "[v]", "-c:v", "libx264", storySource]);
+  const storyEntries = [0, 7, 14].map((startSec, i) => {
+    const entry = { ...recipe, id: `story-part${i}`, sourcePath: storySource, startSec, endSec: startSec + 7 };
+    return { ...entry, approvedHash: variantHash(entry) };
+  });
+  const story = { id: "demo-story", entries: storyEntries, targetDurationSec: 25, channel: "fan_app" as const };
+  const demo = await renderCompilation({ ...story, approvedHash: compilationHash(story) }, root, async () => true, async () => true);
+  assert(demo.durationSec >= 20 && demo.durationSec <= 45);
+  for (const [second, dominant] of [[3, 0], [10, 1], [17, 2]]) {
+    const rgb = execFileSync(FFMPEG, ["-v", "error", "-ss", String(second), "-i", demo.outPath,
+      "-vf", "crop=2:2:960:540,format=rgb24", "-frames:v", "1", "-f", "rawvideo", "-"]);
+    assert(rgb[dominant] > rgb[(dominant + 1) % 3] + 50 && rgb[dominant] > rgb[(dominant + 2) % 3] + 50);
+  }
   console.log("PASS real social/app renditions, per-variant failure isolation, exact hash gates and ordered muted compilation with temporary cleanup");
 } finally { await rm(root, { recursive: true, force: true }); }
