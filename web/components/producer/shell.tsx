@@ -31,8 +31,9 @@ export async function shellContext(sp: Record<string, string | undefined>) {
     db.select({ n: sql<number>`count(*)::int` }).from(s.publications).where(and(eq(s.publications.orgId, org.id), eq(s.publications.state, "published"))),
     liveStatus(org.id).catch(() => null),
   ]);
-  // Hosted demo (Vercel): the live-match desk needs the time-boxed venue feed (ScorePlay), gone post-event — hide it.
-  return { orgs, org, engine, live, hasLive: !process.env.VERCEL && org.name === LIVE_CLUB, library: await libraryFor(org.name), counts: { inbox: c?.inbox ?? 0, approved: c?.approved ?? 0, published: p?.n ?? 0 } };
+  // hosted demo: /live is the replay of the recorded live session (no live engine or stream there)
+  const hosted = !!process.env.VERCEL;
+  return { orgs, org, engine, live: hosted ? ("replay" as const) : live, hasLive: org.name === LIVE_CLUB, library: await libraryFor(org.name), counts: { inbox: c?.inbox ?? 0, approved: c?.approved ?? 0, published: p?.n ?? 0 } };
 }
 export type ShellContext = Awaited<ReturnType<typeof shellContext>>;
 
@@ -55,7 +56,7 @@ export function Shell({ ctx, active, children, refresh = false }: { ctx: ShellCo
       {n.label}
       {n.key === "live" && ctx.live && (
         <span className={cn("ml-auto rounded px-1.5 text-[10.5px] font-bold leading-[18px] text-white", ctx.live === "live" ? "live-badge bg-[var(--danger)]" : "bg-ink-3")}
-          aria-label={ctx.live === "live" ? "a match is live" : "live match paused"}>{ctx.live === "live" ? "LIVE" : "PAUSED"}</span>
+          aria-label={ctx.live === "live" ? "a match is live" : ctx.live === "replay" ? "replay of the live session" : "live match paused"}>{ctx.live === "live" ? "LIVE" : ctx.live === "replay" ? "REPLAY" : "PAUSED"}</span>
       )}
       {n.count && ctx.counts[n.count] > 0 && (
         <span className={cn("ml-auto rounded-full px-1.5 text-[11.5px] font-semibold leading-[19px]", active === n.key ? "bg-card text-accent-foreground" : "bg-secondary text-ink-2")}

@@ -72,13 +72,23 @@ Open **https://spurs2-content-intelligence.vercel.app** and follow along:
    **live from Twelve Labs** against the real match index, each starting at the exact moment, not the
    start of the file.
 4. **Fan app (`/fan`).** Toggle the fan personas and watch the feed re-rank. Open a clip to play it.
-5. **Published / Approved / Montages.** The produced output in its finished states.
+5. **Live match (switch to Tottenham Hotspur, then "Live match" in the sidebar).** A replay of the
+   engine's real live session on **Man Utd v Tottenham**. Pick where to join (try **First chance**, or
+   **89'** for the late equaliser) and a speed, then press **Start replay**. As the match clock runs you
+   watch the engine work second by second: each Twelve Labs watch-list find, each Pegasus verdict
+   (including the plays it turned down, and why), and each clip landing in the inbox with its real
+   trigger-to-draft time. The newest clip plays on screen and the score updates as goals air.
+6. **Published / Approved / Montages.** The produced output in its finished states.
 
-> **About the live-match desk:** in the running system this joins the venue broadcast feed and cuts
-> moments in real time as the match plays. That feed was a time-boxed event feed that the partners
-> cleared after the hackathon, so the hosted demo shows a short explanatory notice there instead of a
-> dead player. **The live desk is shown working in the walkthrough video,** and everything it produces
-> is what you are browsing in the Inbox, Library, and Fan app.
+> **About the live-match desk:** in the running system the desk joins the venue broadcast feed and the
+> engine cuts moments in real time as the match plays. That feed was a time-boxed event feed (cleared
+> after the hackathon), a public demo may not redistribute a broadcast anyway, and a serverless host
+> cannot run the long-lived engine. So the hosted desk **replays the recorded live session**
+> (`data/live/recorded-session.json`, captured from the engine's own log): match data is re-run through
+> the engine's feed logic for the point you join at, and every engine decision appears at the match
+> second it happened. The broadcast window shows the clips the engine cut instead of the feed itself.
+> Run locally with the stream and the live worker, `/live` drives the engine for real
+> (`?mode=replay` shows the replay locally).
 
 ---
 

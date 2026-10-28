@@ -240,7 +240,7 @@ function Player({ desk, session, videoRef, watching, edge, following, viewPaused
 }
 
 // ── timeline + controls ───────────────────────────────────────────────────────────────
-function Controls({ desk, edge, watching, following, paused, matchPaused, pending, onPlayPause, onSeek, onGoLive, onPauseMatch, onRestart, onEnd }: {
+export function Controls({ desk, edge, watching, following, paused, matchPaused, pending, onPlayPause, onSeek, onGoLive, onPauseMatch, onRestart, onEnd }: {
   desk: LiveDesk; edge: number; watching: number; following: boolean; paused: boolean; matchPaused: boolean; pending: boolean;
   onPlayPause: () => void; onSeek: (sec: number) => void; onGoLive: () => void; onPauseMatch: () => void; onRestart: (sec: number) => void; onEnd: () => void;
 }) {
@@ -344,7 +344,7 @@ function Controls({ desk, edge, watching, following, paused, matchPaused, pendin
 }
 
 // ── clips this match produced ─────────────────────────────────────────────────────────
-function ClipsPanel({ desk, orgId }: { desk: LiveDesk; orgId: string }) {
+export function ClipsPanel({ desk, orgId }: { desk: LiveDesk; orgId: string }) {
   const m = desk.match;
   const reels = desk.clips.filter((c) => c.contentType === "reel");
   return (
@@ -387,25 +387,36 @@ function ClipsPanel({ desk, orgId }: { desk: LiveDesk; orgId: string }) {
 const LOG_ICON: Record<LiveLogEntry["kind"], typeof Flag> = { feed: Flag, scan: Search, clip: Film, skip: CircleSlash, error: AlertTriangle };
 const LOG_TONE: Record<LiveLogEntry["kind"], string> = { feed: "text-ink-2", scan: "text-accent-foreground", clip: "text-success-fg", skip: "text-ink-4", error: "text-danger-fg" };
 
-function EnginePanel({ desk, edge, paused }: { desk: LiveDesk; edge: number; paused: boolean }) {
+/** `replay`: the desk is replaying a recorded live session (hosted demo), not driving the live engine. */
+export function EnginePanel({ desk, edge, paused, replay }: { desk: LiveDesk; edge: number; paused: boolean; replay?: { recordedOn: string } }) {
   const m = desk.match;
   const inPlay = ["1H", "2H"].includes(periodAt(m, edge).id);
   const nextScan = desk.lastScanAt === null ? 0 : Math.max(0, Math.ceil(desk.lastScanAt + SCAN_EVERY_SEC - edge));
-  const rows: [string, React.ReactNode, boolean][] = [
+  const watching = paused ? "Paused" : !inPlay ? "Resting (ball not in play)" : `Looking for saves, chances and woodwork · next look in ${nextScan}s`;
+  const rows: [string, React.ReactNode, boolean][] = replay ? [
+    ["Venue broadcast", "Full match, worked live on " + replay.recordedOn + " (the feed is not redistributed in this demo)", true],
+    ["Match data", "Kick-off, goals and full time from this match", true],
+    ["TwelveLabs watch-list", watching, true],
+    ["Pegasus check", `Watches each find and keeps only real highlights for ${m[m.clubSide].name}`, true],
+  ] : [
     ["ScorePlay stream", `Full match, streaming at ${desk.session?.stream?.quality ?? "720p"}`, true],
     ["Match data", "Kick-off, goals and full time from this match", true],
-    ["TwelveLabs watch-list", !desk.engineOk ? "Waiting for the live engine" : paused ? "Paused" : !inPlay ? "Resting (ball not in play)" : `Looking for saves, chances and woodwork · next look in ${nextScan}s`, desk.engineOk],
+    ["TwelveLabs watch-list", !desk.engineOk ? "Waiting for the live engine" : watching, desk.engineOk],
     ["Pegasus check", `Watches each find and keeps only real highlights for ${m[m.clubSide].name}`, desk.engineOk],
   ];
   return (
     <aside className="panel flex h-full min-h-0 flex-col overflow-hidden" aria-label="Live engine">
       <div className="flex items-center gap-2 border-b border-border px-4 py-3">
         <h2 className="text-[15px] font-semibold">Live engine</h2>
-        <span className={cn("ml-auto flex items-center gap-1.5 text-xs font-semibold", desk.engineOk ? "text-success-fg" : "text-danger-fg")}>
-          <span className={cn("status-dot", desk.engineOk ? "ok" : "bad")} />{desk.engineOk ? "Running" : "Not running"}
-        </span>
+        {replay ? (
+          <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-success-fg"><span className="status-dot ok" />{paused ? "Replay paused" : "Replaying"}</span>
+        ) : (
+          <span className={cn("ml-auto flex items-center gap-1.5 text-xs font-semibold", desk.engineOk ? "text-success-fg" : "text-danger-fg")}>
+            <span className={cn("status-dot", desk.engineOk ? "ok" : "bad")} />{desk.engineOk ? "Running" : "Not running"}
+          </span>
+        )}
       </div>
-      {!desk.engineOk && (
+      {!replay && !desk.engineOk && (
         <div className="callout callout-amber mx-4 mt-3"><AlertTriangle size={16} className="mt-px shrink-0" aria-hidden />
           <div>The stream is playing but nothing is being clipped. Start the live engine on this machine: <code className="rounded bg-white/60 px-1">npm run live</code></div>
         </div>
@@ -436,7 +447,8 @@ function EnginePanel({ desk, edge, paused }: { desk: LiveDesk; edge: number; pau
           );
         })}
       </ol>
-      <p className="flex items-center gap-1.5 border-t border-border px-4 py-2.5 text-[11.5px] text-ink-4"><Clapperboard size={13} aria-hidden /> Clips land in the inbox for your approval; nothing is posted.</p>
+      <p className="flex items-center gap-1.5 border-t border-border px-4 py-2.5 text-[11.5px] text-ink-4"><Clapperboard size={13} aria-hidden />
+        {replay ? `Replay of the engine's live run on ${replay.recordedOn}: every look, verdict and clip at the second it happened.` : "Clips land in the inbox for your approval; nothing is posted."}</p>
     </aside>
   );
 }

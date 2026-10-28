@@ -1,0 +1,686 @@
+{
+ "matchId": "mnu-tot-2026-27-wk6",
+ "sessionId": "smvl3sorj",
+ "recordedAt": "2026-10-23T15:07:09.535Z",
+ "joinedAtVideoSec": 356,
+ "log": [
+  {
+   "at": 241,
+   "kind": "feed",
+   "text": "Before you joined: Kick-off at Old Trafford",
+   "wall": "2026-10-23T15:07:10.705Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 365.7829895019531,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 3'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:07:31.730Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 3 across the match)"
+  },
+  {
+   "at": 365.7829895019531,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:07:55.150Z",
+   "detail": "21s from trigger to draft (cut 6s, Pegasus 12s)"
+  },
+  {
+   "at": 393.2994384765625,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 3'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:07:56.745Z",
+   "detail": "\"shot saved by the goalkeeper\", top 2 in the last 3 minutes (rank 29 across the match)"
+  },
+  {
+   "at": 393.2994384765625,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:08:16.576Z",
+   "detail": "18s from trigger to draft (cut 4s, Pegasus 11s)"
+  },
+  {
+   "at": 414.43243408203125,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 3'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:08:18.767Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 2 in the last 3 minutes (rank 23 across the match)"
+  },
+  {
+   "at": 414.43243408203125,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:08:49.998Z",
+   "detail": "29s from trigger to draft (cut 3s, Pegasus 12s)"
+  },
+  {
+   "at": 643.0330810546875,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 7'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:12:08.998Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 1 in the last 3 minutes (rank 33 across the match)"
+  },
+  {
+   "at": 643.0330810546875,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:12:42.580Z",
+   "detail": "Pegasus: Ordinary play showing the away team building an attack against the home team's defense with no decisive action occurring."
+  },
+  {
+   "at": 708.7759399414062,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 8'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:13:19.062Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 1 in the last 3 minutes (rank 21 across the match)"
+  },
+  {
+   "at": 708.7759399414062,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:13:42.600Z",
+   "detail": "21s from trigger to draft (cut 7s, Pegasus 9s)"
+  },
+  {
+   "at": 790.247314453125,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 10'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:14:35.134Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 19 across the match)"
+  },
+  {
+   "at": 790.247314453125,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:14:52.840Z",
+   "detail": "Pegasus: Tottenham attempts an attacking move that is safely dealt with by the Manchester United goalkeeper."
+  },
+  {
+   "at": 903.7666015625,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 12'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:16:28.231Z",
+   "detail": "\"shot saved by the goalkeeper\", top 2 in the last 3 minutes (rank 23 across the match)"
+  },
+  {
+   "at": 903.7666015625,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:16:51.916Z",
+   "detail": "Pegasus: Tottenham players circulate the ball in the final third before the ball is cleared by Manchester United; no goal, save, or major chance occurs."
+  },
+  {
+   "at": 964.9993896484375,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 13'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:17:38.298Z",
+   "detail": "\"shot hits the post or crossbar\", top 1 in the last 3 minutes (rank 17 across the match)"
+  },
+  {
+   "at": 964.9993896484375,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:18:03.981Z",
+   "detail": "Pegasus: A Tottenham player attempts a shot from inside the box that is blocked by a Manchester United defender, followed by a goalkeeper clearance."
+  },
+  {
+   "at": 1025.743896484375,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 14'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:18:31.344Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 1 in the last 3 minutes (rank 10 across the match)"
+  },
+  {
+   "at": 1025.743896484375,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:18:57.367Z",
+   "detail": "23s from trigger to draft (cut 9s, Pegasus 11s)"
+  },
+  {
+   "at": 1066.69921875,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 14'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:19:13.383Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 2 in the last 3 minutes (rank 32 across the match)"
+  },
+  {
+   "at": 1066.69921875,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:19:32.448Z",
+   "detail": "17s from trigger to draft (cut 3s, Pegasus 11s)"
+  },
+  {
+   "at": 1111.632568359375,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 15'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:19:56.427Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 2 in the last 3 minutes (rank 13 across the match)"
+  },
+  {
+   "at": 1111.632568359375,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:20:18.962Z",
+   "detail": "20s from trigger to draft (cut 6s, Pegasus 11s)"
+  },
+  {
+   "at": 1362.2330322265625,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 19'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:24:06.653Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 39 across the match)"
+  },
+  {
+   "at": 1362.2330322265625,
+   "kind": "skip",
+   "text": "Not clipped: opponent chance",
+   "wall": "2026-10-23T15:24:22.140Z",
+   "detail": "Pegasus: A Manchester United player in red receives a through ball in the Spurs box and takes a shot that is blocked by a defender."
+  },
+  {
+   "at": 1445.6044921875,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 21'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:25:30.764Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 38 across the match)"
+  },
+  {
+   "at": 1445.6044921875,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:25:59.240Z",
+   "detail": "25s from trigger to draft (cut 4s, Pegasus 18s)"
+  },
+  {
+   "at": 1469.7327880859375,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 21'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:27:30.899Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 2 in the last 3 minutes (rank 36 across the match)"
+  },
+  {
+   "at": 1469.7327880859375,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:27:56.928Z",
+   "detail": "23s from trigger to draft (cut 9s, Pegasus 9s)"
+  },
+  {
+   "at": 1516.480224609375,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 22'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:28:30.958Z",
+   "detail": "\"shot hits the post or crossbar\", top 2 in the last 3 minutes (rank 38 across the match)"
+  },
+  {
+   "at": 1516.480224609375,
+   "kind": "clip",
+   "text": "New clip in the inbox: So close",
+   "wall": "2026-10-23T15:28:50.401Z",
+   "detail": "19s from trigger to draft (cut 6s, Pegasus 9s)"
+  },
+  {
+   "at": 1828.7662353515625,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 27'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:31:53.143Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 15 across the match)"
+  },
+  {
+   "at": 1828.7662353515625,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:32:07.120Z",
+   "detail": "Pegasus: A Tottenham player takes a throw-in that leads to a brief scramble in the Manchester United box before the ball is cleared."
+  },
+  {
+   "at": 2013.4324951171875,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 30'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:35:03.315Z",
+   "detail": "\"shot hits the post or crossbar\", top 1 in the last 3 minutes (rank 23 across the match)"
+  },
+  {
+   "at": 2013.4324951171875,
+   "kind": "skip",
+   "text": "Not clipped: opponent chance",
+   "wall": "2026-10-23T15:35:22.466Z",
+   "detail": "Pegasus: A Manchester United player takes a shot from outside the box that is blocked by a Tottenham defender."
+  },
+  {
+   "at": 2231.099853515625,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 34'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:38:35.504Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 13 across the match)"
+  },
+  {
+   "at": 2231.099853515625,
+   "kind": "clip",
+   "text": "New clip in the inbox: What a stop",
+   "wall": "2026-10-23T15:38:55.595Z",
+   "detail": "17s from trigger to draft (cut 5s, Pegasus 10s)"
+  },
+  {
+   "at": 2277.233154296875,
+   "kind": "scan",
+   "text": "Watch-list found a possible save at 34'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:39:22.551Z",
+   "detail": "\"shot saved by the goalkeeper\", top 1 in the last 3 minutes (rank 6 across the match)"
+  },
+  {
+   "at": 2277.233154296875,
+   "kind": "clip",
+   "text": "New clip in the inbox: What a stop",
+   "wall": "2026-10-23T15:39:55.822Z",
+   "detail": "31s from trigger to draft (cut 3s, Pegasus 25s)"
+  },
+  {
+   "at": 2463.6552734375,
+   "kind": "scan",
+   "text": "Watch-list found a possible chance at 38'. Checking it with Pegasus",
+   "wall": "2026-10-23T15:42:32.725Z",
+   "detail": "\"dangerous attack and close chance on goal\", top 1 in the last 3 minutes (rank 17 across the match)"
+  },
+  {
+   "at": 2463.6552734375,
+   "kind": "skip",
+   "text": "Not clipped: not a highlight on a closer look",
+   "wall": "2026-10-23T15:42:47.263Z",
+   "detail": "Pegasus: A Tottenham player dribbles down the left wing, is challenged by a Manchester United defender, and goes down for a throw-in."
+  },
+  {
+   "at": 3001,
+   "kind": "feed",
+   "text": "Half-time: Man Utd 0, Spurs 0",
+   "wall": "2026-10-23T16:01:04.855Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 3047,
+   "kind": "feed",
+   "text": "Second half under way",
+   "wall": "2026-10-23T16:01:04.855Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 3558.992919921875,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 54'. Checking it with Pegasus",
+   "wall": "2026-10-23T16:01:05.109Z",
+   "detail": "\"shot hits the post or crossbar\", top 1 in the last 3 minutes (rank 39 across the match)"
+  },
+  {
+   "at": 4441.36669921875,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 69'. Checking it with Pegasus",
+   "wall": "2026-10-23T16:17:26.121Z",
+   "detail": "\"shot hits the post or crossbar\", top 1 in the last 3 minutes (rank 22 across the match)"
+  },
+  {
+   "at": 4678,
+   "kind": "feed",
+   "text": "Goal Man Utd: Mbeumo. Opponent goal: score updated, not clipped",
+   "wall": "2026-10-23T16:35:16.871Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 5488.76611328125,
+   "kind": "scan",
+   "text": "Watch-list found a possible woodwork at 86'. Checking it with Pegasus",
+   "wall": "2026-10-23T16:35:17.132Z",
+   "detail": "\"shot hits the post or crossbar\", top 1 in the last 3 minutes (rank 40 across the match)"
+  },
+  {
+   "at": 5829,
+   "kind": "feed",
+   "text": "Goal Spurs: Solanke equalises. Clipping it once the celebration has aired",
+   "wall": "2026-10-23T16:52:43.875Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 6296,
+   "kind": "feed",
+   "text": "Full time: Man Utd 1, Spurs 1",
+   "wall": "2026-10-23T16:52:43.875Z",
+   "detail": "Match data (replayed from the real match)"
+  },
+  {
+   "at": 5814,
+   "kind": "clip",
+   "text": "Cutting the goal (90+2') from the ScorePlay stream",
+   "wall": "2026-10-23T16:52:44.147Z",
+   "detail": "5814s to 5840s of the full match"
+  }
+ ],
+ "clips": [
+  {
+   "id": "2c1682da-cb47-4a73-8fe3-8d200ff28c1a",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 359,
+   "end": 377.15,
+   "poster": "/renders/live-smvl3sorj-366/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-366/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:07:55.139Z",
+   "happenedAt": "2026-10-23T15:07:29.368Z"
+  },
+  {
+   "id": "b25d2b0a-f69c-44b2-9906-d0fb0c5461cd",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 359,
+   "end": 377.15,
+   "poster": "/renders/live-smvl3sorj-366/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:07:55.144Z",
+   "happenedAt": "2026-10-23T15:07:29.368Z"
+  },
+  {
+   "id": "b7914be1-f467-4042-a8fe-2d141042e09b",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 387,
+   "end": 402.19,
+   "poster": "/renders/live-smvl3sorj-393/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-393/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:08:16.565Z",
+   "happenedAt": "2026-10-23T15:07:54.700Z"
+  },
+  {
+   "id": "d671a6a9-4ac9-40ed-907c-fd93000580ba",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 387,
+   "end": 402.19,
+   "poster": "/renders/live-smvl3sorj-393/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:08:16.570Z",
+   "happenedAt": "2026-10-23T15:07:54.700Z"
+  },
+  {
+   "id": "86d3bf07-f873-479f-8044-e27be51499bb",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 408,
+   "end": 424.19,
+   "poster": "/renders/live-smvl3sorj-414/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-414/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:08:49.988Z",
+   "happenedAt": "2026-10-23T15:08:16.612Z"
+  },
+  {
+   "id": "13c8bf29-90e3-4e78-9710-e67444e88aff",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 408,
+   "end": 424.19,
+   "poster": "/renders/live-smvl3sorj-414/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:08:49.992Z",
+   "happenedAt": "2026-10-23T15:08:16.612Z"
+  },
+  {
+   "id": "6926fb26-f38f-4f23-8088-46176ec7404e",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 702,
+   "end": 723.95,
+   "poster": "/renders/live-smvl3sorj-709/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-709/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:13:42.587Z",
+   "happenedAt": "2026-10-23T15:13:11.363Z"
+  },
+  {
+   "id": "f7548562-5734-444b-aea2-5b43695adde5",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 702,
+   "end": 723.95,
+   "poster": "/renders/live-smvl3sorj-709/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:13:42.594Z",
+   "happenedAt": "2026-10-23T15:13:11.363Z"
+  },
+  {
+   "id": "479dee0d-5ca8-4666-8962-ad8a001b8216",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1019,
+   "end": 1036.79,
+   "poster": "/renders/live-smvl3sorj-1026/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1026/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:18:57.347Z",
+   "happenedAt": "2026-10-23T15:18:28.434Z"
+  },
+  {
+   "id": "e58b3d78-c8e8-4673-9298-430d882c9030",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1019,
+   "end": 1036.79,
+   "poster": "/renders/live-smvl3sorj-1026/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:18:57.359Z",
+   "happenedAt": "2026-10-23T15:18:28.434Z"
+  },
+  {
+   "id": "31b281bc-7471-4cf0-9216-1c828f52218e",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1060,
+   "end": 1078.83,
+   "poster": "/renders/live-smvl3sorj-1067/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1067/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:19:32.431Z",
+   "happenedAt": "2026-10-23T15:19:10.767Z"
+  },
+  {
+   "id": "e7a17db8-eba0-45db-80f5-32acd9f2193d",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1060,
+   "end": 1078.83,
+   "poster": "/renders/live-smvl3sorj-1067/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:19:32.439Z",
+   "happenedAt": "2026-10-23T15:19:10.767Z"
+  },
+  {
+   "id": "207345b9-103d-48e2-8a8a-b472880098e8",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1105,
+   "end": 1121.87,
+   "poster": "/renders/live-smvl3sorj-1112/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1112/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:20:18.948Z",
+   "happenedAt": "2026-10-23T15:19:53.767Z"
+  },
+  {
+   "id": "79400942-482d-453c-b649-475d07760088",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1105,
+   "end": 1121.87,
+   "poster": "/renders/live-smvl3sorj-1112/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:20:18.956Z",
+   "happenedAt": "2026-10-23T15:19:53.767Z"
+  },
+  {
+   "id": "a3359dfa-3fb0-48dd-80c1-4bd351e97fbc",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1439,
+   "end": 1456.19,
+   "poster": "/renders/live-smvl3sorj-1446/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1446/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:25:59.227Z",
+   "happenedAt": "2026-10-23T15:25:28.101Z"
+  },
+  {
+   "id": "4ae0ab3a-424c-4b39-96b7-f861a50fc97f",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big chance",
+   "at": 1439,
+   "end": 1456.19,
+   "poster": "/renders/live-smvl3sorj-1446/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:25:59.234Z",
+   "happenedAt": "2026-10-23T15:25:28.101Z"
+  },
+  {
+   "id": "788f8c56-90c5-4ffb-b8e6-4862ee25e019",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1463,
+   "end": 1485.95,
+   "poster": "/renders/live-smvl3sorj-1470/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1470/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:27:56.910Z",
+   "happenedAt": "2026-10-23T15:25:52.567Z"
+  },
+  {
+   "id": "5bcf51b7-8784-4386-907e-85d50735fefe",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1463,
+   "end": 1485.95,
+   "poster": "/renders/live-smvl3sorj-1470/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:27:56.919Z",
+   "happenedAt": "2026-10-23T15:25:52.567Z"
+  },
+  {
+   "id": "da309d8f-006d-441a-a572-dc9aa6dfafeb",
+   "headline": "SO CLOSE",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1510,
+   "end": 1531.95,
+   "poster": "/renders/live-smvl3sorj-1516/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-1516/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:28:50.384Z",
+   "happenedAt": "2026-10-23T15:26:39.377Z"
+  },
+  {
+   "id": "3698092c-beef-40e7-9f4a-7ac2badfdfd4",
+   "headline": "SO CLOSE",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Chance saved",
+   "at": 1510,
+   "end": 1531.95,
+   "poster": "/renders/live-smvl3sorj-1516/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:28:50.393Z",
+   "happenedAt": "2026-10-23T15:26:39.377Z"
+  },
+  {
+   "id": "3345eb88-cf8c-4f35-90ad-203ecaba0d68",
+   "headline": "WHAT A STOP",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big save",
+   "at": 2225,
+   "end": 2240.95,
+   "poster": "/renders/live-smvl3sorj-2231/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-2231/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:38:55.576Z",
+   "happenedAt": "2026-10-23T15:38:32.767Z"
+  },
+  {
+   "id": "92db86dc-d68c-4ae6-8498-682f40c47c10",
+   "headline": "WHAT A STOP",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big save",
+   "at": 2225,
+   "end": 2240.95,
+   "poster": "/renders/live-smvl3sorj-2231/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:38:55.585Z",
+   "happenedAt": "2026-10-23T15:38:32.767Z"
+  },
+  {
+   "id": "c8db566f-dbf5-4a8a-bfd2-3d1141d17b5e",
+   "headline": "WHAT A STOP",
+   "contentType": "reel",
+   "status": "draft_ready",
+   "label": "Big save",
+   "at": 2271,
+   "end": 2287.99,
+   "poster": "/renders/live-smvl3sorj-2277/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvl3sorj-2277/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T15:39:55.804Z",
+   "happenedAt": "2026-10-23T15:39:19.901Z"
+  },
+  {
+   "id": "6c6b0aa4-11f4-4e28-bfad-29bb94b62dd3",
+   "headline": "WHAT A STOP",
+   "contentType": "milestone_graphic",
+   "status": "draft_ready",
+   "label": "Big save",
+   "at": 2271,
+   "end": 2287.99,
+   "poster": "/renders/live-smvl3sorj-2277/card.instagram_feed.jpg",
+   "video": null,
+   "createdAt": "2026-10-23T15:39:55.814Z",
+   "happenedAt": "2026-10-23T15:39:19.901Z"
+  },
+  {
+   "id": "41f4fa6f-d6a6-4b96-9197-17b09a794777",
+   "headline": "SOLANKE RESCUES A POINT",
+   "contentType": "reel",
+   "status": "rendered",
+   "label": "Goal",
+   "at": 5814,
+   "end": 5839.95,
+   "poster": "/renders/live-smvkvlec7-5814/reel.instagram_reel.draft.poster.jpg",
+   "video": "/renders/live-smvkvlec7-5814/reel.instagram_reel.draft.mp4",
+   "createdAt": "2026-10-23T11:20:58.744Z",
+   "happenedAt": "2026-10-23T11:20:05.503Z",
+   "fromEarlierRun": true
+  }
+ ]
+}

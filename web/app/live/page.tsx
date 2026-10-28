@@ -1,26 +1,29 @@
 import { connection } from "next/server";
 import { Shell, shellContext, NoOrg } from "@/components/producer/shell";
 import { LiveDeskView } from "@/components/producer/live-desk";
+import { LiveReplayView } from "@/components/producer/live-replay";
 import { liveDesk } from "@/lib/live";
+import type { LiveMatch } from "@shared/live-match";
+import type { RecordedSession } from "@shared/live-replay";
+import liveMatch from "../../../data/live/mnu-tot-full-match.json" with { type: "json" };
+import recording from "../../../data/live/recorded-session.json" with { type: "json" };
 
+/**
+ * Live match desk. Locally (worker + ScorePlay stream available) it drives the live engine. On the hosted demo it
+ * replays the recorded live session of the same match second by second: the broadcast feed was time-boxed to the event
+ * and a serverless host cannot run the engine, but every decision the engine made live is in the recording.
+ * `?mode=replay` shows the replay locally too.
+ */
 export default async function LivePage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   await connection(); // live state, never prerendered
   const sp = await searchParams;
   const ctx = await shellContext(sp);
   if (!ctx.org) return <NoOrg />;
-  if (process.env.VERCEL) {
+  if (process.env.VERCEL || sp.mode === "replay") {
     return (
       <Shell ctx={ctx} active="live">
-        <h1 className="sr-only">Live match</h1>
-        <div className="mx-auto max-w-xl px-6 py-24 text-center">
-          <h2 className="text-lg font-semibold text-foreground">Live match desk</h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            The live desk replays the full match broadcast from the venue feed (ScorePlay) while the engine works it
-            in real time with Twelve Labs. That live feed was a time-boxed event feed and isn&apos;t available in this
-            hosted demo. Everything the desk produces is here to explore: see <b>Inbox</b> for the review queue,{" "}
-            <b>Library</b> for live Twelve Labs semantic search, and the <b>Fan app</b> for the published output.
-          </p>
-        </div>
+        <h1 className="sr-only">Live match replay</h1>
+        <LiveReplayView orgId={ctx.org.id} match={liveMatch as unknown as LiveMatch} recording={recording as unknown as RecordedSession} />
       </Shell>
     );
   }
