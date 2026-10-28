@@ -1,0 +1,34 @@
+{
+  "$comment": "Content plan for Tottenham's ScorePlay LIBRARY (everything that is not the full match, which the live desk covers). Video formats: a real TwelveLabs search over the club's indexed footage (index 6ad90f31960d8ea7bdd040ab, 58 videos), scoped to one ScorePlay collection. Photo formats: picked from the club photographer's captions ('Dominic Solanke of Tottenham Hotspur scores a goal ...'). Built from what ScorePlay holds for Tottenham (probed 2026-10-23): Moments 13, Pre-Match 11, Press Conference 5, Post-Match 5, Highlights 4, Creative Video 19; Match photos 399, Dressing Room photos 14.",
+  "orgKey": "tottenham-hotspur",
+  "team": "Tottenham Hotspur",
+  "competition": "Premier League",
+  "eventLabel": "Man Utd v Spurs · Premier League",
+  "teamSeasonId": 72209,
+  "photoCollectionId": 1536077,
+  "formats": [
+    {
+      "id": "match_moment", "label": "Match moment", "collection": "Moments", "max": 3,
+      "queries": [
+        { "query": "player celebrates scoring a goal", "label": "Goal", "headline": "GET IN" },
+        { "query": "striker shoots at goal", "label": "Chance", "headline": "SO CLOSE" },
+        { "query": "hard sliding tackle wins the ball", "label": "Tackle", "headline": "WON IT BACK" }
+      ]
+    },
+    {
+      "id": "manager_voice", "label": "Manager voice", "collection": "Press Conference", "max": 1,
+      "queries": [{ "query": "head coach answering questions at a press conference", "label": "Press conference", "headline": "DE ZERBI" }]
+    },
+    {
+      "id": "player_voice", "label": "Player voice", "collection": "Post-Match", "max": 1,
+      "queries": [{ "query": "player interview talking to the camera after the match", "label": "Post-match", "headline": "IN THEIR WORDS" }]
+    },
+    {
+      "id": "matchday", "label": "Matchday atmosphere", "collection": "Creative Video", "max": 1,
+      "queries": [{ "query": "away fans singing in the stand", "label": "Away end", "headline": "THE AWAY END" }]
+    },
+    { "id": "player_photo", "label": "Player photo", "collection": "Match photos", "max": 2, "photo": "player" },
+    { "id": "fans_photo", "label": "Fans photo", "collection": "Match photos", "max": 1, "photo": "scene", "captionMatch": "fans celebrate", "headline": "THE AWAY END" },
+    { "id": "dressing_room", "label": "Dressing room", "collection": "Dressing Room photos", "max": 1, "photo": "scene", "photoCollectionId": 1536083, "captionMatch": "match shirt of", "headline": "READY" }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "player celebrating": {
+    "elapsedMs": 1044,
+    "hits": []
+  },
+  "ball in motion": {
+    "elapsedMs": 924,
+    "hits": [
+      {
+        "rank": 1,
+        "start": 0,
+        "end": 13.99899959564209,
+        "videoId": "6ad81fd0968fe117efe47d16",
+        "thumbnailUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fcb030b76724d10e3c5/thumbnails/0.jpeg"
+      },
+      {
+        "rank": 2,
+        "start": 0,
+        "end": 8.799833297729492,
+        "videoId": "6ad81fdf5411fa6e602cba9f",
+        "thumbnailUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/0.jpeg"
+      },
+      {
+        "rank": 3,
+        "start": 8.799833297729492,
+        "end": 17.533000946044922,
+        "videoId": "6ad81fdf5411fa6e602cba9f",
+        "thumbnailUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/10.jpeg"
+      }
+    ]
+  },
+  "people running on field": {
+    "elapsedMs": 667,
+    "hits": [
+      {
+        "rank": 1,
+        "start": 0,
+        "end": 8.799833297729492,
+        "videoId": "6ad81fdf5411fa6e602cba9f",
+        "thumbnailUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/0.jpeg"
+      },
+      {
+        "rank": 2,
+        "start": 8.799833297729492,
+        "end": 17.533000946044922,
+        "videoId": "6ad81fdf5411fa6e602cba9f",
+        "thumbnailUrl": "https://deuqpmn4rs7j5.cloudfront.net/6ad819d9381c6c9c76f8dcf7/assets/6ad81fdb960d8ea7bdcdc32b/thumbnails/10.jpeg"
+      }
+    ]
+  }
+}

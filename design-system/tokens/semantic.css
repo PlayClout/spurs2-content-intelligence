@@ -1,0 +1,95 @@
+/* Clout — Semantic & state color tokens (product layer, v02)
+   Maps the brand palette onto UI roles an engineer can consume without judgement calls.
+   RULE: brand Pink #FF006B is reserved for VALUE / ACTION. It is never an error color.
+   Feedback hues marked (+) are intentional additions — the brand package defines no
+   success/warning/error/info system. See guidelines/product-gap-analysis.md. */
+:root {
+  /* ── Surfaces (dark is the only product theme) ───────────── */
+  --bg-canvas: #050811;            /* app background */
+  --bg-surface: #10131C;           /* card / panel */
+  --bg-surface-raised: #171B26;    /* elevated card, menu, popover */
+  --bg-surface-sunken: #02040A;    /* wells, inputs, code */
+  --bg-overlay: rgba(2, 4, 10, 0.72); /* modal scrim */
+  --bg-inverse: #F5F5F3;           /* rare light surface (receipts, print) */
+
+  /* ── Text ────────────────────────────────────────────────── */
+  --fg-default: #F5F5F3;
+  --fg-secondary: #8B93A3;
+  --fg-muted: #5B6472;
+  --fg-disabled: #3B424E;
+  --fg-accent: #5AA2FF;
+  --fg-on-action: #FFFFFF;         /* on Action gradient / pink fills */
+  --fg-on-inverse: #050811;        /* on light surfaces */
+  --fg-link: #5AA2FF;
+  --fg-link-hover: #8FC0FF;
+
+  /* ── Borders ─────────────────────────────────────────────── */
+  --border-subtle: rgba(245, 245, 243, 0.08);
+  --border-default: rgba(245, 245, 243, 0.12);
+  --border-strong: rgba(245, 245, 243, 0.24);
+  --border-accent: rgba(18, 107, 255, 0.40);
+  --border-input: rgba(245, 245, 243, 0.16);
+  --border-input-hover: rgba(245, 245, 243, 0.28);
+  --border-input-focus: #126BFF;
+
+  /* ── Interactive: primary (Action gradient) ──────────────── */
+  --action-default: linear-gradient(90deg, #FF006B 0%, #FF3157 50%, #FF6A1A 100%); /* @kind color */
+  --action-hover-filter: brightness(1.06); /* @kind other */
+  --action-active-scale: 0.975; /* @kind other */
+  --action-disabled-opacity: 0.4; /* @kind other */
+
+  /* ── Interactive: neutral / ghost layers ─────────────────── */
+  --interactive-bg: rgba(245, 245, 243, 0.06);
+  --interactive-bg-hover: rgba(245, 245, 243, 0.10);
+  --interactive-bg-active: rgba(245, 245, 243, 0.14);
+  --interactive-bg-selected: rgba(18, 107, 255, 0.16);
+  --interactive-bg-disabled: rgba(245, 245, 243, 0.03);
+
+  /* ── Accent (brand signature, selection & focus) ─────────── */
+  --accent-default: #126BFF;
+  --accent-hover: #3A85FF;
+  --accent-active: #0B52CC;
+  --accent-subtle: rgba(18, 107, 255, 0.16);
+  --accent-bright: #00A3FF;
+
+  /* ── Value / prize emphasis (brand-native) ───────────────── */
+  --value-default: #FF006B;
+  --value-subtle: rgba(255, 0, 107, 0.14);
+
+  /* ── Feedback (+ additions; see gap analysis) ────────────── */
+  --success-default: #00D982;      /* + neon mint — reads as "won / claimed / verified" */
+  --success-fg: #5CFFC0;
+  --success-subtle: rgba(0, 217, 130, 0.14);
+  --success-border: rgba(0, 217, 130, 0.45);
+
+  --warning-default: #FFB020;      /* + amber — deliberately distinct from CTA orange */
+  --warning-fg: #FFCE6B;
+  --warning-subtle: rgba(255, 176, 32, 0.14);
+  --warning-border: rgba(255, 176, 32, 0.45);
+
+  --danger-default: #FF2942;       /* + true red — NOT brand pink, which means value */
+  --danger-fg: #FF7A88;
+  --danger-subtle: rgba(255, 41, 66, 0.14);
+  --danger-border: rgba(255, 41, 66, 0.45);
+
+  --info-default: #00A3FF;         /* brand Hyper Blue */
+  --info-fg: #7ACCFF;
+  --info-subtle: rgba(0, 163, 255, 0.14);
+  --info-border: rgba(0, 163, 255, 0.45);
+
+  /* ── Focus (accessibility, non-negotiable) ───────────────── */
+  --focus-ring-color: #5AA2FF;
+  --focus-ring-width: 3px; /* @kind spacing */
+  --focus-ring-offset: 2px; /* @kind spacing */
+  --focus-ring: 0 0 0 3px rgba(90, 162, 255, 0.55); /* @kind other */
+
+  /* ── Data visualization (ordered categorical ramp) ───────── */
+  --chart-1: #126BFF;
+  --chart-2: #00A3FF;
+  --chart-3: #7047EB;
+  --chart-4: #FF006B;
+  --chart-5: #FF6A1A;
+  --chart-6: #00D982;
+  --chart-grid: rgba(245, 245, 243, 0.08);
+  --chart-axis: #5B6472;
+}

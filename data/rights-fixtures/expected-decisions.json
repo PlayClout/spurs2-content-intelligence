@@ -1,0 +1,23 @@
+{
+  "asset_spurs_goal_001": {
+    "verdict": "AMBER",
+    "triggeredRules": ["PL-BROADCAST-OWNED-SOCIAL-48H", "MUSIC-SYNC-VERIFY", "CROWD-CLOSEUP-PRIVACY-EU"],
+    "allowedUses": ["instagram", "youtube"],
+    "blockedUses": ["partner_site"],
+    "reasoningIncludes": ["broadcast cooldown", "music", "crowd"]
+  },
+  "asset_spurs_training_002": {
+    "verdict": "GREEN",
+    "triggeredRules": ["TRAINING-CLUB-CONTROLLED-GREEN"],
+    "allowedUses": ["instagram", "tiktok", "youtube"],
+    "blockedUses": [],
+    "reasoningIncludes": ["Club-controlled training footage"]
+  },
+  "asset_saspurs_partner_003": {
+    "verdict": "RED",
+    "triggeredRules": ["CROWD-CLOSEUP-PRIVACY-EU", "SPONSOR-COMPETITOR-CATEGORY-REVIEW"],
+    "allowedUses": ["instagram"],
+    "blockedUses": ["partner_site"],
+    "reasoningIncludes": ["Sponsor category conflict", "crowd"]
+  }
+}

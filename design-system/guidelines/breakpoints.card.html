@@ -1,0 +1,25 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Breakpoints & Layout" subtitle="Mobile-first grid, gutters, screen padding, content widths" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:20px 24px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;padding:7px 10px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-muted);border-bottom:1px solid var(--border-default)}
+  td{padding:8px 10px;border-bottom:1px solid var(--border-subtle);color:var(--fg-secondary)}
+  td:first-child{color:var(--fg-default);font-weight:600}
+  .b{color:var(--accent-bright);font-weight:700}
+</style></head><body>
+<table>
+  <tr><th>Breakpoint</th><th>Min width</th><th>Cols</th><th>Gutter</th><th>Screen pad</th><th>Dialog</th><th>Primary nav</th></tr>
+  <tr><td>Mobile <span class="b">◀ author here</span></td><td>390px</td><td>4</td><td>16px</td><td>20px</td><td>Sheet</td><td>TabBar</td></tr>
+  <tr><td>Tablet</td><td>768px</td><td>8</td><td>20px</td><td>32px</td><td>Modal</td><td>TabBar</td></tr>
+  <tr><td>Desktop</td><td>1024px</td><td>12</td><td>24px</td><td>48px</td><td>Modal</td><td>Sidebar</td></tr>
+  <tr><td>Wide</td><td>1280px+</td><td>12</td><td>24px</td><td>48px</td><td>Modal</td><td>Sidebar</td></tr>
+</table>
+<div style="display:flex;gap:22px;margin-top:14px;font-size:11px;color:var(--fg-muted)">
+  <span>narrow <b style="color:var(--fg-default)">480</b> forms</span>
+  <span>default <b style="color:var(--fg-default)">720</b> reading</span>
+  <span>wide <b style="color:var(--fg-default)">1200</b> feeds</span>
+  <span>full <b style="color:var(--fg-default)">1440</b> max</span>
+</div>
+</body></html>

@@ -1,0 +1,25 @@
+{
+  "$comment": "Content plan for a club whose ScorePlay library is NOT a full match. Each format is a different kind of club footage. Video formats: a real TwelveLabs search over the club's own index (club-<key>), scoped to one ScorePlay collection. Photo formats: picked from the club photographer's captions (names never come from ScorePlay player tags, which were wrong on real photos). Built from what ScorePlay holds for San Antonio (probed 2026-10-23): Raw Footage (32 camera clips), Social Edits (36 finished posts incl. postgame interviews), Photos (187 stills incl. in-game partner activations).",
+  "orgKey": "san-antonio-spurs",
+  "competition": "NBA Preseason",
+  "eventLabel": "Spurs vs Kings · Preseason",
+  "teamSeasonId": 72210,
+  "photoCollectionId": 1536706,
+  "formats": [
+    {
+      "id": "game_action", "label": "Game action", "collection": "Raw Footage", "max": 4,
+      "queries": [
+        { "query": "slam dunk", "label": "Dunk", "headline": "THROWN DOWN" },
+        { "query": "player blocks a shot", "label": "Block", "headline": "DENIED" },
+        { "query": "three-point shot goes in", "label": "Three", "headline": "FROM DEEP" },
+        { "query": "alley-oop dunk", "label": "Alley-oop", "headline": "OFF THE LOB" }
+      ]
+    },
+    {
+      "id": "player_voice", "label": "Player voice", "collection": "Social Edits", "max": 2,
+      "queries": [{ "query": "player talking to the camera in a postgame interview", "label": "Postgame", "headline": "IN THEIR WORDS" }]
+    },
+    { "id": "partner_activation", "label": "Partner activation", "collection": "Photos", "max": 2, "photo": "activation" },
+    { "id": "player_photo", "label": "Player photo", "collection": "Photos", "max": 2, "photo": "player" }
+  ]
+}

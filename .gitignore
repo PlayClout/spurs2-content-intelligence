@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+web/node_modules/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# build output
+.next/
+web/.next/
+dist/
+.vercel/
+
+# generated media (produced by the rendering worker; not committed)
+out/
+web/public/renders/
+data/fallback-assets/*.mp4
+
+# logs / os
+*.log
+.DS_Store

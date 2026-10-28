@@ -1,0 +1,97 @@
+/* Clout — Product sizing, layout & platform tokens (v02)
+   Everything an agent needs to size a control, hit a touch target, or pick a breakpoint. */
+:root {
+  /* ── Control heights (interactive elements) ──────────────── */
+  --control-h-xs: 32px;   /* dense desktop chips only — never a primary mobile target */
+  --control-h-sm: 40px;
+  --control-h-md: 48px;   /* DEFAULT on mobile — meets Android 48dp */
+  --control-h-lg: 56px;
+  --control-h-xl: 64px;   /* hero CTA (matches brand Button large) */
+
+  /* ── Touch targets (hard minimums) ───────────────────────── */
+  --touch-min-ios: 44px;
+  --touch-min-android: 48px;
+  --touch-min: 48px;      /* use this; satisfies both */
+  --touch-spacing-min: 8px; /* minimum gap between adjacent targets */
+
+  /* ── Icon sizes ──────────────────────────────────────────── */
+  --icon-xs: 16px;
+  --icon-sm: 20px;
+  --icon-md: 24px;        /* default — native icon grid */
+  --icon-lg: 32px;
+  --icon-xl: 40px;
+
+  /* ── Product radii (extends the brand set) ───────────────── */
+  --radius-xs: 6px;
+  --radius-md: 12px;      /* inputs, small controls */
+  --radius-lg: 16px;
+  --radius-xl: 22px;      /* = brand card radius */
+  --radius-2xl: 28px;
+  --radius-sheet: 24px;   /* bottom-sheet top corners */
+
+  /* ── Border widths ───────────────────────────────────────── */
+  --border-w-hairline: 1px;
+  --border-w-default: 1.5px;
+  --border-w-strong: 2px;
+  --border-w-emphasis: 3px;
+
+  /* ── Layout: screen padding (mobile-first) ───────────────── */
+  --screen-pad-mobile: 20px;
+  --screen-pad-tablet: 32px;
+  --screen-pad-desktop: 48px;
+  --content-max-narrow: 480px;   /* forms, onboarding, auth */
+  --content-max-default: 720px;  /* reading, settings */
+  --content-max-wide: 1200px;    /* feeds, dashboards */
+  --content-max-full: 1440px;
+
+  /* ── Layout: chrome heights ──────────────────────────────── */
+  --navbar-h-mobile: 56px;
+  --navbar-h-desktop: 64px;
+  --tabbar-h: 56px;               /* + safe-area inset bottom */
+  --safe-top: env(safe-area-inset-top, 0px); /* @kind spacing */
+  --safe-bottom: env(safe-area-inset-bottom, 0px); /* @kind spacing */
+
+  /* ── Breakpoints (min-width, mobile-first) ───────────────── */
+  --bp-sm: 390px;    /* baseline phone */
+  --bp-md: 768px;    /* tablet / large phone landscape */
+  --bp-lg: 1024px;   /* small desktop */
+  --bp-xl: 1280px;   /* desktop */
+  --bp-2xl: 1536px;  /* wide desktop */
+
+  /* ── Grid ────────────────────────────────────────────────── */
+  --grid-cols-mobile: 4; /* @kind other */
+  --grid-cols-tablet: 8; /* @kind other */
+  --grid-cols-desktop: 12; /* @kind other */
+  --grid-gutter-mobile: 16px;
+  --grid-gutter-tablet: 20px;
+  --grid-gutter-desktop: 24px;
+
+  /* ── Z-index scale (never invent values) ─────────────────── */
+  --z-base: 0; /* @kind other */
+  --z-raised: 10; /* @kind other */
+  --z-sticky: 100; /* @kind other */
+  --z-navbar: 200; /* @kind other */
+  --z-tabbar: 200; /* @kind other */
+  --z-drawer: 300; /* @kind other */
+  --z-overlay: 400; /* @kind other */
+  --z-modal: 500; /* @kind other */
+  --z-popover: 600; /* @kind other */
+  --z-toast: 700; /* @kind other */
+  --z-tooltip: 800; /* @kind other */
+
+  /* ── Product type scale (distinct from marketing display) ── */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 15px;   /* body default on mobile */
+  --text-base: 16px; /* body default on web; min for long-form */
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --leading-tight: 1.2; /* @kind other */
+  --leading-snug: 1.35; /* @kind other */
+  --leading-normal: 1.5; /* @kind other */
+  --leading-relaxed: 1.65; /* @kind other */
+}

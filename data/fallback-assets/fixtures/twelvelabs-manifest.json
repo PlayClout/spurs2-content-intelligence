@@ -1,0 +1,216 @@
+{
+  "$provenance": "RECORDED 2026-10-22T21:32:16.043Z live POST /v1.3/analyze, pegasus1.6, asset 6ad90e129c038876f3589de8, window 2-11s",
+  "request": {
+    "model_name": "pegasus1.6",
+    "video": {
+      "type": "asset_id",
+      "asset_id": "6ad90e129c038876f3589de8"
+    },
+    "prompt": "(MANIFEST_PROMPT)",
+    "response_format": {
+      "type": "json_schema",
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "moments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                },
+                "end": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                }
+              },
+              "required": [
+                "label",
+                "description",
+                "start",
+                "end"
+              ]
+            }
+          },
+          "subjectX": {
+            "type": "number"
+          },
+          "detectedSponsors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string",
+                  "enum": [
+                    "kit",
+                    "pitchside",
+                    "scorebug",
+                    "overlay",
+                    "other",
+                    "unknown"
+                  ]
+                },
+                "start": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                },
+                "end": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                }
+              },
+              "required": [
+                "name",
+                "category",
+                "location",
+                "start",
+                "end"
+              ]
+            }
+          },
+          "identifiablePeople": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "player",
+                    "coach",
+                    "official",
+                    "fan"
+                  ]
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "label"
+              ]
+            }
+          },
+          "competitionMarkings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "crowdPrivacy": {
+            "type": "object",
+            "properties": {
+              "facesVisible": {
+                "type": "boolean"
+              },
+              "closeUps": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "facesVisible",
+              "closeUps"
+            ]
+          },
+          "audioRisks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "stadium_music",
+                    "recorded_music",
+                    "broadcast_commentary",
+                    "crowd_chant"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          },
+          "onScreenText": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                },
+                "end": {
+                  "type": "timestamp",
+                  "format": "seconds"
+                }
+              },
+              "required": [
+                "text",
+                "kind",
+                "start",
+                "end"
+              ]
+            }
+          },
+          "suggestedUse": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary",
+          "moments",
+          "subjectX",
+          "detectedSponsors",
+          "identifiablePeople",
+          "competitionMarkings",
+          "crowdPrivacy",
+          "audioRisks",
+          "onScreenText",
+          "suggestedUse"
+        ]
+      }
+    },
+    "start_time": 2,
+    "end_time": 11,
+    "temperature": 0.1,
+    "max_tokens": 2048,
+    "stream": false
+  },
+  "elapsedMs": 8846,
+  "response": {
+    "id": "241fde80-151b-45ee-81f4-eb2f935e99c4",
+    "data": "{\"audioRisks\":[{\"type\":\"broadcast_commentary\"}],\"competitionMarkings\":[],\"crowdPrivacy\":{\"closeUps\":false,\"facesVisible\":true},\"detectedSponsors\":[{\"category\":\"fintech\",\"end\":9.0,\"location\":\"pitchside\",\"name\":\"sumup\",\"start\":0.0}],\"identifiablePeople\":[{\"label\":\"Son Heung-min\",\"type\":\"player\"},{\"label\":\"Richarlison\",\"type\":\"player\"}],\"moments\":[{\"description\":\"A player in a dark kit receives a pass and dribbles towards the penalty area.\",\"end\":4.5,\"label\":\"Pass and Dribble\",\"start\":0.0},{\"description\":\"The player shoots the ball past the goalkeeper into the net, scoring a goal.\",\"end\":7.0,\"label\":\"Goal Scoring\",\"start\":4.5},{\"description\":\"The scorer celebrates near the goal net as teammates approach to congratulate him.\",\"end\":9.0,\"label\":\"Celebration\",\"start\":7.0}],\"onScreenText\":[{\"end\":9.0,\"kind\":\"sponsor\",\"start\":0.0,\"text\":\"sumup\"}],\"subjectX\":0.55,\"suggestedUse\":\"This clip is ideal for a highlight reel or social media post showcasing a dramatic goal and celebration moment from the match.\",\"summary\":\"A football match sequence shows a player in a dark kit receiving a pass, dribbling into the penalty area, and scoring a goal past the goalkeeper. The scorer then celebrates near the goal net while teammates join him. The crowd is visible in the background throughout the sequence.\"}",
+    "finish_reason": "stop",
+    "usage": {
+      "output_tokens": 527,
+      "input_tokens": 8804
+    }
+  }
+}

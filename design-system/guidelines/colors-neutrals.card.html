@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Surfaces & Text" subtitle="Dark surface ramp + text hierarchy on black" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--clout-black);font-family:var(--font-body);padding:20px;display:flex;gap:14px}
+  .surfaces{display:flex;gap:10px;flex:1}
+  .sw{flex:1;border-radius:12px;height:110px;border:1px solid var(--border-hairline);display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-sizing:border-box}
+  .n{color:#fff;font-weight:600;font-size:11px}.h{color:rgba(255,255,255,.6);font-size:10px}
+  .text{flex:1;border-radius:12px;background:var(--clout-carbon);border:1px solid var(--border-hairline);padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+  .t1{color:var(--text-primary);font-size:18px;font-weight:600}
+  .t2{color:var(--text-secondary);font-size:14px}
+  .t3{color:var(--text-muted);font-size:12px}
+  .t4{color:var(--text-accent);font-size:13px;font-weight:600}
+</style></head><body>
+  <div class="surfaces">
+    <div class="sw" style="background:var(--clout-black)"><span class="n">Background</span><span class="h">#050811</span></div>
+    <div class="sw" style="background:var(--clout-carbon)"><span class="n">Panel</span><span class="h">#10131C</span></div>
+    <div class="sw" style="background:var(--clout-carbon-2)"><span class="n">Elevated</span><span class="h">#171B26</span></div>
+  </div>
+  <div class="text">
+    <span class="t1">Primary — Clout White</span>
+    <span class="t2">Secondary — Slate #8B93A3</span>
+    <span class="t3">Muted / caption — #5B6472</span>
+    <span class="t4">Accent / link — Blue tint #5AA2FF</span>
+  </div>
+</body></html>

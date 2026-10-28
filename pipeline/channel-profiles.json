@@ -1,0 +1,85 @@
+{
+  "$comment": "Channels are configuration, not code. render(clip, profile) -> variant.",
+  "instagram_reel": {
+    "label": "Instagram Reel",
+    "aspect": "9:16", "width": 1080, "height": 1920,
+    "maxDurationSec": 90, "targetDurationSec": [7, 30],
+    "safeZone": { "top": 220, "bottom": 420, "left": 60, "right": 120 },
+    "captions": { "burnIn": true, "position": "center-lower-safe", "fontSize": 54 },
+    "copy": { "maxChars": 2200, "hashtags": true, "tone": "hype" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  },
+  "instagram_story": {
+    "label": "Instagram Story",
+    "aspect": "9:16", "width": 1080, "height": 1920,
+    "maxDurationSec": 15, "targetDurationSec": [5, 15],
+    "safeZone": { "top": 250, "bottom": 300, "left": 60, "right": 60 },
+    "captions": { "burnIn": true, "position": "center", "fontSize": 54 },
+    "copy": { "maxChars": 0, "hashtags": false, "tone": "minimal" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  },
+  "tiktok": {
+    "label": "TikTok",
+    "aspect": "9:16", "width": 1080, "height": 1920,
+    "maxDurationSec": 600, "targetDurationSec": [7, 34],
+    "safeZone": { "top": 120, "bottom": 500, "left": 60, "right": 160 },
+    "captions": { "burnIn": true, "position": "upper-third-safe", "fontSize": 54 },
+    "copy": { "maxChars": 2200, "hashtags": true, "tone": "native-casual" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  },
+  "x_post": {
+    "label": "X (Twitter)",
+    "aspect": "16:9", "width": 1920, "height": 1080,
+    "maxDurationSec": 140, "targetDurationSec": [10, 45],
+    "safeZone": { "top": 0, "bottom": 0, "left": 0, "right": 0 },
+    "captions": { "burnIn": true, "position": "lower-third", "fontSize": 44 },
+    "copy": { "maxChars": 280, "hashtags": true, "tone": "punchy" },
+    "encode": { "vcodec": "libx264", "crf": 21, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  },
+  "youtube_short": {
+    "label": "YouTube Short",
+    "aspect": "9:16", "width": 1080, "height": 1920,
+    "maxDurationSec": 60, "targetDurationSec": [15, 58],
+    "safeZone": { "top": 120, "bottom": 360, "left": 60, "right": 120 },
+    "captions": { "burnIn": true, "position": "center-lower-safe", "fontSize": 54 },
+    "copy": { "maxChars": 100, "hashtags": true, "tone": "hype" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  },
+  "youtube_highlight": {
+    "label": "YouTube Highlight",
+    "aspect": "16:9", "width": 1920, "height": 1080,
+    "maxDurationSec": 1200, "targetDurationSec": [30, 180],
+    "safeZone": { "top": 0, "bottom": 0, "left": 0, "right": 0 },
+    "captions": { "burnIn": false, "position": "none", "fontSize": 0 },
+    "copy": { "maxChars": 5000, "hashtags": false, "tone": "editorial" },
+    "encode": { "vcodec": "libx264", "crf": 19, "preset": "medium", "acodec": "aac", "abitrate": "192k" }
+  },
+  "instagram_feed": {
+    "label": "Instagram Feed (photo)",
+    "kind": "photo",
+    "aspect": "4:5", "width": 1080, "height": 1350,
+    "maxDurationSec": 0, "targetDurationSec": [0, 0],
+    "safeZone": { "top": 64, "bottom": 64, "left": 64, "right": 64 },
+    "captions": { "burnIn": true, "position": "lower-third", "fontSize": 64 },
+    "copy": { "maxChars": 2200, "hashtags": true, "tone": "hype" },
+    "encode": { "vcodec": "mjpeg", "crf": 0, "preset": "", "acodec": "", "abitrate": "" }
+  },
+  "x_photo": {
+    "label": "X (photo)",
+    "kind": "photo",
+    "aspect": "16:9", "width": 1600, "height": 900,
+    "maxDurationSec": 0, "targetDurationSec": [0, 0],
+    "safeZone": { "top": 48, "bottom": 48, "left": 64, "right": 64 },
+    "captions": { "burnIn": true, "position": "lower-third", "fontSize": 56 },
+    "copy": { "maxChars": 280, "hashtags": true, "tone": "punchy" },
+    "encode": { "vcodec": "mjpeg", "crf": 0, "preset": "", "acodec": "", "abitrate": "" }
+  },
+  "fan_app": {
+    "label": "Fan app", "aspect": "16:9", "width": 1920, "height": 1080,
+    "maxDurationSec": 180, "targetDurationSec": [10, 45],
+    "safeZone": { "top": 0, "bottom": 0, "left": 0, "right": 0 },
+    "captions": { "burnIn": false, "position": "none", "fontSize": 0 },
+    "copy": { "maxChars": 2200, "hashtags": false, "tone": "editorial" },
+    "encode": { "vcodec": "libx264", "crf": 20, "preset": "fast", "acodec": "aac", "abitrate": "128k" }
+  }
+}

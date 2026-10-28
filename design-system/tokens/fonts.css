@@ -1,0 +1,6 @@
+/* Clout — Webfonts
+   Brand display face is deliberately DEFERRED (see Typography guide): campaign type is
+   governed by documented visual characteristics — heavy, condensed, italic, uppercase —
+   not a licensed premium face. Oswald is the approved operational substitute (it is the
+   exact fallback used in Clout's own CTA preview tooling). Inter is the body/UI face. */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');

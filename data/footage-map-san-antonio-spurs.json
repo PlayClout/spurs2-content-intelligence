@@ -1,0 +1,555 @@
+{
+  "generatedAt": "2026-10-23T08:47:25.235Z",
+  "club": "san-antonio-spurs",
+  "twelvelabsIndexId": "6adb1c4f3eff3c9c9fc86377",
+  "collections": [
+    1536844,
+    1536708
+  ],
+  "media": [
+    {
+      "scorePlayMediaId": 130907149,
+      "name": "VicDunkCompQ1_vs_SAC_261016_9x16.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1c578fa69e301e80366c",
+      "twelvelabsAssetId": "6adb1c51c3de3d218f831973"
+    },
+    {
+      "scorePlayMediaId": 130941274,
+      "name": "X S1 JAM-423A-.mov",
+      "durationSec": 152,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1cddf3da3b51f7c5678a",
+      "twelvelabsAssetId": "6adb1ca28fa69e301e803798"
+    },
+    {
+      "scorePlayMediaId": 131000125,
+      "name": "X S1 OWN OOP-422A-.mov",
+      "durationSec": 160,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1ce1e70665f1a3768c4d",
+      "twelvelabsAssetId": "6adb1ca29389454e45605286"
+    },
+    {
+      "scorePlayMediaId": 130963809,
+      "name": "X S1 JAM-423B-.mov",
+      "durationSec": 152,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1cde5ad4bae6253a600f",
+      "twelvelabsAssetId": "6adb1ca24b78837d2f71c28c"
+    },
+    {
+      "scorePlayMediaId": 131000126,
+      "name": "X S1 OWN OOP-422B-.mov",
+      "durationSec": 160,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1cdd8fa69e301e8038ac",
+      "twelvelabsAssetId": "6adb1ca15beb2f1510574f63"
+    },
+    {
+      "scorePlayMediaId": 130932949,
+      "name": "X S1 DUNK!-411C-.mov",
+      "durationSec": 83,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1d648fa69e301e803930",
+      "twelvelabsAssetId": "6adb1d4104f6bb12ab70efa4"
+    },
+    {
+      "scorePlayMediaId": 130932409,
+      "name": "S7 BLOCK-252D-.mov",
+      "durationSec": 12,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1d90e70665f1a3768e1b",
+      "twelvelabsAssetId": "6adb1d84e70665f1a3768dc2"
+    },
+    {
+      "scorePlayMediaId": 130931968,
+      "name": "S7 BLOCK-252C-.mov",
+      "durationSec": 12,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1d969389454e45605582",
+      "twelvelabsAssetId": "6adb1d8af3da3b51f7c56933"
+    },
+    {
+      "scorePlayMediaId": 130941272,
+      "name": "X S1 JAM !!-427B-.mov",
+      "durationSec": 141,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1d614b78837d2f71c408",
+      "twelvelabsAssetId": "6adb1d2c8fa69e301e8038fc"
+    },
+    {
+      "scorePlayMediaId": 130931966,
+      "name": "S7 BLOCK-252B-.mov",
+      "durationSec": 12,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1da98fa69e301e803ae9",
+      "twelvelabsAssetId": "6adb1d9d5beb2f151057526d"
+    },
+    {
+      "scorePlayMediaId": 130930674,
+      "name": "S7 BLOCK-252A-.mov",
+      "durationSec": 12,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1dac5beb2f15105752c6",
+      "twelvelabsAssetId": "6adb1da2f3da3b51f7c569d6"
+    },
+    {
+      "scorePlayMediaId": 130932951,
+      "name": "X S1 JAM !!-427A-.mov",
+      "durationSec": 141,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1d78e70665f1a3768d72",
+      "twelvelabsAssetId": "6adb1d3f4b78837d2f71c3e9"
+    },
+    {
+      "scorePlayMediaId": 130930673,
+      "name": "S7 BLK-251A-.mov",
+      "durationSec": 35,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1dbe5ad4bae6253a62a9",
+      "twelvelabsAssetId": "6adb1dab5ad4bae6253a6263"
+    },
+    {
+      "scorePlayMediaId": 130929455,
+      "name": "S5 WINDMILL-247B-.mov",
+      "durationSec": 26,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1dc53eff3c9c9fc8686e",
+      "twelvelabsAssetId": "6adb1db55beb2f15105752f1"
+    },
+    {
+      "scorePlayMediaId": 130929453,
+      "name": "S5 WINDMILL-247A-.mov",
+      "durationSec": 26,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1dd35ad4bae6253a62e5",
+      "twelvelabsAssetId": "6adb1dc3f3da3b51f7c56a51"
+    },
+    {
+      "scorePlayMediaId": 130925411,
+      "name": "S5 TAKE-232B-.mov",
+      "durationSec": 25,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1dd85beb2f1510575352",
+      "twelvelabsAssetId": "6adb1dc85beb2f1510575331"
+    },
+    {
+      "scorePlayMediaId": 130925409,
+      "name": "S5 STL JAM!-247B-.mov",
+      "durationSec": 18,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1de3e70665f1a3768f53",
+      "twelvelabsAssetId": "6adb1dd69389454e45605692"
+    },
+    {
+      "scorePlayMediaId": 130925410,
+      "name": "S5 TAKE-232A-.mov",
+      "durationSec": 25,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1de5f3da3b51f7c56a90",
+      "twelvelabsAssetId": "6adb1dd58fa69e301e803b9d"
+    },
+    {
+      "scorePlayMediaId": 130923318,
+      "name": "S5 STL JAM!-247A-.mov",
+      "durationSec": 18,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1df19389454e456056b1",
+      "twelvelabsAssetId": "6adb1de48fa69e301e803bb2"
+    },
+    {
+      "scorePlayMediaId": 130921146,
+      "name": "S5 PULL J-227B-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1df75beb2f1510575375",
+      "twelvelabsAssetId": "6adb1dea5ad4bae6253a62fe"
+    },
+    {
+      "scorePlayMediaId": 130921143,
+      "name": "S5 PULL J-227A-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1df95ad4bae6253a630c",
+      "twelvelabsAssetId": "6adb1def5beb2f151057536c"
+    },
+    {
+      "scorePlayMediaId": 130919175,
+      "name": "S5 J-213A-.mov",
+      "durationSec": 6,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e044b78837d2f71c6b2",
+      "twelvelabsAssetId": "6adb1dfee70665f1a3768f75"
+    },
+    {
+      "scorePlayMediaId": 130919176,
+      "name": "S5 LAY-226B-.mov",
+      "durationSec": 22,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e07c3de3d218f831e79",
+      "twelvelabsAssetId": "6adb1df75beb2f1510575374"
+    },
+    {
+      "scorePlayMediaId": 130919174,
+      "name": "S5 LAY-226A-.mov",
+      "durationSec": 22,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e1304f6bb12ab70f27f",
+      "twelvelabsAssetId": "6adb1e035ad4bae6253a6317"
+    },
+    {
+      "scorePlayMediaId": 130916829,
+      "name": "S5 GLASS-222B-.mov",
+      "durationSec": 25,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e143eff3c9c9fc868bf",
+      "twelvelabsAssetId": "6adb1e05f3da3b51f7c56aab"
+    },
+    {
+      "scorePlayMediaId": 130916205,
+      "name": "S5 DRIVE-237B-.mov",
+      "durationSec": 17,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e2204f6bb12ab70f2c2",
+      "twelvelabsAssetId": "6adb1e189389454e456056da"
+    },
+    {
+      "scorePlayMediaId": 130916828,
+      "name": "S5 GLASS-222A-.mov",
+      "durationSec": 25,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e20f3da3b51f7c56ae1",
+      "twelvelabsAssetId": "6adb1e105beb2f1510575396"
+    },
+    {
+      "scorePlayMediaId": 130916203,
+      "name": "S5 DRIVE-218A-.mov",
+      "durationSec": 7,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e2f04f6bb12ab70f34c",
+      "twelvelabsAssetId": "6adb1e265ad4bae6253a6392"
+    },
+    {
+      "scorePlayMediaId": 130916204,
+      "name": "S5 DRIVE-237A-.mov",
+      "durationSec": 17,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e323eff3c9c9fc8699d",
+      "twelvelabsAssetId": "6adb1e248fa69e301e803c50"
+    },
+    {
+      "scorePlayMediaId": 130916202,
+      "name": "S5 3PT-322B-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e3b5ad4bae6253a6425",
+      "twelvelabsAssetId": "6adb1e2e4b78837d2f71c767"
+    },
+    {
+      "scorePlayMediaId": 130916200,
+      "name": "S5 DRIVE-231A-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e459389454e45605854",
+      "twelvelabsAssetId": "6adb1e3b8fa69e301e803d33"
+    },
+    {
+      "scorePlayMediaId": 130916201,
+      "name": "S5 3PT-329B-.mov",
+      "durationSec": 23,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e439389454e45605841",
+      "twelvelabsAssetId": "6adb1e334b78837d2f71c784"
+    },
+    {
+      "scorePlayMediaId": 130916199,
+      "name": "S5 3PT-322A-.mov",
+      "durationSec": 16,
+      "collection": "Raw Footage",
+      "twelvelabsVideoId": "6adb1e505beb2f1510575555",
+      "twelvelabsAssetId": "6adb1e43c3de3d218f831fcd"
+    },
+    {
+      "scorePlayMediaId": 130907142,
+      "name": "Vic_Dunk_#3_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e57f3da3b51f7c56c91",
+      "twelvelabsAssetId": "6adb1e545ad4bae6253a64ec"
+    },
+    {
+      "scorePlayMediaId": 130907148,
+      "name": "VicDropsSabonis_vs_SAC_261016_9x16.mp4",
+      "durationSec": 9,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e539389454e456058be",
+      "twelvelabsAssetId": "6adb1e4c5beb2f151057553e"
+    },
+    {
+      "scorePlayMediaId": 130907143,
+      "name": "Vic_Dunk_#3_16x9.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e585beb2f1510575584",
+      "twelvelabsAssetId": "6adb1e51f3da3b51f7c56c6b"
+    },
+    {
+      "scorePlayMediaId": 130907139,
+      "name": "Vic_Dunk_#2_NOAUDIO.mp4",
+      "durationSec": 4,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e5f5ad4bae6253a652d",
+      "twelvelabsAssetId": "6adb1e5c4b78837d2f71c89b"
+    },
+    {
+      "scorePlayMediaId": 130907134,
+      "name": "Vic one hand jam!!_9x16.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e654b78837d2f71c8b9",
+      "twelvelabsAssetId": "6adb1e5ec3de3d218f832086"
+    },
+    {
+      "scorePlayMediaId": 130907108,
+      "name": "Vic FB Backboard Oop_9x16.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e65e70665f1a37691b8",
+      "twelvelabsAssetId": "6adb1e5f04f6bb12ab70f491"
+    },
+    {
+      "scorePlayMediaId": 130907106,
+      "name": "Vic FB Backboard Oop_4x5.mp4",
+      "durationSec": 14,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e6b9389454e4560591a",
+      "twelvelabsAssetId": "6adb1e64c3de3d218f832095"
+    },
+    {
+      "scorePlayMediaId": 130907105,
+      "name": "TeamReadyForTuesday_PostgameBite_261016_9x16.mp4",
+      "durationSec": 19,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e6c3eff3c9c9fc86afe",
+      "twelvelabsAssetId": "6adb1e65c3de3d218f832099"
+    },
+    {
+      "scorePlayMediaId": 130907088,
+      "name": "S40_Three_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e7a9389454e4560592d",
+      "twelvelabsAssetId": "6adb1e773eff3c9c9fc86b06"
+    },
+    {
+      "scorePlayMediaId": 130907090,
+      "name": "Steph Windmill Speed Ramp_9x16.mp4",
+      "durationSec": 11,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e774b78837d2f71c8cf",
+      "twelvelabsAssetId": "6adb1e715ad4bae6253a655e"
+    },
+    {
+      "scorePlayMediaId": 130907089,
+      "name": "Steph Windmill Speed Ramp_4x5.mp4",
+      "durationSec": 11,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e784b78837d2f71c8d1",
+      "twelvelabsAssetId": "6adb1e71e70665f1a37691c4"
+    },
+    {
+      "scorePlayMediaId": 130907048,
+      "name": "S30_Three_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e843eff3c9c9fc86b1a",
+      "twelvelabsAssetId": "6adb1e813eff3c9c9fc86b0f"
+    },
+    {
+      "scorePlayMediaId": 130907050,
+      "name": "S40 3PT-332A-.mov",
+      "durationSec": 15,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e82c3de3d218f8320c2",
+      "twelvelabsAssetId": "6adb1e78f3da3b51f7c56cd8"
+    },
+    {
+      "scorePlayMediaId": 130907041,
+      "name": "S11_Dunk_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e8a5ad4bae6253a657e",
+      "twelvelabsAssetId": "6adb1e845beb2f15105755fd"
+    },
+    {
+      "scorePlayMediaId": 130907046,
+      "name": "S17_Three_4x5.mp4",
+      "durationSec": 7,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e8a04f6bb12ab70f4d8",
+      "twelvelabsAssetId": "6adb1e834b78837d2f71c8d8"
+    },
+    {
+      "scorePlayMediaId": 130907033,
+      "name": "S5_Dunk_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e92f3da3b51f7c56cff",
+      "twelvelabsAssetId": "6adb1e8ef3da3b51f7c56cf7"
+    },
+    {
+      "scorePlayMediaId": 130907031,
+      "name": "S4_Fox and 1_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e949389454e4560595a",
+      "twelvelabsAssetId": "6adb1e918fa69e301e803e97"
+    },
+    {
+      "scorePlayMediaId": 130907040,
+      "name": "S5_Dunk_9x16.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1e919389454e45605951",
+      "twelvelabsAssetId": "6adb1e8b9389454e4560594d"
+    },
+    {
+      "scorePlayMediaId": 130907005,
+      "name": "S3_layup (assist from S10)_4x5.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ea1f3da3b51f7c56d0b",
+      "twelvelabsAssetId": "6adb1e9d5beb2f1510575626"
+    },
+    {
+      "scorePlayMediaId": 130907003,
+      "name": "S2_dribble + layup_9x16.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ea4e70665f1a3769200",
+      "twelvelabsAssetId": "6adb1ea04b78837d2f71c8f9"
+    },
+    {
+      "scorePlayMediaId": 130907006,
+      "name": "S4 AND 1-259A-.mov",
+      "durationSec": 16,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ea0e70665f1a37691fd",
+      "twelvelabsAssetId": "6adb1e964b78837d2f71c8ef"
+    },
+    {
+      "scorePlayMediaId": 130907002,
+      "name": "S2_dribble + layup_4x5.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ea65beb2f151057562d",
+      "twelvelabsAssetId": "6adb1ea2f3da3b51f7c56d0c"
+    },
+    {
+      "scorePlayMediaId": 130906962,
+      "name": "KJ and 1_Tongue out_4x5.mp4",
+      "durationSec": 9,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1eb104f6bb12ab70f4f2",
+      "twelvelabsAssetId": "6adb1eab5ad4bae6253a659b"
+    },
+    {
+      "scorePlayMediaId": 130906960,
+      "name": "JuThree.mp4",
+      "durationSec": 5,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1eb904f6bb12ab70f4f8",
+      "twelvelabsAssetId": "6adb1eb3f3da3b51f7c56d10"
+    },
+    {
+      "scorePlayMediaId": 130906961,
+      "name": "KJ and 1 lay_Tongue Out _9x16.mp4",
+      "durationSec": 8,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1eb904f6bb12ab70f4f7",
+      "twelvelabsAssetId": "6adb1eb204f6bb12ab70f4f3"
+    },
+    {
+      "scorePlayMediaId": 130906986,
+      "name": "Luke on Tarris already being impactful.mp4",
+      "durationSec": 45,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1eb504f6bb12ab70f4f6",
+      "twelvelabsAssetId": "6adb1ea89389454e45605967"
+    },
+    {
+      "scorePlayMediaId": 130906959,
+      "name": "Ja'Kobi Cross 3pt_4x5.mp4",
+      "durationSec": 8,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ec19389454e45605975",
+      "twelvelabsAssetId": "6adb1ebdf3da3b51f7c56d1b"
+    },
+    {
+      "scorePlayMediaId": 130906958,
+      "name": "HarperComp_vs_SAC_261016_9x16.mp4",
+      "durationSec": 28,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ec7e70665f1a376921d",
+      "twelvelabsAssetId": "6adb1ec0c3de3d218f832100"
+    },
+    {
+      "scorePlayMediaId": 130906900,
+      "name": "FoxDrive.mp4",
+      "durationSec": 6,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ed35ad4bae6253a65e8",
+      "twelvelabsAssetId": "6adb1ecd5ad4bae6253a65b5"
+    },
+    {
+      "scorePlayMediaId": 130906902,
+      "name": "Harper14PTRun_2_NDE_vs_SAC_261016_9x16.mp4",
+      "durationSec": 30,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ece9389454e45605998",
+      "twelvelabsAssetId": "6adb1ec58fa69e301e803eb9"
+    },
+    {
+      "scorePlayMediaId": 130906901,
+      "name": "Dylan tuff lay and 1_4x5.mp4",
+      "durationSec": 10,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ed104f6bb12ab70f532",
+      "twelvelabsAssetId": "6adb1ecb8fa69e301e803ec0"
+    },
+    {
+      "scorePlayMediaId": 130906897,
+      "name": "Dev_Three_4x5.mp4",
+      "durationSec": 4,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1ef98fa69e301e803fe0",
+      "twelvelabsAssetId": "6adb1edf5beb2f15105756c9"
+    },
+    {
+      "scorePlayMediaId": 130906899,
+      "name": "Dylan 3_Team Pass_4x5.mp4",
+      "durationSec": 13,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1efbe70665f1a3769342",
+      "twelvelabsAssetId": "6adb1ed8e70665f1a3769285"
+    },
+    {
+      "scorePlayMediaId": 130906898,
+      "name": "DylanOnShotConfidence_PostgameBite_261016_9x16.mp4",
+      "durationSec": 38,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1efd4b78837d2f71ca45",
+      "twelvelabsAssetId": "6adb1eda8fa69e301e803f17"
+    },
+    {
+      "scorePlayMediaId": 130906896,
+      "name": "10.17_NDE_TeamWin_9x16.mp4",
+      "durationSec": 71,
+      "collection": "Social Edits",
+      "twelvelabsVideoId": "6adb1f023eff3c9c9fc86cc4",
+      "twelvelabsAssetId": "6adb1ee29389454e45605a10"
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "$provenance": "Synthesized demo fixtures modeled on the public ScorePlay OpenAPI schemas (field names, types, units, timing modes). Values are invented for the demo footage; not recorded API responses. IDs are fake.",
+  "whoami": {
+    "user_id": 42,
+    "user_type": "admin",
+    "company": {
+      "name": "hackathon-sandbox (fixture)",
+      "subdomain": "fixture"
+    },
+    "rights": [
+      "can_view_media",
+      "can_do_media_download",
+      "can_do_media_edit"
+    ],
+    "scope": {
+      "sponsor_id": 0,
+      "team_ids": [],
+      "only_shared_content": false,
+      "require_validation": false,
+      "validator": true
+    }
+  },
+  "tagSearch": {
+    "castle": {
+      "tags": [],
+      "players": [
+        {
+          "ID": 189201,
+          "full_name": "stephon castle",
+          "external_id": "sas-castle"
+        }
+      ],
+      "sponsors": []
+    },
+    "wembanyama": {
+      "tags": [],
+      "players": [
+        {
+          "ID": 189202,
+          "full_name": "victor wembanyama",
+          "external_id": "sas-wemby"
+        }
+      ],
+      "sponsors": []
+    },
+    "goal": {
+      "tags": [
+        {
+          "ID": 1910925,
+          "name": "goal",
+          "label": "Goal"
+        }
+      ],
+      "players": [],
+      "sponsors": []
+    }
+  },
+  "media": [
+    {
+      "ID": 46000301,
+      "name": "basketball-broll.mp4",
+      "type": "video",
+      "date": 1792710420,
+      "company_id": 789,
+      "event_id": 321901,
+      "team_id": 0,
+      "duration": 13.97,
+      "width": 1280,
+      "height": 720,
+      "description": "Spurs vs Thunder, Q4 final possession (fallback b-roll standing in for match footage)",
+      "validated": true,
+      "is_private": false,
+      "can_be_shared": true,
+      "usage": "editorial",
+      "custom_terms": "",
+      "accessible_from": 0,
+      "accessible_until": 1924988400,
+      "external_accounts_drms": null,
+      "player_ids": [
+        189201
+      ],
+      "sponsor_ids": [],
+      "tag_option_ids": [],
+      "raw_tags": [
+        "q4",
+        "final-possession"
+      ]
+    },
+    {
+      "ID": 46000302,
+      "name": "soccer-broll.mp4",
+      "type": "video",
+      "date": 1792681200,
+      "company_id": 789,
+      "event_id": 321902,
+      "team_id": 0,
+      "duration": 17.52,
+      "width": 1280,
+      "height": 720,
+      "description": "Spurs vs Arsenal, 88th minute (fallback b-roll standing in for match footage)",
+      "validated": true,
+      "is_private": false,
+      "can_be_shared": true,
+      "usage": "editorial",
+      "custom_terms": "Premier League footage: owned social only within 48h of full time; no partner sites",
+      "accessible_from": 0,
+      "accessible_until": 1906563600,
+      "external_accounts_drms": null,
+      "player_ids": [],
+      "sponsor_ids": [],
+      "tag_option_ids": [
+        1910925
+      ],
+      "raw_tags": [
+        "goal",
+        "derby"
+      ]
+    },
+    {
+      "ID": 46000303,
+      "name": "castle-celebration-01.jpg",
+      "type": "photo",
+      "date": 1792710425,
+      "company_id": 789,
+      "event_id": 321901,
+      "team_id": 0,
+      "width": 1280,
+      "height": 720,
+      "description": "Castle celebrates the buzzer-beater (frame grab standing in for a photographer shot)",
+      "validated": true,
+      "is_private": false,
+      "can_be_shared": true,
+      "usage": "editorial",
+      "custom_terms": "",
+      "accessible_from": 0,
+      "accessible_until": 0,
+      "external_accounts_drms": null,
+      "player_ids": [
+        189201
+      ],
+      "sponsor_ids": [],
+      "tag_option_ids": [],
+      "raw_tags": [
+        "celebration"
+      ]
+    }
+  ],
+  "formats": {
+    "46000301": {
+      "common_formats": [
+        "original"
+      ],
+      "items": {
+        "552001": [
+          {
+            "id": "5b0f6d0e-0000-4000-8000-000000000301",
+            "type": "original",
+            "file_name": "basketball-broll.mp4",
+            "size": 4314210,
+            "mime_type": "video/mp4",
+            "file_url": "repo:data/fallback-assets/basketball-broll.mp4",
+            "media_version_id": 552001,
+            "status": "ready",
+            "is_scoreplay": true
+          }
+        ]
+      }
+    },
+    "46000302": {
+      "common_formats": [
+        "original"
+      ],
+      "items": {
+        "552002": [
+          {
+            "id": "5b0f6d0e-0000-4000-8000-000000000302",
+            "type": "original",
+            "file_name": "soccer-broll.mp4",
+            "size": 5379988,
+            "mime_type": "video/mp4",
+            "file_url": "repo:data/fallback-assets/soccer-broll.mp4",
+            "media_version_id": 552002,
+            "status": "ready",
+            "is_scoreplay": true
+          }
+        ]
+      }
+    }
+  },
+  "logs": {
+    "46000301": [
+      {
+        "id": 456,
+        "media_id": 46000301,
+        "name": "Dunk",
+        "external_id": "evt_q4_0003",
+        "timestamp": 9,
+        "start_timestamp": 6000,
+        "end_timestamp": 13500,
+        "comment": "game-winner, data feed",
+        "tags": [
+          "dunk",
+          "game-winner"
+        ],
+        "players": [
+          {
+            "id": 189201,
+            "external_id": "sas-castle",
+            "name": "Stephon Castle"
+          }
+        ]
+      }
+    ],
+    "46000302": []
+  }
+}

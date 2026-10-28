@@ -1,0 +1,15 @@
+<!-- @dsCard group="Colors" viewport="700x160" name="Semantic Status" subtitle="Success, warning, danger, info — added, pending ratification" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);font-family:var(--font-body);padding:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .c{border-radius:12px;padding:14px;border:1px solid;display:flex;flex-direction:column;gap:6px}
+  .n{font-weight:700;font-size:13px}.h{font-size:11px;opacity:.85;font-variant-numeric:tabular-nums}
+  .u{font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+  .dot{width:100%;height:6px;border-radius:3px}
+</style></head><body>
+  <div class="c" style="background:var(--success-subtle);border-color:var(--success-border);color:var(--success-fg)"><span class="dot" style="background:var(--success-default)"></span><span class="n">Success</span><span class="h">#00D982</span><span class="u">Won · claimed · verified</span></div>
+  <div class="c" style="background:var(--warning-subtle);border-color:var(--warning-border);color:var(--warning-fg)"><span class="dot" style="background:var(--warning-default)"></span><span class="n">Warning</span><span class="h">#FFB020</span><span class="u">Locking soon · attention</span></div>
+  <div class="c" style="background:var(--danger-subtle);border-color:var(--danger-border);color:var(--danger-fg)"><span class="dot" style="background:var(--danger-default)"></span><span class="n">Danger</span><span class="h">#FF2942</span><span class="u">Error · destructive</span></div>
+  <div class="c" style="background:var(--info-subtle);border-color:var(--info-border);color:var(--info-fg)"><span class="dot" style="background:var(--info-default)"></span><span class="n">Info</span><span class="h">#00A3FF</span><span class="u">Brand hyper blue</span></div>
+</body></html>

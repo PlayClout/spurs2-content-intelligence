@@ -1,0 +1,34 @@
+<!-- @dsCard group="Spacing" viewport="700x180" name="Control Sizing" subtitle="Heights, touch targets & icon sizes — 48px is the mobile default" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:22px 26px;display:flex;gap:34px;align-items:flex-start}
+  .col{display:flex;flex-direction:column;gap:9px}
+  .r{display:flex;align-items:center;gap:12px}
+  .lbl{width:96px;font-size:11px;color:var(--fg-muted);flex:none;font-variant-numeric:tabular-nums}
+  .bar{background:var(--interactive-bg-active);border:1px solid var(--border-default);border-radius:var(--radius-md);width:120px}
+  .ico{background:var(--accent-subtle);border-radius:4px}
+  .hd{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin-bottom:2px}
+</style></head><body>
+  <div class="col">
+    <span class="hd">Control heights</span>
+    <div class="r"><span class="lbl">xs · 32</span><span class="bar" style="height:32px"></span></div>
+    <div class="r"><span class="lbl">sm · 40</span><span class="bar" style="height:40px"></span></div>
+    <div class="r"><span class="lbl">md · 48 ◀</span><span class="bar" style="height:48px;border-color:var(--accent-default)"></span></div>
+    <div class="r"><span class="lbl">lg · 56</span><span class="bar" style="height:56px"></span></div>
+  </div>
+  <div class="col">
+    <span class="hd">Touch minimums</span>
+    <div class="r"><span class="lbl">iOS · 44</span><span class="bar" style="height:44px;width:44px"></span></div>
+    <div class="r"><span class="lbl">Android · 48</span><span class="bar" style="height:48px;width:48px;border-color:var(--accent-default)"></span></div>
+    <div style="font-size:11px;color:var(--fg-muted);max-width:150px;line-height:1.5">Ship 48px — it satisfies both. Min 8px between targets.</div>
+  </div>
+  <div class="col">
+    <span class="hd">Icon sizes</span>
+    <div class="r"><span class="lbl">xs · 16</span><span class="ico" style="width:16px;height:16px"></span></div>
+    <div class="r"><span class="lbl">sm · 20</span><span class="ico" style="width:20px;height:20px"></span></div>
+    <div class="r"><span class="lbl">md · 24 ◀</span><span class="ico" style="width:24px;height:24px;background:var(--accent-default)"></span></div>
+    <div class="r"><span class="lbl">lg · 32</span><span class="ico" style="width:32px;height:32px"></span></div>
+    <div class="r"><span class="lbl">xl · 40</span><span class="ico" style="width:40px;height:40px"></span></div>
+  </div>
+</body></html>

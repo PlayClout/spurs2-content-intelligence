@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spursx2 AI · Producer (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --subtle:#F9FAFB; --hover:#F3F4F6;
+  --border:#E5E7EB; --border-strong:#D1D5DB;
+  --text:#111827; --text-2:#4B5563; --text-3:#9CA3AF;
+  --primary:#2E6CFF; --primary-hover:#1F5AE8; --primary-soft:#EEF3FF; --primary-text:#1D4ED8;
+  --success:#16A34A; --success-soft:#ECFDF3; --success-text:#15803D;
+  --warning:#D97706; --warning-soft:#FFF7E6; --warning-text:#B45309;
+  --danger:#DC2626; --danger-soft:#FEF2F2; --danger-text:#B91C1C;
+  --violet-soft:#F3F0FF; --violet-text:#6D28D9;
+  --radius:10px; --radius-sm:6px;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.05);
+  --shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.04);
+  --shadow-lg:0 12px 32px rgba(16,24,40,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.5;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+h1,h2,h3{letter-spacing:-.02em;font-weight:650}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:240px 1fr;height:100vh}
+/* sidebar */
+.side{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 12px}
+.ws{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:18px}
+.ws-logo{width:30px;height:30px;border-radius:8px;background:#132257;color:#fff;display:grid;place-items:center;font-weight:700;font-size:12px}
+.ws-name{font-weight:600;font-size:13px;line-height:1.2}.ws-sub{font-size:11px;color:var(--text-3)}
+.ws .chev{margin-left:auto;color:var(--text-3)}
+.nav-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;padding:12px 8px 6px}
+.nav a{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:var(--radius-sm);color:var(--text-2);text-decoration:none;font-weight:500;font-size:13.5px;cursor:pointer}
+.nav a:hover{background:var(--hover);color:var(--text)}
+.nav a.on{background:var(--primary-soft);color:var(--primary-text)}
+.nav a .count{margin-left:auto;font-size:11.5px;font-weight:600;background:var(--hover);color:var(--text-2);border-radius:999px;padding:0 7px;line-height:19px}
+.nav a.on .count{background:#fff;color:var(--primary-text)}
+.nav a .count.hot{background:var(--danger);color:#fff}
+.side-foot{margin-top:auto;border-top:1px solid var(--border);padding-top:12px;display:grid;gap:8px}
+.sys{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2);padding:0 8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px var(--success-soft)}
+.brandline{font-size:11px;color:var(--text-3);padding:0 8px}
+/* main */
+.main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 20px;flex-shrink:0}
+.search{display:flex;align-items:center;gap:8px;background:var(--subtle);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;width:320px;color:var(--text-3);font-size:13px}
+.search input{border:0;background:none;outline:none;flex:1;color:var(--text)}
+.kbd{font-size:11px;border:1px solid var(--border);border-radius:4px;padding:0 5px;color:var(--text-3);background:#fff}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:var(--radius-sm);font-weight:600;font-size:13px;border:1px solid var(--border);background:#fff;color:var(--text);box-shadow:var(--shadow-sm);white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover{background:var(--primary-hover)}
+.btn.primary:disabled,.btn:disabled{background:var(--hover);border-color:var(--border);color:var(--text-3);box-shadow:none;cursor:not-allowed}
+.btn.ghost{border-color:transparent;box-shadow:none;background:none;color:var(--text-2)}
+.btn.ghost:hover{background:var(--hover)}
+.btn.danger-ghost{color:var(--danger-text)}
+.btn.sm{height:28px;padding:0 10px;font-size:12px}
+.btn.lg{height:40px;padding:0 18px;font-size:14px}
+.avatar{width:30px;height:30px;border-radius:50%;background:#E0E7FF;color:var(--primary-text);display:grid;place-items:center;font-weight:700;font-size:12px}
+.page{flex:1;overflow:auto;padding:24px}
+.view{display:none}.view.on{display:block}
+.stabs{display:flex;gap:22px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.stabs button{padding:9px 0;font-weight:600;font-size:13.5px;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.stabs button.on{color:var(--primary-text);border-color:var(--primary)}
+.spane{display:none}.spane.on{display:block}
+/* smart trim */
+.st{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}
+.st-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.st-head .t{font-weight:600;font-size:13px}
+.ai{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--primary-text);background:var(--primary-soft);border-radius:999px;padding:1px 8px}
+.beats{position:relative;height:46px;border-radius:6px;background:var(--hover);overflow:hidden;display:flex}
+.beat{position:relative;height:100%;border-right:1px solid #fff;font-size:10.5px;color:var(--text-2);padding:4px 6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.beat.key{background:#FFF1D6;color:#7C4A03;font-weight:600}
+.cut{position:absolute;top:0;bottom:0;border:2px solid var(--primary);border-radius:6px;background:rgba(46,108,255,.10);pointer-events:none;transition:left .25s,width .25s}
+.cut::before,.cut::after{content:"";position:absolute;top:50%;width:6px;height:22px;margin-top:-11px;background:#fff;border:2px solid var(--primary);border-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.cut::before{left:-5px}.cut::after{right:-5px}
+.beats{overflow:visible}
+.axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-3);margin-top:4px;font-variant-numeric:tabular-nums}
+.st-why{font-size:12.5px;color:var(--text-2);margin-top:10px;line-height:1.45}
+.st-why b{color:var(--text)}
+.st-row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.st-chip{font-size:12px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;color:var(--text-2);background:#fff;font-weight:600}
+.st-chip.on{border-color:var(--primary);color:var(--primary-text);background:var(--primary-soft)}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:20px}
+.page-head h1{font-size:24px}
+.page-head p{color:var(--text-2);margin-top:2px}
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-sm)}
+.kpi .l{font-size:12.5px;color:var(--text-2);font-weight:500}
+.kpi .v{font-size:26px;font-weight:600;margin-top:2px}
+.kpi .s{font-size:12px;color:var(--text-3)}
+/* alert */
+.alert{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid #FECACA;border-left:4px solid var(--danger);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.alert img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.alert .t{font-weight:600}.alert .d{font-size:12.5px;color:var(--text-2)}
+.alert .acts{margin-left:auto;display:flex;gap:6px}
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;line-height:19px;white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.9}
+.badge.plain::before{display:none}
+.b-blue{background:var(--primary-soft);color:var(--primary-text)}
+.b-green{background:var(--success-soft);color:var(--success-text)}
+.b-amber{background:var(--warning-soft);color:var(--warning-text)}
+.b-red{background:var(--danger-soft);color:var(--danger-text)}
+.b-gray{background:var(--hover);color:var(--text-2)}
+.b-violet{background:var(--violet-soft);color:var(--violet-text)}
+/* inbox split */
+.split{display:grid;grid-template-columns:minmax(360px,420px) 1fr;gap:16px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.panel-head{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.panel-head h2{font-size:15px}
+.tabs-sm{display:flex;gap:2px;background:var(--hover);padding:3px;border-radius:8px}
+.tabs-sm button{font-size:12.5px;font-weight:600;color:var(--text-2);padding:4px 10px;border-radius:6px}
+.tabs-sm button.on{background:#fff;color:var(--text);box-shadow:var(--shadow-sm)}
+.list{flex:1;min-height:0;overflow:auto}
+/* inbox = full-height workspace: two independently scrolling panes, actions always visible */
+#v-inbox.on{display:flex;flex-direction:column;height:calc(100vh - 56px - 48px)}
+#v-inbox .split{flex:1;min-height:0;align-items:stretch}
+#v-inbox .panel{display:flex;flex-direction:column;min-height:0}
+.dscroll{flex:1;min-height:0;overflow:auto}
+.stats{display:flex;gap:18px;font-size:13px;color:var(--text-2)}
+.stats b{font-size:18px;color:var(--text);margin-right:4px;font-weight:600}
+.row.hot{background:#FFF8F8}
+.row.hot.sel{background:var(--primary-soft)}
+.hotline{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--danger-text);font-weight:600;margin-top:6px}
+.hotline .snz{margin-left:auto;font-weight:600;color:var(--text-3);font-size:12px}
+.hotline .snz:hover{color:var(--text)}
+.row{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;position:relative}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--subtle)}
+.row.sel{background:#E8EFFF}
+.row.sel .title{color:var(--primary-text)}
+.row.sel::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary)}
+.actionbar{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--subtle);margin-bottom:12px}
+.thumb{width:60px;height:80px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--hover)}
+.thumb.card{width:64px;height:80px}
+.row .title{font-weight:600;font-size:13.5px;line-height:1.3}
+.row .meta{font-size:12px;color:var(--text-3);margin-top:2px}
+.row .chips{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.row .score{margin-left:auto;text-align:right;flex-shrink:0}
+.score-n{font-weight:600;font-size:18px;line-height:1}
+.score-l{font-size:10.5px;color:var(--text-3)}
+/* detail */
+.detail-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:16px;align-items:flex-start}
+.detail-head h2{font-size:20px}
+.detail-head .sub{font-size:13px;color:var(--text-2);margin-top:2px}
+.detail-head .acts{margin-left:auto;display:flex;gap:8px;align-items:center}
+.callout{display:flex;gap:10px;margin:16px 20px 0;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45}
+.callout.amber{background:var(--warning-soft);color:#7C4A03;border:1px solid #FDE2B5}
+.callout.red{background:var(--danger-soft);color:#7F1D1D;border:1px solid #FECACA}
+.callout.blue{background:var(--primary-soft);color:#1E3A8A;border:1px solid #D6E2FF}
+.callout b{font-weight:600}
+.dtabs{display:flex;gap:20px;padding:0 20px;border-bottom:1px solid var(--border);margin-top:14px}
+.dtabs button{padding:10px 0;font-weight:600;font-size:13px;color:var(--text-2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.dtabs button.on{color:var(--primary-text);border-color:var(--primary)}
+.dtabs .n{font-size:11px;background:var(--hover);border-radius:999px;padding:0 6px;margin-left:4px;color:var(--text-2)}
+.dbody{padding:20px}
+.pane{display:none}.pane.on{display:block}
+.media-grid{display:grid;grid-template-columns:auto 1fr;gap:24px}
+.phone{width:230px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:#000;position:relative;box-shadow:var(--shadow)}
+.phone.card{aspect-ratio:4/5;width:260px}
+.phone img{width:100%;height:100%;object-fit:cover}
+.play{position:absolute;inset:0;display:grid;place-items:center}
+.play span{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:var(--shadow)}
+.dur{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:600;border-radius:4px;padding:1px 6px}
+.chan-switch{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.chan-switch button{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;color:var(--text-2);background:#fff}
+.chan-switch button.on{border-color:var(--primary);color:var(--primary-text);background:var(--primary-soft)}
+.field{margin-bottom:16px}
+.field label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:6px}
+.field label span{font-weight:500;color:var(--text-3)}
+.textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;min-height:96px;resize:vertical;font-size:13.5px;line-height:1.5;outline:none}
+.textarea:focus,.inp:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.inp{border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:13px;width:90px;outline:none}
+.trim{display:flex;align-items:center;gap:10px}
+.trimbar{flex:1;height:34px;border-radius:6px;background:var(--hover);position:relative;overflow:hidden}
+.trimbar .sel{position:absolute;top:0;bottom:0;left:18%;right:28%;background:var(--primary-soft);border:2px solid var(--primary);border-radius:6px}
+.hint{font-size:12px;color:var(--text-3);margin-top:6px}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px 12px;font-size:13px}
+.kv dt{color:var(--text-3)}
+.sec-title{font-size:13px;font-weight:600;margin:20px 0 10px;color:var(--text)}
+.sec-title:first-child{margin-top:0}
+.sig{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px}
+.sig .k{font-size:11.5px;font-weight:600;color:var(--text-2);width:110px;flex-shrink:0}
+.sig .tag{margin-left:auto}
+.bar{height:6px;background:var(--hover);border-radius:99px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--primary);border-radius:99px}
+.meter{display:flex;align-items:center;gap:10px;font-size:13px;margin-bottom:8px}
+.meter .l{width:130px;color:var(--text-2)}
+.meter .n{width:30px;text-align:right;color:var(--text-2);font-variant-numeric:tabular-nums}
+/* channels table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--text-3);padding:9px 12px;border-bottom:1px solid var(--border);background:var(--subtle)}
+td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--subtle)}
+.cb{width:16px;height:16px;accent-color:var(--primary)}
+.chan{display:flex;align-items:center;gap:10px;font-weight:600}
+.chan-ic{width:26px;height:26px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700}
+.muted{color:#6B7280}
+.sticky-foot{display:flex;align-items:center;gap:10px;padding:12px 20px;border-top:1px solid var(--border);background:var(--subtle);border-radius:0 0 var(--radius) var(--radius)}
+/* toggle */
+.toggle{width:36px;height:20px;border-radius:99px;background:var(--border-strong);position:relative;transition:.15s;flex-shrink:0}
+.toggle::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:.15s}
+.toggle.on{background:var(--primary)}.toggle.on::after{left:18px}
+.toggle.warn.on{background:var(--warning)}
+/* cards grid */
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.svc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm)}
+.svc .h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.svc .n{font-weight:600}
+.svc p{font-size:12.5px;color:var(--text-2)}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:#0F172A;color:#E2E8F0;border-radius:8px;padding:12px;white-space:pre;overflow:auto;margin-top:8px;display:none}
+.code.on{display:block}
+.pub-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+.pub-card img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}
+.pub-card .b{padding:12px}
+.pub-card .t{font-weight:600}
+.banner{display:flex;align-items:center;gap:12px;background:var(--primary-soft);border:1px solid #D6E2FF;color:#1E3A8A;border-radius:var(--radius);padding:12px 14px;margin-bottom:16px}
+.banner .acts{margin-left:auto;display:flex;gap:8px}
+.empty{padding:48px;text-align:center;color:var(--text-2)}
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:#111827;color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);transition:.2s;display:flex;gap:10px;align-items:center;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast b{color:#86EFAC}
+.mock-tag{position:fixed;top:10px;right:12px;z-index:50;font-size:11px;font-weight:600;background:#111827;color:#fff;border-radius:999px;padding:3px 10px;opacity:.85}
+.reject-box{display:none;gap:8px;align-items:center}
+.reject-box.on{display:flex}
+.reject-box input{width:220px}
+svg{flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="mock-tag">MOCKUP · real clips + copy from the live replay</div>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="ws">
+      <div class="ws-logo">THFC</div>
+      <div><div class="ws-name">Tottenham Hotspur</div><div class="ws-sub">Premier League</div></div>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg>
+    </div>
+    <nav class="nav">
+      <a class="on" data-view="inbox"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>Inbox<span class="count" id="nav-inbox">7</span></a>
+      <a data-view="approved"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>Approved<span class="count" id="nav-approved">1</span></a>
+      <a data-view="published"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4M12 2v13"/></svg>Published<span class="count">2</span></a>
+      <a data-view="montages"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg>Montages</a>
+      <div class="nav-label">Workspace</div>
+      <a data-view="settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</a>
+    </nav>
+    <div class="side-foot">
+      <div class="sys"><span class="dot"></span>All systems live · 42 ms</div>
+      <a class="btn ghost" style="justify-content:flex-start" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>Open fan app<svg style="margin-left:auto" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></a>
+      <div class="brandline">Spursx2 AI</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="top">
+      <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input placeholder="Search clips, players, moments"><span class="kbd">⌘K</span></div>
+      <div class="top-right">
+        <span class="badge b-blue" title="Signals are a timed replay of the real match, not a live feed">Replay mode</span>
+        <button class="btn" id="replayBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>Replay match</button>
+        <div class="avatar">SP</div>
+      </div>
+    </header>
+
+    <div class="page">
+      <!-- ============ INBOX ============ -->
+      <section class="view on" id="v-inbox">
+        <div class="page-head" style="margin-bottom:14px;align-items:center">
+          <div class="stats"><span><b id="k-review">7</b>to review</span><span><b id="k-hot" style="color:var(--danger)">1</b>act now</span><span><b id="k-approved">1</b>approved</span><span><b>38s</b>play to draft</span></div>
+        </div>
+
+        <div class="split">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Queue</h2>
+              <div class="tabs-sm" style="margin-left:auto" id="qtabs">
+                <button class="on" data-f="all">All</button><button data-f="reel">Reels</button><button data-f="card">Photo cards</button>
+              </div>
+            </div>
+            <div class="list" id="list"></div>
+          </div>
+
+          <div class="panel" id="detail"></div>
+        </div>
+      </section>
+
+      <!-- ============ APPROVED ============ -->
+      <section class="view" id="v-approved">
+        <div class="page-head"><div><h1>Approved</h1><p>Final renders. Package for channels or publish to the fan app.</p></div></div>
+        <div class="panel"><table><thead><tr><th>Clip</th><th>Format</th><th>Rights</th><th>Channels</th><th>Fan app</th><th>Approved</th><th></th></tr></thead><tbody id="approvedRows"></tbody></table></div>
+      </section>
+
+      <!-- ============ PUBLISHED ============ -->
+      <section class="view" id="v-published">
+        <div class="page-head"><div><h1>Published</h1><p>Live in the fan app and recorded as simulated exports. Nothing is posted to real social accounts.</p></div><button class="btn">Export report</button></div>
+        <div class="grid3">
+          <div class="pub-card"><img src="img/solanke-card.jpg" alt=""><div class="b"><div class="t">Solanke rescues a point</div><div class="muted" style="font-size:12px;margin:2px 0 8px">Fan app · Instagram Feed (simulated) · 4 min ago</div><div style="display:flex;gap:6px"><span class="badge b-green">Live in fan app</span><span class="badge b-violet">Simulated export</span></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn sm">View</button><button class="btn sm ghost danger-ghost" onclick="toast('Withdrawn from fan app')">Withdraw</button></div></div></div>
+          <div class="pub-card"><img src="img/montage.jpg" alt="" style="aspect-ratio:16/9"><div class="b"><div class="t">Match montage · 3 clips · 40s</div><div class="muted" style="font-size:12px;margin:2px 0 8px">Fan app · 12 min ago</div><div style="display:flex;gap:6px"><span class="badge b-green">Live in fan app</span></div><div style="display:flex;gap:6px;margin-top:12px"><button class="btn sm">View</button><button class="btn sm ghost danger-ghost" onclick="toast('Withdrawn from fan app')">Withdraw</button></div></div></div>
+        </div>
+      </section>
+
+      <!-- ============ MONTAGES ============ -->
+      <section class="view" id="v-montages">
+        <div class="page-head"><div><h1>Montages</h1><p>Combine 2 to 3 approved clips into one 20 to 45 second cut.</p></div><button class="btn primary" onclick="toast('Montage approved · render queued')">Approve and render</button></div>
+        <div class="split" style="grid-template-columns:1fr 360px">
+          <div class="panel">
+            <div class="panel-head"><h2>Suggested order</h2><span class="badge b-gray plain" style="margin-left:auto">34.2s of 45s</span></div>
+            <table><thead><tr><th style="width:90px">Beat</th><th>Clip</th><th>Window</th><th>Rights</th><th></th></tr></thead><tbody>
+              <tr><td><span class="badge b-blue plain">Hook</span></td><td><div class="chan"><img class="thumb" style="width:34px;height:44px" src="img/savio-reel.jpg">So close from Sávio</div></td><td class="muted">8.0s</td><td><span class="badge b-amber">Owned only</span></td><td><button class="btn ghost sm">Remove</button></td></tr>
+              <tr><td><span class="badge b-blue plain">Build-up</span></td><td><div class="chan"><img class="thumb" style="width:34px;height:44px" src="img/chance-reel.jpg">The chance nobody logged</div></td><td class="muted">12.2s</td><td><span class="badge b-amber">Owned only</span></td><td><button class="btn ghost sm">Remove</button></td></tr>
+              <tr><td><span class="badge b-blue plain">Payoff</span></td><td><div class="chan"><img class="thumb" style="width:34px;height:44px" src="img/solanke-reel.jpg">Solanke rescues a point</div></td><td class="muted">14.0s</td><td><span class="badge b-amber">Owned only</span></td><td><button class="btn ghost sm">Remove</button></td></tr>
+            </tbody></table>
+          </div>
+          <div class="panel"><div class="panel-head"><h2>Preview</h2></div><div style="padding:14px"><img src="img/montage.jpg" style="width:100%;border-radius:8px;display:block"><p class="hint">Muted by default (approved audio policy for compilations). Re-checked against rights before render.</p></div></div>
+        </div>
+      </section>
+
+      <!-- ============ INTEGRATIONS ============ -->
+      <section class="view" id="v-settings">
+        <div class="page-head" style="margin-bottom:12px"><div><h1>Settings</h1></div></div>
+        <div class="stabs"><button class="on" onclick="stab('integrations')">Integrations</button><button class="" onclick="stab('writeback')">Write-back history</button><button class="" onclick="stab('rules')">Rights rules</button></div>
+      <div class="spane on" id="s-integrations">
+        <div class="grid4">
+          <div class="svc"><div class="h"><span class="n">ScorePlay</span><span class="badge b-green">Live</span></div><p>Admin key · 96 videos, 605 photos in the team workspace.</p></div>
+          <div class="svc"><div class="h"><span class="n">TwelveLabs</span><span class="badge b-green">Live</span></div><p>Premier League index · 58 Tottenham videos · 58/58 mapped to ScorePlay.</p></div>
+          <div class="svc"><div class="h"><span class="n">Storage</span><span class="badge b-green">Local</span></div><p>Renders stay on this laptop. No cloud copies of club media.</p></div>
+          <div class="svc"><div class="h"><span class="n">Database</span><span class="badge b-green">Live</span></div><p>Supabase · 42 ms.</p></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h2>Signal sources</h2></div>
+          <table><thead><tr><th>Source</th><th>Status</th><th>Detail</th></tr></thead><tbody>
+            <tr><td><b>Match feed</b></td><td><span class="badge b-blue">Replay</span></td><td class="muted">Timed replay of the real Man Utd v Tottenham timeline. Labelled replay, never shown as live.</td></tr>
+            <tr><td><b>Fan reaction</b></td><td><span class="badge b-blue">Replay</span></td><td class="muted">Replayed reaction signals from the same timeline.</td></tr>
+            <tr><td><b>AI watch-list</b></td><td><span class="badge b-green">Live</span></td><td class="muted">TwelveLabs search over the indexed match footage.</td></tr>
+            <tr><td><b>X / social search</b></td><td><span class="badge b-gray">Not connected</span></td><td class="muted">No authorized X read access. Not simulated.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-head"><h2>Worker jobs</h2><div style="margin-left:auto;display:flex;gap:6px"><span class="badge b-gray plain">Queued 0</span><span class="badge b-blue plain">Running 0</span><span class="badge b-red plain">Failed 1</span><span class="badge b-green plain">Done 14</span></div></div>
+          <table><thead><tr><th>Status</th><th>Job</th><th>Clip</th><th>Time</th><th></th></tr></thead><tbody>
+            <tr><td><span class="badge b-red">Failed</span></td><td>render_compilation</td><td class="muted">Compilation changed since approval. Re-approve.</td><td class="muted">6:41 PM</td><td style="text-align:right"><button class="btn sm" onclick="toast('Job requeued')">Retry</button></td></tr>
+            <tr><td><span class="badge b-green">Done</span></td><td>render_package</td><td class="muted">Solanke rescues a point · 9 channels</td><td class="muted">6:38 PM</td><td></td></tr>
+            <tr><td><span class="badge b-green">Done</span></td><td>render_final</td><td class="muted">Solanke rescues a point</td><td class="muted">6:37 PM</td><td></td></tr>
+            <tr><td><span class="badge b-green">Done</span></td><td>process_moment</td><td class="muted">The away end, at full time</td><td class="muted">6:36 PM</td><td></td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      </div>
+      <!-- ============ WRITE-BACK HISTORY ============ -->
+      <div class="spane" id="s-writeback">
+        <p class="muted" style="margin-bottom:14px">Every time a clip is approved, its source moment is logged back to ScorePlay so the club's library knows what was used. This is the record of those writes.</p>
+        <div class="panel">
+          <div class="panel-head"><h2>History</h2><span class="muted" style="font-size:12.5px;margin-left:6px">Last 30 days</span>
+            <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+              <span class="badge b-green plain">Written 3</span><span class="badge b-amber plain">Held 1</span><span class="badge b-red plain">Failed 0</span>
+              <button class="btn sm" style="margin-left:6px">Export CSV</button>
+            </div>
+          </div>
+          <table><thead><tr><th>When</th><th>Clip</th><th>What was written</th><th>ScorePlay media</th><th>Result</th><th></th></tr></thead><tbody>
+            <tr><td class="muted">Today 6:37 PM</td><td><b>Solanke rescues a point</b></td><td class="muted">Moment log 2.0s to 11.0s · tags: goal, Dominic Solanke</td><td class="muted">130849867</td><td><span class="badge b-amber">Held</span><div class="muted" style="font-size:12px">Awaiting ScorePlay taxonomy sign-off</div></td><td style="text-align:right"><button class="btn ghost sm" onclick="document.getElementById('payload').classList.toggle('on')">Details</button></td></tr>
+            <tr><td colspan="6" style="padding:0 12px"><div class="code" id="payload">POST /video/logs
+{
+  "media_id": 130849867,
+  "start_offset": 2.0,
+  "end_offset": 11.0,
+  "label": "Solanke rescues a point · approved"
+}</div></td></tr>
+            <tr><td class="muted">Today 5:12 PM</td><td><b>Training: Kudus finishing drill</b></td><td class="muted">Moment log 0.0s to 9.5s · tags: training</td><td class="muted">130849511</td><td><span class="badge b-green">Written</span><div class="muted" style="font-size:12px">ScorePlay log #48812</div></td><td style="text-align:right"><button class="btn ghost sm">Details</button></td></tr>
+            <tr><td class="muted">Yesterday</td><td><b>Archie Gray long-range effort</b></td><td class="muted">Moment log 50.0s to 60.0s · tags: shot</td><td class="muted">130849402</td><td><span class="badge b-green">Written</span><div class="muted" style="font-size:12px">ScorePlay log #48790</div></td><td style="text-align:right"><button class="btn ghost sm">Details</button></td></tr>
+            <tr><td class="muted">Yesterday</td><td><b>Fans at the Lane, pre-match</b></td><td class="muted">Moment log 3.0s to 12.0s · tags: crowd</td><td class="muted">130849377</td><td><span class="badge b-green">Written</span><div class="muted" style="font-size:12px">ScorePlay log #48771</div></td><td style="text-align:right"><button class="btn ghost sm">Details</button></td></tr>
+          </tbody></table>
+        </div>
+        <div class="panel" style="padding:14px 16px;display:flex;align-items:center;gap:14px;margin-top:16px">
+          <div style="flex:1"><div style="font-weight:600;font-size:13.5px">Pause write-back</div><div class="muted" style="font-size:12.5px">Keep new writes as drafts instead of sending them to ScorePlay. Currently on until ScorePlay signs off the taxonomy.</div></div>
+          <span class="badge b-amber" id="holdBadge">Paused</span>
+          <button class="toggle warn on" id="holdToggle" aria-label="Pause write-back"></button>
+        </div>
+      </div>
+      <!-- ============ RULES ============ -->
+      <div class="spane" id="s-rules">
+        <div style="display:flex;align-items:center;margin-bottom:14px"><p class="muted">Active version <b style="color:var(--text)">v3</b> · Illustrative demo policy, not club or league policy.</p><button class="btn" style="margin-left:auto" onclick="toast('New rule draft created')">+ New rule</button></div>
+        <div class="banner"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><div><b>1 change in draft.</b> Nothing changes decisions until you preview and activate.</div><div class="acts"><button class="btn sm" onclick="toast('Preview: 1 verdict would change (music clip clears)')">Preview impact</button><button class="btn primary sm" onclick="toast('v4 activated')">Activate v4</button></div></div>
+        <div class="split" style="grid-template-columns:1fr 300px">
+          <div class="panel"><table><thead><tr><th style="width:56px">On</th><th>Rule</th><th>Severity</th><th>Scope</th><th>Source</th><th></th></tr></thead><tbody>
+            <tr><td><button class="toggle on"></button></td><td><b>PL broadcast cooldown</b><div class="muted" style="font-size:12px">Owned social only for 48h after broadcast</div></td><td><span class="badge b-amber">Restrict</span></td><td class="muted">All territories</td><td class="muted">Illustrative</td><td><button class="btn ghost sm">Edit</button></td></tr>
+            <tr><td><button class="toggle on"></button></td><td><b>Music sync verify</b><div class="muted" style="font-size:12px">Mute audio unless sync rights are confirmed</div></td><td><span class="badge b-amber">Remediate</span></td><td class="muted">All territories</td><td class="muted">Illustrative</td><td><button class="btn ghost sm">Edit</button></td></tr>
+            <tr><td><button class="toggle on"></button></td><td><b>Crowd close-up privacy</b><div class="muted" style="font-size:12px">Review identifiable fans before paid or partner use</div></td><td><span class="badge b-amber">Restrict</span></td><td class="muted">EU, UK</td><td class="muted">Illustrative</td><td><button class="btn ghost sm">Edit</button></td></tr>
+            <tr><td><button class="toggle on"></button></td><td><b>Sponsor competitor category</b><div class="muted" style="font-size:12px">Block partner sites when a rival sponsor is visible</div></td><td><span class="badge b-red">Block</span></td><td class="muted">Partner site</td><td class="muted">Illustrative</td><td><button class="btn ghost sm">Edit</button></td></tr>
+            <tr><td><button class="toggle"></button></td><td><b>Alcohol brand, France</b><div class="muted" style="font-size:12px">Loi Evin: block visible alcohol branding in FR</div></td><td><span class="badge b-red">Block</span></td><td class="muted">FR</td><td class="muted">Illustrative</td><td><button class="btn ghost sm">Edit</button></td></tr>
+            <tr><td><button class="toggle on"></button></td><td><b>Training footage cleared</b><div class="muted" style="font-size:12px">Club-controlled training content is cleared</div></td><td><span class="badge b-green">Clear</span></td><td class="muted">All territories</td><td class="muted">Cited</td><td><button class="btn ghost sm">Edit</button></td></tr>
+          </tbody></table></div>
+          <div class="panel"><div class="panel-head"><h2>History</h2></div><div style="padding:6px 14px 14px;font-size:13px">
+            <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><b>v4</b><span class="badge b-gray plain">Draft</span><span class="muted" style="margin-left:auto">1 change</span></div>
+            <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><b>v3</b><span class="badge b-green plain">Active</span><span class="muted" style="margin-left:auto">Today 2:14 PM</span></div>
+            <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)"><b>v2</b><span class="muted" style="margin-left:auto">Today 11:02 AM</span></div>
+            <div style="display:flex;gap:8px;padding:8px 0"><b>v1</b><span class="muted" style="margin-left:auto">Yesterday</span></div>
+          </div></div>
+        </div>
+      </div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CH = {
+  instagram_reel:{label:"Instagram Reel",ic:"IG",c:"#E1306C",max:2200,ar:"9:16"},
+  tiktok:{label:"TikTok",ic:"TT",c:"#111",max:2200,ar:"9:16"},
+  youtube_short:{label:"YouTube Short",ic:"YT",c:"#FF0000",max:100,ar:"9:16"},
+  instagram_feed:{label:"Instagram Feed",ic:"IG",c:"#E1306C",max:2200,ar:"4:5"},
+  x_photo:{label:"X",ic:"X",c:"#111",max:280,ar:"16:9"},
+};
+const BEATS = {
+  solanke:{win:[0,14],beats:[["Pass and dribble",0,4.5],["Goal",4.5,8,1],["Celebration",8,14]]},
+  savio:{win:[1,16.5],beats:[["Pass and tackle",1,4.5],["Dribble into the box",4.5,11.5],["Cutback and save",11.5,16.5,1]]},
+  chance:{win:[15.4,26],beats:[["Coach reaction",15.4,18.9],["Spurs build-up",18.9,23.4],["Shot",23.4,26,1]]},
+  awayend:{win:[19.8,30.4],beats:[["Players clapping",19.8,21.8],["Walk to the away end",21.8,26.8,1],["Fans cheering",26.8,30.4]]},
+};
+const TARGET = {instagram_reel:[7,30,90],tiktok:[7,34,600],youtube_short:[15,58,60],instagram_story:[5,15,15]};
+/* Smart trim: start a beat before the key moment (setup), end after the reaction beat, then fit the channel's target
+   length inside the footage we analysed. Returns the cut + plain-language reasons. Every input is stored data. */
+function smartTrim(play, ch){
+  const b = BEATS[play]; const [tMin, tMax, hardMax] = TARGET[ch] || [7, 30, 90];
+  const label = CH[ch]?.label || ch;
+  const ki = b.beats.findIndex(x => x[3]); const key = b.beats[ki];
+  const setup = b.beats[ki - 1], after = b.beats[ki + 1];
+  // 1. the story: up to 3s of setup before the key beat, through the reaction beat after it
+  let start = setup ? Math.max(setup[1], key[1] - 3) : key[1];
+  let end = after ? after[2] : key[2];
+  let note = "";
+  // 2. fit the channel's target length, only ever inside the footage we analysed
+  const cap = Math.min(tMax, hardMax);
+  if (end - start < tMin){
+    start = Math.max(b.win[0], end - tMin);
+    if (end - start < tMin) end = Math.min(b.win[1], start + tMin);
+    note = end - start < tMin
+      ? `${label} works best at ${tMin}s or longer, but only ${(b.win[1]-b.win[0]).toFixed(1)}s of this play was analysed, so it uses all of it.`
+      : `Lengthened to reach ${label}'s ${tMin}s minimum.`;
+  }
+  if (end - start > cap){ end = start + cap; note = `Shortened to fit ${label}'s ${cap}s target.`; }
+  // 3. explain the FINAL cut (computed after fitting, so the numbers always match the bar)
+  const lead = key[1] - start;
+  const why = (lead > 0.05 ? `<b>Starts ${lead.toFixed(1)}s before the ${key[0].toLowerCase()}</b> so the build-up lands` : `<b>Starts on the ${key[0].toLowerCase()}</b>`)
+    + (end >= (after ? after[2] : key[2]) - 0.05 ? (after ? `, <b>ends after the ${after[0].toLowerCase()}</b>.` : `, <b>ends on the ${key[0].toLowerCase()}</b>.`) : `, <b>ends at ${end.toFixed(1)}s</b>.`);
+  return {start:+start.toFixed(1), end:+end.toFixed(1), len:+(end-start).toFixed(1), why, note, b};
+}
+let trimMode = "smart";
+const CLIPS = [
+  {id:"sol-reel",play:"solanke",title:"Solanke rescues a point",fmt:"reel",aud:"Casual fans",score:81,status:"review",hot:true,min:"88'",dur:"9s",
+   channels:["instagram_reel","tiktok","youtube_short"],
+   copy:{instagram_reel:"WHAT A MOMENT! Solanke with the dramatic late equaliser at Old Trafford! 88' and we're level! That's the resilience we needed. Man United 1 Spurs 1 #COYS",tiktok:"88th minute magic from Solanke at Old Trafford! Late equaliser to grab a point when we needed it most #COYS",youtube_short:"Solanke levels it up! 88' at Old Trafford #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849867: can_be_shared=false). Owned club channels only."],
+   signals:[["Match feed","Goal, Solanke equalises late","Replay"],["Fan reaction","Mentions of Solanke up 11x in 2 minutes","Replay"]],
+   why:"Late equaliser away at a rival. The highest-stakes moment of the match.",found:"30s after the play"},
+  {id:"sol-card",play:"solanke",title:"Solanke rescues a point",fmt:"card",aud:"Superfans",score:82,status:"review",min:"88'",
+   channels:["instagram_feed","x_photo"],
+   copy:{instagram_feed:"WHAT A MOMENT! Solanke with the dramatic late equaliser at Old Trafford! 88' and we're level! That's the resilience we needed. A crucial point on the road against Man United. #COYS",x_photo:"SOLANKE! 88' EQUALISER! Dramatic scenes at Old Trafford as we snatch a point! #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849867: can_be_shared=false). Owned club channels only."],
+   signals:[["Match feed","Goal, Solanke equalises late","Replay"],["Fan reaction","Mentions of Solanke up 11x in 2 minutes","Replay"]],
+   why:"Superfans want the stat line and the moment as a keepable card.",found:"31s after the play"},
+  {id:"sav-reel",play:"savio",title:"So close from Sávio",fmt:"reel",aud:"Casual fans",score:55,status:"review",min:"62'",dur:"8s",
+   channels:["instagram_reel","tiktok","youtube_short"],
+   copy:{instagram_reel:"So close! Sávio with the break, cuts it back perfectly, but the keeper denies us! That's the kind of chance we need to convert. We're still in this! #COYS",tiktok:"that was RIGHT there. Sávio with the perfect cutback but the keeper said no way #COYS",youtube_short:"So close from Sávio! Keeper makes the save #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849865). Owned club channels only."],
+   signals:[["Match feed","Big chance, Sávio breaks and cuts back, keeper saves","Replay"]],why:"Big chance with a clean, fast replay arc.",found:"34s after the play"},
+  {id:"sav-card",play:"savio",title:"So close from Sávio",fmt:"card",aud:"Superfans",score:55,status:"review",min:"62'",
+   channels:["instagram_feed","x_photo"],
+   copy:{instagram_feed:"So close! Sávio with the break and cut-back, but the keeper denies us at 62'. We're still fighting out there! #COYS",x_photo:"Agonisingly close! Sávio's cut-back saved at 62'. We keep pushing. #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849865). Owned club channels only."],
+   signals:[["Match feed","Big chance, Sávio breaks and cuts back, keeper saves","Replay"]],why:"Near-miss card for the matchday thread.",found:"35s after the play"},
+  {id:"away-reel",play:"awayend",title:"The away end, at full time",fmt:"reel",aud:"Casual fans",score:50,status:"needs",min:"FT",dur:"12s",
+   channels:["instagram_reel","tiktok","youtube_short"],
+   copy:{instagram_reel:"What a performance from our travelling support! The lads showed their appreciation to every single one of you at Old Trafford. 1-1 FT. That's what it means to be Spurs. #COYS",tiktok:"our away end was absolutely buzzing at full time and the players knew it. Respect to everyone who made the trip to Old Trafford #COYS",youtube_short:"Respect to the travelling fans. 1-1 FT #COYS"},
+   rights:"review",reasons:["Crowd close-up privacy: review identifiable fans before EU/UK paid or partner distribution.","Not marked shareable in ScorePlay (media 130849743). Owned club channels only."],
+   signals:[["Fan reaction","Away end trending: 'proud of this team'","Replay"]],why:"Emotional full-time beat that travels well with fans.",found:"40s after the whistle"},
+  {id:"chance-reel",play:"chance",title:"The chance nobody logged",fmt:"reel",aud:"Casual fans",score:41,status:"review",min:"71'",dur:"12s",
+   channels:["instagram_reel","tiktok","youtube_short"],
+   copy:{instagram_reel:"The chance nobody logged. 71'. Watch as our lads push forward down the left, stringing together passes and testing the keeper. #COYS",tiktok:"The chance nobody logged 👀 71'. Our boys attacking down the left and making the keeper work #COYS",youtube_short:"The chance nobody logged. 71' #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849848). Owned club channels only."],
+   signals:[["AI watch-list","TwelveLabs \"shot on goal\" hit at 18.4 to 26.0s","Live"]],why:"Found by TwelveLabs in the footage. Not in the match feed.",found:"found in footage"},
+  {id:"chance-card",play:"chance",title:"The chance nobody logged",fmt:"card",aud:"Superfans",score:48,status:"review",min:"71'",
+   channels:["instagram_feed","x_photo"],
+   copy:{instagram_feed:"The chance nobody logged. 71'. Our lads were pushing hard down the left, stringing together passes and forcing the save. #COYS",x_photo:"71'. The chance nobody logged. Spurs pressing, probing down the left. #COYS"},
+   rights:"owned",reasons:["Not marked shareable in ScorePlay (media 130849848). Owned club channels only."],
+   signals:[["AI watch-list","TwelveLabs \"shot on goal\" hit at 18.4 to 26.0s","Live"]],why:"Deep-cut card for superfans who saw it live.",found:"found in footage"},
+  {id:"away-card",play:"awayend",title:"The away end, at full time",fmt:"card",aud:"Superfans",score:56,status:"approved",min:"FT",
+   channels:["instagram_feed","x_photo"],copy:{instagram_feed:"Thank you to the away end. Man United 1-1 Spurs. #COYS",x_photo:"The away end at full time. One voice. 1-1. #COYS"},
+   rights:"owned",reasons:["Owned club channels only."],signals:[["Fan reaction","Away end trending","Replay"]],why:"",found:""},
+];
+const DEST = [
+  ["instagram_reel","9:16 · 1080×1920","14s",true],["instagram_story","9:16 · 1080×1920","14s",true],["tiktok","9:16 · 1080×1920","14s",true],
+  ["youtube_short","9:16 · 1080×1920","15s",true],["youtube_highlight","16:9 · 1920×1080","14s",true],["x_post","16:9 · 1920×1080","14s",true],
+  ["instagram_feed","4:5 · 1080×1350","still",true],["x_photo","16:9 · 1600×900","still",true],["fan_app","16:9 · 1920×1080","14s",true],
+];
+const DLABEL = {instagram_story:"Instagram Story",youtube_highlight:"YouTube Highlight",x_post:"X video",fan_app:"Fan app"};
+const DIC = {instagram_story:["IG","#E1306C"],youtube_highlight:["YT","#FF0000"],x_post:["X","#111"],fan_app:["FA","#2E6CFF"]};
+
+let sel = "sol-reel", filter = "all", activeCh = null, tab = "edit";
+const $ = (s) => document.querySelector(s);
+const img = (c) => `img/${c.play}-${c.fmt}.jpg`;
+const rightsBadge = (c) => c.rights === "review" ? `<span class="badge b-amber">Needs rights review</span>` : c.rights === "blocked" ? `<span class="badge b-red">Blocked</span>` : `<span class="badge b-gray">Owned channels only</span>`;
+const statusBadge = (s) => ({review:`<span class="badge b-blue">Ready to review</span>`,needs:`<span class="badge b-amber">Needs review</span>`,approved:`<span class="badge b-green">Approved</span>`,rejected:`<span class="badge b-red">Rejected</span>`})[s];
+
+function renderList(){
+  const items = CLIPS.filter(c => c.status !== "approved" && c.status !== "rejected" && (filter === "all" || c.fmt === filter))
+    .sort((a, b) => (b.hot ? 1 : 0) - (a.hot ? 1 : 0) || b.score - a.score);
+  $("#list").innerHTML = items.length ? items.map(c => `
+    <div class="row ${c.id===sel?"sel":""} ${c.hot?"hot":""}" onclick="select('${c.id}')">
+      <img class="thumb ${c.fmt}" src="${img(c)}" alt="">
+      <div style="min-width:0;flex:1">
+        <div class="title">${c.title}</div>
+        <div class="meta">${c.fmt==="reel"?"Reel":"Photo card"} · ${c.aud} · ${c.min}</div>
+        <div class="chips">${c.hot?'<span class="badge b-red">Act now</span>':""}${statusBadge(c.status)}</div>
+        ${c.hot?`<div class="hotline">Goal + Solanke mentions up 11x · 30s ago<span class="snz" onclick="event.stopPropagation();snooze('${c.id}')">Snooze</span></div>`:""}
+      </div>
+      <div class="score"><div class="score-n">${c.score}</div><div class="score-l">score</div></div>
+    </div>`).join("") : `<div class="empty"><b>Inbox zero.</b><br>New clips appear here as the engine finds them.</div>`;
+  const open = CLIPS.filter(c => c.status==="review"||c.status==="needs").length;
+  $("#nav-inbox").textContent = open; $("#k-review").textContent = open;
+  $("#k-hot").textContent = CLIPS.filter(c => c.hot && (c.status==="review"||c.status==="needs")).length;
+  const ap = CLIPS.filter(c => c.status==="approved").length;
+  $("#nav-approved").textContent = ap; $("#k-approved").textContent = ap;
+  renderApproved();
+}
+
+function renderDetail(){
+  const c = CLIPS.find(x => x.id === sel);
+  if (!c){ $("#detail").innerHTML = `<div class="empty">Select a clip to review</div>`; return; }
+  if (!activeCh || !c.channels.includes(activeCh)) activeCh = c.channels[0];
+  const p = CH[activeCh], copy = c.copy[activeCh] || "";
+  const done = c.status === "approved" || c.status === "rejected";
+  const needs = c.status === "needs";
+  $("#detail").innerHTML = `
+    <div class="detail-head">
+      <div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">${statusBadge(c.status)}${rightsBadge(c)}<span class="badge b-blue plain">Replay</span></div>
+        <h2>${c.title}</h2>
+        <div class="sub">${c.fmt==="reel"?"Reel":"Photo card"} for ${c.aud.toLowerCase()} · ${c.min} · surfaced ${c.found}</div>
+      </div>
+      <div class="acts">
+        <div class="reject-box" id="rejBox"><input class="inp" style="width:200px" placeholder="Reason (optional)" id="rejReason"><button class="btn" onclick="cancelReject()">Cancel</button><button class="btn" style="color:var(--danger-text)" onclick="doReject()">Reject</button></div>
+        <span id="mainActs" style="display:flex;gap:8px">
+          ${done ? `<button class="btn" onclick="undo()">Undo</button>` : `<button class="btn" onclick="startReject()">Reject</button>
+          <button class="btn primary lg" ${needs?'id="apBtn" disabled':""} onclick="approve()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Approve</button>`}
+        </span>
+      </div>
+    </div>
+    <div class="dscroll">
+    ${needs ? `<div class="callout amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></svg><div><b>Rights need a decision.</b> ${c.reasons[0]}<div style="display:flex;gap:8px;margin-top:8px"><input class="inp" style="width:340px" placeholder="Why it's OK to approve (required)" oninput="document.getElementById('apBtn').disabled=this.value.trim().length<5"></div></div></div>`
+      : `<div class="callout blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><div><b>Cleared for owned channels.</b> ${c.reasons[0]} Rights are checked again at publish.</div></div>`}
+    <div class="dtabs">
+      ${[["edit","Edit"],["channels","Channels",9],["fan","Fan app"],["why","Why this clip"]].map(([k,l,n])=>`<button class="${tab===k?"on":""}" onclick="setTab('${k}')">${l}${n?`<span class="n">${n}</span>`:""}</button>`).join("")}
+    </div>
+    <div class="dbody">
+      <div class="pane ${tab==="edit"?"on":""}">
+        <div class="media-grid">
+          <div>
+            <div class="phone ${c.fmt}"><img src="${img(c)}" alt="">${c.fmt==="reel"?`<div class="play"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="#111"><path d="M8 5v14l11-7z"/></svg></span></div><span class="dur">${c.dur}</span>`:""}</div>
+          </div>
+          <div>
+            <div class="chan-switch">${c.channels.map(k=>`<button class="${k===activeCh?"on":""}" onclick="setCh('${k}')"><span class="chan-ic" style="width:18px;height:18px;font-size:9px;border-radius:4px;background:${CH[k].c}">${CH[k].ic}</span>${CH[k].label}</button>`).join("")}</div>
+            <div class="field">
+              <label>Caption for ${p.label}<span id="cc">${copy.length} / ${p.max}</span></label>
+              <textarea class="textarea" oninput="document.getElementById('cc').textContent=this.value.length+' / ${p.max}'">${copy}</textarea>
+            </div>
+            ${c.fmt==="reel"?(() => { const t = smartTrim(c.play, activeCh); const W = t.b.win, span = W[1]-W[0]; const pct = (x) => ((x-W[0])/span*100).toFixed(2);
+              return `<div class="field"><label>Trim<span>${CH[activeCh].label}: ${TARGET[activeCh]?.[0]} to ${TARGET[activeCh]?.[1]}s</span></label>
+              <div class="st">
+                <div class="st-head"><span class="ai"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6.2 4.5 2.4 7.3L12 16.5 5.8 21l2.4-7.3L2 9.2h7.6z"/></svg>Smart trim</span><span class="t">${t.start.toFixed(1)}s to ${t.end.toFixed(1)}s · ${t.len.toFixed(1)}s</span>
+                  <div class="tabs-sm" style="margin-left:auto"><button class="${trimMode==="smart"?"on":""}" onclick="trimMode='smart';renderDetail()">Smart</button><button class="${trimMode==="manual"?"on":""}" onclick="trimMode='manual';renderDetail()">Manual</button></div></div>
+                <div class="beats">${t.b.beats.map(x => `<div class="beat ${x[3]?"key":""}" style="width:${((x[2]-x[1])/span*100).toFixed(2)}%" title="${x[0]} · ${x[1]}s to ${x[2]}s">${x[0]}</div>`).join("")}
+                  <div class="cut" style="left:${pct(t.start)}%;width:${(t.len/span*100).toFixed(2)}%"></div></div>
+                <div class="axis"><span>${W[0].toFixed(1)}s</span><span>Beats detected by TwelveLabs in the footage</span><span>${W[1].toFixed(1)}s</span></div>
+                ${trimMode==="smart" ? `<div class="st-why">${t.why}${t.note?` <span style="color:var(--warning-text)">${t.note}</span>`:""}</div>
+                <div class="st-row"><span class="muted" style="font-size:12px">Cut per channel:</span>${c.channels.filter(k=>TARGET[k]).map(k => { const x = smartTrim(c.play, k); return `<span class="st-chip ${k===activeCh?"on":""}" onclick="setCh('${k}')">${CH[k].label} ${x.len.toFixed(1)}s</span>`; }).join("")}</div>`
+                : `<div class="trim" style="margin-top:10px"><input class="inp" value="${t.start.toFixed(1)}"><span class="muted">to</span><input class="inp" value="${t.end.toFixed(1)}"><span class="hint" style="margin:0">Snaps to beat edges. Switch back to Smart any time.</span></div>`}
+              </div></div>`; })():""}
+            <div style="display:flex;gap:8px"><button class="btn" onclick="toast('Changes saved')">Save changes</button><span class="hint" style="margin:0;align-self:center">Edits after approval send that version back for re-approval.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane ${tab==="channels"?"on":""}">
+        <div class="actionbar">
+          <span style="font-size:13px">${c.status==="approved"?"<b>9 of 9 channels selected.</b> Photo channels render a still.":"<b>Approve the clip first.</b> Then render every channel in one go."}</span>
+          <button class="btn primary" style="margin-left:auto" ${c.status!=="approved"?"disabled":""} onclick="toast('<b>Rendering 9 versions</b> · usually under a minute')">Render 9 versions</button>
+        </div>
+        <div class="panel" style="box-shadow:none">
+          <table><thead><tr><th style="width:36px"><input type="checkbox" class="cb" checked onclick="document.querySelectorAll('.dcb').forEach(x=>x.checked=this.checked)"></th><th>Channel</th><th>Size</th><th>Length</th><th>Status</th><th></th></tr></thead>
+          <tbody>${DEST.map(([k,size,len])=>{const ic=CH[k]?[CH[k].ic,CH[k].c]:DIC[k];const lab=CH[k]?.label||DLABEL[k];return `<tr><td><input type="checkbox" class="cb dcb" checked></td><td><div class="chan"><span class="chan-ic" style="background:${ic[1]}">${ic[0]}</span>${lab}</div></td><td class="muted">${size}</td><td class="muted">${len}</td><td>${c.status==="approved"?'<span class="badge b-green">Ready</span>':'<span class="badge b-gray">Draft</span>'}</td><td style="text-align:right"><button class="btn ghost sm">Edit</button></td></tr>`}).join("")}</tbody></table>
+        </div>
+      </div>
+
+      <div class="pane ${tab==="fan"?"on":""}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="sec-title">Who is in the clip</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">${c.play==="solanke"?'<span class="badge b-blue plain">Dominic Solanke ✕</span>':c.play==="savio"?'<span class="badge b-blue plain">Sávio ✕</span>':'<span class="muted">No players tagged</span>'}<button class="btn ghost sm">+ Add player</button></div>
+            <div class="sec-title">Interests</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="badge b-gray plain">goal ✕</span><span class="badge b-gray plain">comeback ✕</span><button class="btn ghost sm">+ Add</button></div>
+          </div>
+          <div class="panel" style="padding:16px;box-shadow:none">
+            <div style="font-weight:600;margin-bottom:4px">Publish to fan app</div>
+            <p class="muted" style="font-size:13px;margin-bottom:12px">Fans see it in their feed, ranked by who they follow. You can withdraw it any time.</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px;align-items:center;font-size:13px"><span class="badge ${c.status==="approved"?"b-green":"b-gray"}">1</span>Clip approved</div>
+              <div style="display:flex;gap:8px;align-items:center;font-size:13px"><span class="badge b-gray">2</span>Players and interests confirmed</div>
+            </div>
+            <button class="btn primary" style="margin-top:14px;width:100%;justify-content:center" ${c.status!=="approved"?"disabled":""} onclick="toast('<b>Published</b> to the fan app')">Confirm and publish</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane ${tab==="why"?"on":""}">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <div class="sec-title">Why the engine picked it</div>
+            <p style="font-size:13.5px;margin-bottom:14px">${c.why}</p>
+            <div class="meter"><span class="l">Significance</span><span class="bar"><i style="width:${Math.min(98,c.score+8)}%"></i></span><span class="n">${Math.min(98,c.score+8)}</span></div>
+            <div class="meter"><span class="l">Audience fit</span><span class="bar"><i style="width:${c.score-6}%"></i></span><span class="n">${c.score-6}</span></div>
+            <div class="meter"><span class="l">Fan momentum</span><span class="bar"><i style="width:${c.hot?90:30}%"></i></span><span class="n">${c.hot?90:30}</span></div>
+            <div class="hint">Scored by Claude Haiku from the moment, signals and audience.</div>
+          </div>
+          <div>
+            <div class="sec-title">Signals</div>
+            ${c.signals.map(s=>`<div class="sig"><span class="k">${s[0]}</span><span>${s[1]}</span><span class="tag badge ${s[2]==="Live"?"b-green":"b-blue"}">${s[2]}</span></div>`).join("")}
+            <div class="sec-title">Sources</div>
+            <dl class="kv"><dt>Footage</dt><dd>ScorePlay · real</dd><dt>Moment detection</dt><dd>TwelveLabs Pegasus · real</dd><dt>Rights facts</dt><dd>ScorePlay fields + rules v3</dd></dl>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>`;
+}
+
+function renderApproved(){
+  const rows = CLIPS.filter(c => c.status === "approved");
+  $("#approvedRows").innerHTML = rows.map(c => `<tr>
+    <td><div class="chan"><img class="thumb" style="width:36px;height:46px" src="${img(c)}">${c.title}</div></td>
+    <td class="muted">${c.fmt==="reel"?"Reel":"Photo card"}</td><td>${rightsBadge(c)}</td>
+    <td><span class="badge b-gray plain">0 of 9 rendered</span></td><td><span class="badge b-gray plain">Not published</span></td>
+    <td class="muted">just now</td><td style="text-align:right"><button class="btn sm" onclick="go('inbox');select('${c.id}');setTab('channels')">Package</button> <button class="btn primary sm" onclick="go('inbox');select('${c.id}');setTab('fan')">Publish</button></td></tr>`).join("") || `<tr><td colspan="7"><div class="empty">Nothing approved yet.</div></td></tr>`;
+}
+
+function select(id){ sel = id; activeCh = null; tab = "edit"; go("inbox", true); renderList(); renderDetail(); }
+function setTab(t){ tab = t; renderDetail(); }
+function setCh(k){ activeCh = k; renderDetail(); }
+function approve(){
+  const c = CLIPS.find(x => x.id === sel); c.status = "approved"; c.hot = false;
+  toast("<b>Approved.</b> Final render queued · ScorePlay log held");
+  tab = "channels"; renderList(); renderDetail();
+}
+function snooze(id){ const c = CLIPS.find(x => x.id === id); c.hot = false; toast("Snoozed for 10 minutes"); renderList(); }
+function startReject(){ $("#rejBox").classList.add("on"); $("#mainActs").style.display = "none"; $("#rejReason").focus(); }
+function cancelReject(){ $("#rejBox").classList.remove("on"); $("#mainActs").style.display = "flex"; }
+function doReject(){
+  const c = CLIPS.find(x => x.id === sel); c.status = "rejected"; c.hot = false;
+  toast("Rejected");
+  const next = CLIPS.find(x => x.status === "review" || x.status === "needs");
+  if (next) { sel = next.id; tab = "edit"; }
+  renderList(); renderDetail();
+}
+function undo(){ const c = CLIPS.find(x => x.id === sel); c.status = "review"; tab = "edit"; renderList(); renderDetail(); toast("Moved back to inbox"); }
+
+function stab(k){
+  document.querySelectorAll(".spane").forEach(x => x.classList.toggle("on", x.id === "s-" + k));
+  document.querySelectorAll(".stabs button").forEach(b => b.classList.toggle("on", b.getAttribute("onclick") === `stab('${k}')`));
+}
+function go(v, silent){
+  document.querySelectorAll(".view").forEach(x => x.classList.toggle("on", x.id === "v-" + v));
+  document.querySelectorAll(".nav a").forEach(a => a.classList.toggle("on", a.dataset.view === v));
+}
+document.querySelectorAll(".nav a[data-view]").forEach(a => a.addEventListener("click", () => go(a.dataset.view)));
+document.querySelectorAll("#qtabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#qtabs button").forEach(x => x.classList.remove("on")); b.classList.add("on"); filter = b.dataset.f; renderList();
+}));
+document.querySelectorAll(".toggle").forEach(t => t.addEventListener("click", () => {
+  t.classList.toggle("on");
+  if (t.id === "holdToggle") { const on = t.classList.contains("on"); $("#holdBadge").className = "badge " + (on ? "b-amber" : "b-green"); $("#holdBadge").textContent = on ? "Holding" : "Sending"; toast(on ? "All writes held" : "Writes will send when every other gate passes"); }
+}));
+$("#replayBtn").addEventListener("click", () => toast("<b>Replay started.</b> New clips will land in the inbox"));
+let tt; function toast(m){ const t = $("#toast"); t.innerHTML = m; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2600); }
+document.addEventListener("keydown", (e) => {
+  if (e.target.matches("input,textarea")) return;
+  const open = CLIPS.filter(c => c.status==="review"||c.status==="needs"); const i = open.findIndex(c => c.id === sel);
+  if (e.key === "j" && open[i+1]) select(open[i+1].id);
+  if (e.key === "k" && open[i-1]) select(open[i-1].id);
+  if (e.key === "a" && open[i] && open[i].status === "review") approve();
+});
+renderList(); renderDetail();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+{
+  "$provenance": "SYNTHETIC demo sample, not historical X data or measured engagement. Revealed only when its replay event fires.",
+  "sample": { "provider": "fixture", "currentCount": 22, "baselineCount": 2, "windowSec": 120 }
+}

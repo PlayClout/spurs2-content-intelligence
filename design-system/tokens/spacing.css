@@ -1,0 +1,35 @@
+/* Clout — Spacing, radii & layout (v01)
+   4px base grid. Stable marketing grid: headline stack (upper) → hero/prize (dominant) →
+   secondary prizes (divided row) → full-width CTA (base). Protect the CENTER READ ZONE. */
+:root {
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Corner radii (from component masters) */
+  --radius-sm: 8px;
+  --radius-chip: 14px;   /* stat chips */
+  --radius-tag: 16px;    /* prize / price tags */
+  --radius-card: 22px;   /* prize cards, panels */
+  --radius-pill: 999px;  /* CTAs, pass tags */
+
+  /* Canvas masters (marketing) */
+  --canvas-square: 1200px;
+  --canvas-vertical-w: 1080px;
+  --canvas-vertical-h: 1920px;
+  --canvas-landscape-w: 1920px;
+  --canvas-landscape-h: 1080px;
+  --canvas-banner-w: 682px;   /* in-app banner — NO logo by default */
+  --canvas-banner-h: 240px;
+}

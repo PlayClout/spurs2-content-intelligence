@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Library · Spursx2 AI (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<script src="../inventory.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <button class="org" id="org" title="Switch club"><span class="crest" id="crest"></span><span><b id="orgName"></b><small id="orgLeague"></small></span><span class="chev">⌄</span></button>
+    <nav>
+      <a class="nav" data-only="tottenham-hotspur"><span class="i">◉</span>Live match</a>
+      <a class="nav"><span class="i">▤</span>Inbox<span class="count">14</span></a>
+      <a class="nav active"><span class="i">▦</span>Library</a>
+      <a class="nav"><span class="i">✓</span>Approved<span class="count">3</span></a>
+      <a class="nav"><span class="i">↑</span>Published</a>
+      <a class="nav"><span class="i">▣</span>Montages</a>
+      <p class="sect">Workspace</p>
+      <a class="nav"><span class="i">⚙</span>Settings</a>
+    </nav>
+    <div class="foot"><span class="dot ok"></span>All systems live · 4 ms</div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <form class="search" id="searchForm">
+        <span class="mag">⌕</span>
+        <input id="q" placeholder="Search this club's footage: “Solanke goal”, “away fans singing”…" autocomplete="off">
+        <span class="hint">TwelveLabs</span>
+      </form>
+      <div class="right"><span class="pill tone-blue" id="indexPill"></span></div>
+    </header>
+
+    <div class="body">
+      <!-- collection rail -->
+      <aside class="rail" aria-label="ScorePlay collections">
+        <p class="railHead">ScorePlay collections</p>
+        <div id="rail"></div>
+        <p class="railNote">Searchable = in this club's TwelveLabs index. Photos are found by the photographer's caption.</p>
+      </aside>
+
+      <section class="content">
+        <div class="contentHead">
+          <div>
+            <h1 id="title"></h1>
+            <p class="sub" id="subtitle"></p>
+          </div>
+          <div class="seg" role="tablist">
+            <button class="on" data-kind="all">All</button><button data-kind="video">Video</button><button data-kind="photo">Photos</button>
+          </div>
+        </div>
+        <div id="grid" class="grid"></div>
+        <div id="more" class="more"></div>
+      </section>
+
+      <!-- detail drawer -->
+      <aside class="drawer" id="drawer" hidden>
+        <button class="x" id="closeDrawer" aria-label="Close">×</button>
+        <div class="thumb big" id="dThumb"></div>
+        <p class="kicker" id="dKicker"></p>
+        <h2 id="dTitle"></h2>
+        <dl class="facts" id="dFacts"></dl>
+        <div id="dTrim" class="trim"></div>
+        <label class="field">Make it a
+          <select id="dFormat"><option>Reel + photo card (default)</option><option>Reel only</option><option>Photo card only</option></select>
+        </label>
+        <button class="btn primary wide" id="dMake">Make clip</button>
+        <p class="note">Runs the normal pipeline: Pegasus checks the moment, rights are screened, and a draft lands in the Inbox for approval. Nothing is published.</p>
+      </aside>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+  // Variant A: collections rail + grid; search swaps the grid for moment hits (each with its own window)
+  window.VARIANT = "rail";
+</script>
+<script src="../shared.js"></script>
+</body>
+</html>

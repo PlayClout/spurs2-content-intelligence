@@ -1,0 +1,53 @@
+<!-- @dsCard group="Components" viewport="700x520" name="Navigation" subtitle="NavBar, Tabs, SegmentedControl, Menu, TabBar" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:0 0 20px}
+  h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin:22px 26px 12px}
+  .pad{padding:0 26px}
+  .row{display:flex;gap:24px;align-items:flex-start;padding:0 26px}
+</style></head><body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { NavBar, NavIconButton, Tabs, SegmentedControl, Menu, TabBar } = window.CloutDesignSystem_49ec9a;
+function Demo(){
+  const [t,setT]=React.useState('live'); const [v,setV]=React.useState('w'); const [a,setA]=React.useState('picks');
+  return (<div>
+    <NavBar title="Sunday Slate" onBack={()=>{}} actions={<NavIconButton icon="bell" label="Notifications" badge />} />
+    <h3>Tabs · in-page sections</h3>
+    <div className="pad"><Tabs items={[{id:'live',label:'Live',count:3},{id:'upcoming',label:'Upcoming'},{id:'done',label:'Settled',count:12}]} active={t} onChange={setT} /></div>
+    <h3>Segmented control</h3>
+    <div className="pad"><SegmentedControl items={[{id:'d',label:'Daily'},{id:'w',label:'Weekly'},{id:'s',label:'Season'}]} value={v} onChange={setV} /></div>
+    <h3>Menu</h3>
+    <div className="row">
+      <Menu items={[
+        {id:'share',label:'Share contest',icon:'share'},
+        {id:'notify',label:'Reminders',icon:'bell',meta:'On'},
+        {id:'rules',label:'Rules',icon:'external'},
+        {divider:true},
+        {id:'leave',label:'Leave contest',icon:'close',tone:'danger'}]} onSelect={()=>{}} />
+      <Menu items={[
+        {id:'nfl',label:'NFL',checked:true},
+        {id:'nba',label:'NBA'},
+        {id:'ufc',label:'UFC',disabled:true}]} onSelect={()=>{}} style={{minWidth:170}} />
+    </div>
+    <h3>Tab bar · primary mobile nav</h3>
+    <div style={{padding:'0 26px'}}>
+      <div style={{maxWidth:390,border:'1px solid var(--border-default)',borderRadius:'var(--radius-md)',overflow:'hidden'}}>
+        <TabBar active={a} onChange={setA} items={[
+          {id:'home',label:'Home',icon:'bolt'},
+          {id:'picks',label:'Picks',icon:'target'},
+          {id:'rewards',label:'Rewards',icon:'gift',badge:2},
+          {id:'shop',label:'Shop',icon:'coin'},
+          {id:'me',label:'Me',icon:'user'}]} />
+      </div>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body></html>

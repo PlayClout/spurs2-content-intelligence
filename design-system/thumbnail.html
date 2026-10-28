@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="./styles.css">
+<style>
+  html,body{margin:0}
+  .tile{width:1280px;height:854px;display:flex;background:var(--clout-black);overflow:hidden}
+  .main{flex:1;position:relative;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(90% 90% at 28% 22%,rgba(18,107,255,.35),rgba(18,107,255,0) 60%),var(--clout-black)}
+  .main img{width:62%;max-width:640px}
+  .strip{width:150px;display:flex;flex-direction:column}
+  .strip span{flex:1}
+</style></head><body>
+  <div class="tile">
+    <div class="main"><img src="./assets/logo/clout_wordmark_white.svg" alt="Clout"></div>
+    <div class="strip">
+      <span style="background:#00A3FF"></span>
+      <span style="background:#FF6A1A"></span>
+      <span style="background:#FF006B"></span>
+      <span style="background:#7047EB"></span>
+    </div>
+  </div>
+</body></html>

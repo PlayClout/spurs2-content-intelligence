@@ -1,0 +1,56 @@
+<!-- @dsCard group="Components" viewport="700x560" name="Forms" subtitle="Input, Select, TextArea, Checkbox, Radio, Switch — all states" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:26px 30px}
+  h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin:22px 0 12px}
+  h3:first-child{margin-top:0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+  .col{display:flex;flex-direction:column;gap:14px}
+</style></head><body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Input, TextArea, Select, Checkbox, RadioGroup, Switch, FormField } = window.CloutDesignSystem_49ec9a;
+function Demo(){
+  const [pick,setPick] = React.useState('over');
+  return (<div>
+    <h3>Inputs · states</h3>
+    <div className="grid">
+      <FormField label="Username" htmlFor="u1" helper="3–20 characters."><Input id="u1" placeholder="cloutlegend" /></FormField>
+      <FormField label="Email" htmlFor="u2" required status="error" message="That address isn't valid."><Input id="u2" status="error" defaultValue="not-an-email" /></FormField>
+      <FormField label="Promo code" htmlFor="u3" status="success" message="Code applied — $10 bonus."><Input id="u3" status="success" defaultValue="CLOUT10" /></FormField>
+      <FormField label="Handle" htmlFor="u4" status="warning" message="Almost taken — check availability."><Input id="u4" status="warning" defaultValue="mvp" loading /></FormField>
+      <FormField label="Locked field" htmlFor="u5" disabled><Input id="u5" disabled defaultValue="Verified · cannot edit" /></FormField>
+      <FormField label="Region" htmlFor="u6"><Select id="u6" options={[{value:'us',label:'United States'},{value:'ca',label:'Canada'}]} defaultValue="us" placeholder="" /></FormField>
+    </div>
+    <h3>Selection controls</h3>
+    <div className="grid">
+      <div className="col">
+        <Checkbox id="c1" label="I'm 18 or older" description="Required to enter contests." defaultChecked />
+        <Checkbox id="c2" label="Select all picks" indeterminate />
+        <Checkbox id="c3" label="Disabled option" disabled />
+      </div>
+      <div className="col">
+        <RadioGroup name="pk" value={pick} onChange={setPick} options={[
+          {value:'over',label:'Over 24.5',description:'Pays 1.9×'},
+          {value:'under',label:'Under 24.5',description:'Pays 1.8×'}]} />
+      </div>
+    </div>
+    <h3>Switches · TextArea</h3>
+    <div className="grid">
+      <div className="col" style={{gap:6}}>
+        <Switch id="s1" label="Contest reminders" description="Push before each lock." defaultChecked />
+        <Switch id="s2" label="Saving…" loading />
+        <Switch id="s3" label="Unavailable" disabled />
+      </div>
+      <TextArea rows={4} maxLength={120} showCount defaultValue="Called it in week 3." placeholder="Add a note" />
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body></html>

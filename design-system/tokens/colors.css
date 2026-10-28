@@ -1,0 +1,45 @@
+/* Clout — Color System (v01)
+   HEX/RGB are the digital source of truth. Dark foundation dominates (~65%); Electric Blue
+   is the signature atmosphere (~11%); warm accents are held for value/energy/CTA (~6%). */
+:root {
+  /* ── Core palette ─────────────────────────────────────────── */
+  --clout-black: #050811;          /* foundation background */
+  --clout-carbon: #10131C;         /* panels / surfaces */
+  --clout-white: #F5F5F3;          /* primary text */
+  --clout-electric-blue: #126BFF;  /* PRIMARY atmospheric signature */
+  --clout-pink: #FF006B;           /* action / value */
+  --clout-signal-orange: #FF6A1A;  /* energy / CTA */
+
+  /* ── Extended neon ────────────────────────────────────────── */
+  --clout-deep-navy: #071A3D;      /* environmental shadow */
+  --clout-hyper-blue: #00A3FF;     /* bright accent / glow */
+  --clout-violet: #7047EB;         /* atmosphere midpoint */
+  --clout-electric-magenta: #D900FF;/* high-energy accent */
+  --clout-hot-coral: #FF3157;      /* action-gradient midpoint */
+
+  /* ── Neutral ramp (dark UI) ───────────────────────────────── */
+  --clout-carbon-2: #171B26;       /* elevated panel */
+  --clout-slate: #8B93A3;          /* secondary text */
+  --clout-slate-dim: #5B6472;      /* tertiary / captions */
+  --clout-blue-tint: #5AA2FF;      /* subheads / links on dark */
+
+  /* ── Gradients (authoritative stops) ──────────────────────── */
+  --clout-gradient-action: linear-gradient(90deg, #FF006B 0%, #FF3157 50%, #FF6A1A 100%); /* @kind color */
+  --clout-gradient-atmosphere: linear-gradient(120deg, #126BFF 0%, #7047EB 50%, #FF006B 100%); /* @kind color */
+  /* Split-light is a lighting METHOD, not a fill: opposing cool/warm over a dark center */
+  --clout-splitlight: radial-gradient(120% 120% at 12% 20%, rgba(18,107,255,0.55) 0%, rgba(18,107,255,0) 45%), radial-gradient(120% 120% at 88% 85%, rgba(255,49,87,0.45) 0%, rgba(255,49,87,0) 45%), var(--clout-black); /* @kind color */
+
+  /* ── Semantic aliases ─────────────────────────────────────── */
+  --surface-bg: var(--clout-black);
+  --surface-panel: var(--clout-carbon);
+  --surface-elevated: var(--clout-carbon-2);
+  --text-primary: var(--clout-white);
+  --text-secondary: var(--clout-slate);
+  --text-muted: var(--clout-slate-dim);
+  --text-accent: var(--clout-blue-tint);
+  --border-hairline: rgba(245, 245, 243, 0.12);
+  --border-blue: rgba(18, 107, 255, 0.40);
+  --focus-ring: var(--clout-electric-blue);
+  --value: var(--clout-pink);            /* prize / value emphasis */
+  --cta: var(--clout-gradient-action); /* primary conversion @kind color */
+}

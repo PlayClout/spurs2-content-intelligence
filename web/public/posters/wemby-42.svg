@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <radialGradient id="g1" cx="15%" cy="15%" r="90%"><stop offset="0%" stop-color="#126BFF" stop-opacity="0.55"/><stop offset="60%" stop-color="#126BFF" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g2" cx="88%" cy="88%" r="90%"><stop offset="0%" stop-color="#7047EB" stop-opacity="0.45"/><stop offset="60%" stop-color="#7047EB" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="#050811"/>
+  <rect width="640" height="360" fill="url(#g1)"/>
+  <rect width="640" height="360" fill="url(#g2)"/>
+  <rect x="1" y="1" width="638" height="358" fill="none" stroke="rgba(245,245,243,0.12)" stroke-width="2"/>
+  <text x="40" y="190" font-family="Arial Narrow, sans-serif" font-size="44" font-weight="bold" font-style="italic" fill="#F5F5F3" text-transform="uppercase">CAREER-HIGH 42</text>
+  <text x="40" y="230" font-family="Arial, sans-serif" font-size="20" fill="#8B93A3">Milestone · Q4 4:30</text>
+  <text x="40" y="320" font-family="Arial, sans-serif" font-size="14" letter-spacing="3" fill="#5AA2FF">SPURSX2 AI</text>
+  <polygon points="540,160 540,220 590,190" fill="rgba(245,245,243,0.85)"/>
+  <circle cx="560" cy="190" r="46" fill="none" stroke="rgba(245,245,243,0.4)" stroke-width="3"/>
+</svg>

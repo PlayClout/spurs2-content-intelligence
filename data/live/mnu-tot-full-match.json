@@ -1,0 +1,42 @@
+{
+  "id": "mnu-tot-2026-27-wk6",
+  "name": "Man Utd v Tottenham",
+  "competitionLabel": "Premier League · Week 6 · Old Trafford",
+  "orgKey": "tottenham-hotspur",
+  "competition": "Premier League",
+  "home": { "short": "MNU", "name": "Man Utd", "kit": "red shirts" },
+  "away": { "short": "TOT", "name": "Spurs", "kit": "white shirts with navy shorts" },
+  "clubSide": "away",
+  "scorePlayMediaId": 130849784,
+  "twelvelabs": { "indexId": "6ad90f31960d8ea7bdd040ab", "videoId": "6ad90f3c9c038876f358a41b", "assetId": "6ad90e1a030b76724d135bf2" },
+  "teamSeasonId": 72209,
+  "durationSec": 6334,
+  "periods": [
+    { "id": "pre", "label": "Pre-match", "from": 0 },
+    { "id": "1H", "label": "1st half", "from": 241, "clockStart": 0, "regulationEnd": 2700 },
+    { "id": "HT", "label": "Half-time", "from": 3001 },
+    { "id": "2H", "label": "2nd half", "from": 3047, "clockStart": 2700, "regulationEnd": 5400 },
+    { "id": "FT", "label": "Full time", "from": 6296 }
+  ],
+  "verified": "Period offsets read from the broadcast clock on ScorePlay proxy frames: 600s=05:59, 2900s=44:19, 2995s=45:54 (+1), 3008s=HALFTIME graphic, 3600s=54:13, 4672s=72:05 (0-0), 4680s=72:13 (1-0, Mbeumo graphic), 5822s=91:15 (1-0), 5832s=91:25 (1-1), 6292s=99:05 (+8), 6300s=post-match.",
+  "feed": [
+    { "id": "ko", "at": 241, "type": "kickoff", "text": "Kick-off at Old Trafford" },
+    { "id": "ht", "at": 3001, "type": "half_time", "text": "Half-time: Man Utd 0, Spurs 0" },
+    { "id": "2h", "at": 3047, "type": "kickoff", "text": "Second half under way" },
+    { "id": "g1", "at": 4678, "type": "goal", "team": "home", "player": "Mbeumo", "start": 4664, "end": 4690, "quietSec": 90, "text": "Goal Man Utd: Mbeumo" },
+    { "id": "g2", "at": 5829, "type": "goal", "team": "away", "player": "Solanke", "start": 5814, "end": 5840, "quietSec": 90, "text": "Goal Spurs: Solanke equalises", "headline": "SOLANKE RESCUES A POINT" },
+    { "id": "ft", "at": 6296, "type": "full_time", "text": "Full time: Man Utd 1, Spurs 1" }
+  ],
+  "watchlist": [
+    { "query": "shot saved by the goalkeeper", "label": "Save", "headline": "WHAT A STOP" },
+    { "query": "shot hits the post or crossbar", "label": "Woodwork", "headline": "OFF THE WOODWORK" },
+    { "query": "dangerous attack and close chance on goal", "label": "Chance", "headline": "SO CLOSE" }
+  ],
+  "joinPresets": [
+    { "label": "First chance", "videoSec": 356, "hint": "2', about 10 seconds before the engine's first find, then the whole match" },
+    { "label": "Kick-off", "videoSec": 236, "hint": "The full 90 minutes" },
+    { "label": "Second half", "videoSec": 3042, "hint": "From the restart" },
+    { "label": "67'", "videoSec": 4367, "hint": "Into the final 25 minutes, both goals still to come" },
+    { "label": "89'", "videoSec": 5687, "hint": "Stoppage time and the late equaliser, in about 3 minutes" }
+  ]
+}

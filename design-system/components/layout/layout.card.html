@@ -1,0 +1,72 @@
+<!-- @dsCard group="Components" viewport="700x620" name="Layout & Data" subtitle="Surface, ListRow, Chip, Avatar, StatBlock, DataTable, Modal" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:26px 30px}
+  h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin:22px 0 12px}
+  h3:first-child{margin-top:0}
+  .row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+</style></head><body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Surface, ListRow, Chip, Avatar, AvatarGroup, StatBlock, DataTable, Modal, Tooltip, Icon, Button } = window.CloutDesignSystem_49ec9a;
+function Demo(){
+  const [sel,setSel]=React.useState(true);
+  return (<div>
+    <h3>Surfaces</h3>
+    <div className="row">
+      <Surface style={{width:150}}>Default</Surface>
+      <Surface variant="raised" style={{width:150}}>Raised</Surface>
+      <Surface variant="sunken" style={{width:150}}>Sunken</Surface>
+      <Surface variant="accent" style={{width:150}}>Accent</Surface>
+      <Surface interactive selected={sel} onClick={()=>setSel(!sel)} style={{width:150}}>Selectable</Surface>
+    </div>
+    <h3>Chips · avatars · stats</h3>
+    <div className="row">
+      <Chip>Neutral</Chip><Chip tone="accent">NFL</Chip><Chip tone="value">$500</Chip>
+      <Chip tone="success">Won</Chip><Chip tone="warning">Locking</Chip><Chip tone="danger">Missed</Chip>
+      <Chip selectable selected>Selected</Chip><Chip onRemove={()=>{}}>Filter</Chip>
+    </div>
+    <div className="row" style={{marginTop:14}}>
+      <Avatar name="Jordan M" size="lg" ring="action" live />
+      <Avatar name="Sam K" size="md" ring="accent" />
+      <Avatar name="Alex R" size="sm" />
+      <AvatarGroup size="sm" max={3} users={[{name:'A B'},{name:'C D'},{name:'E F'},{name:'G H'},{name:'I J'}]} />
+      <div style={{display:'flex',gap:28,marginLeft:12}}>
+        <StatBlock value="$2.4M" label="Prizes awarded" delta="+12%" tone="value" />
+        <StatBlock value="480K" label="Players" delta="+4%" />
+        <StatBlock value="92%" label="Retention" tone="accent" size="sm" />
+      </div>
+    </div>
+    <h3>List rows · table</h3>
+    <div className="two">
+      <Surface padding="none" style={{overflow:'hidden'}}>
+        <ListRow leading={<Avatar name="Jordan M" size="sm" ring="action"/>} title="Jordan M." subtitle="14-week streak" value="1,240" valueTone="value" />
+        <ListRow leading={<Avatar name="Sam K" size="sm"/>} title="Sam K." subtitle="9-week streak" value="1,105" />
+        <ListRow leading={<Icon name="gift" size={22} color="var(--fg-secondary)"/>} title="Reward claimed" subtitle="Today" value="+250" valueTone="success" chevron divider={false} />
+      </Surface>
+      <DataTable dense highlightRow="me" columns={[
+        {key:'rank',label:'#',width:44,emphasis:true},
+        {key:'player',label:'Player'},
+        {key:'pts',label:'Pts',align:'right',emphasis:true,numeric:true}]}
+        rows={[{id:1,rank:'1',player:'Jordan M.',pts:'1,240'},{id:'me',rank:'2',player:'You',pts:'1,105'},{id:3,rank:'3',player:'Alex R.',pts:'980'}]} />
+    </div>
+    <h3>Modal · sheet</h3>
+    <div style={{position:'relative',height:230,borderRadius:'var(--radius-lg)',overflow:'hidden',border:'1px solid var(--border-default)'}}>
+      <Modal presentation="sheet" title="Confirm your pick" description="Locks at kickoff — picks can't be changed."
+        onClose={()=>{}} footer={<><Button family="dark" size="small" showArrow={false}>Cancel</Button><Button size="small">Lock it in</Button></>}>
+        <div style={{display:'flex',gap:10,alignItems:'center'}}>
+          <Chip tone="accent">NFL</Chip><Chip>Over 24.5</Chip><Tooltip label="XP awarded if correct"><Chip tone="value">120 XP</Chip></Tooltip>
+        </div>
+      </Modal>
+    </div>
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body></html>

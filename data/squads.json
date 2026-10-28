@@ -1,0 +1,861 @@
+{
+  "generatedAt": "2026-10-23T11:55:02.163Z",
+  "source": "ScorePlay /players (team_season) + club photographer captions",
+  "clubs": [
+    {
+      "orgKey": "tottenham-hotspur",
+      "team": "Tottenham Hotspur",
+      "sport": "soccer",
+      "teamSeasonId": 72209,
+      "scorePlayRecords": 67,
+      "linkedToLeagueData": 37,
+      "unlinkedNotUsed": 30,
+      "players": [
+        {
+          "id": "andy-robertson",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Andy Robertson",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736580,
+          "role": "player",
+          "aliases": [
+            "Andy Robertson",
+            "Andrew Henry Robertson",
+            "Robertson"
+          ],
+          "fullName": "Andrew Henry Robertson"
+        },
+        {
+          "id": "antonin-kinsky",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Antonín Kinský",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736555,
+          "role": "player",
+          "aliases": [
+            "Antonín Kinský",
+            "Kinský"
+          ],
+          "fullName": "Antonín Kinský"
+        },
+        {
+          "id": "archie-gray",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Archie Gray",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736554,
+          "role": "player",
+          "aliases": [
+            "Archie Gray",
+            "Archie James Francis Gray",
+            "Gray"
+          ],
+          "fullName": "Archie James Francis Gray"
+        },
+        {
+          "id": "benjamin-davies",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Benjamin Davies",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736560,
+          "role": "player",
+          "aliases": [
+            "Benjamin Davies",
+            "Benjamin Thomas Davies",
+            "Davies"
+          ],
+          "fullName": "Benjamin Thomas Davies"
+        },
+        {
+          "id": "brandon-austin",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Brandon Austin",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736562,
+          "role": "player",
+          "aliases": [
+            "Brandon Austin",
+            "Brandon Anthony Austin",
+            "Austin"
+          ],
+          "fullName": "Brandon Anthony Austin"
+        },
+        {
+          "id": "bruno-saltor-grau",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Bruno Saltor Grau",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736545,
+          "role": "player",
+          "aliases": [
+            "Bruno Saltor Grau",
+            "Saltor Grau"
+          ],
+          "fullName": "Bruno Saltor Grau"
+        },
+        {
+          "id": "conor-gallagher",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Conor Gallagher",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736572,
+          "role": "player",
+          "aliases": [
+            "Conor Gallagher",
+            "Conor John Gallagher",
+            "Gallagher"
+          ],
+          "fullName": "Conor John Gallagher"
+        },
+        {
+          "id": "dane-scarlett",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Dane Scarlett",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736548,
+          "role": "player",
+          "aliases": [
+            "Dane Scarlett",
+            "Dane Pharrell Scarlett",
+            "Scarlett"
+          ],
+          "fullName": "Dane Pharrell Scarlett"
+        },
+        {
+          "id": "dejan-kulusevski",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Dejan Kulusevski",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736575,
+          "role": "player",
+          "aliases": [
+            "Dejan Kulusevski",
+            "Kulusevski"
+          ],
+          "fullName": "Dejan Kulusevski"
+        },
+        {
+          "id": "destiny-udogie",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Destiny Udogie",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736570,
+          "role": "player",
+          "aliases": [
+            "Destiny Udogie",
+            "Iyenoma Destiny Udogie",
+            "Udogie"
+          ],
+          "fullName": "Iyenoma Destiny Udogie"
+        },
+        {
+          "id": "solanke",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Dominic Solanke",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736578,
+          "role": "player",
+          "aliases": [
+            "Dominic Solanke",
+            "Dominic Ayodele Solanke-Mitchell",
+            "Solanke-Mitchell"
+          ],
+          "fullName": "Dominic Ayodele Solanke-Mitchell"
+        },
+        {
+          "id": "james-maddison",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "James Maddison",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736566,
+          "role": "player",
+          "aliases": [
+            "James Maddison",
+            "James Daniel Maddison",
+            "Maddison"
+          ],
+          "fullName": "James Daniel Maddison"
+        },
+        {
+          "id": "jan-paul-van-hecke",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Jan Paul van Hecke",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736546,
+          "role": "player",
+          "aliases": [
+            "Jan Paul van Hecke",
+            "van Hecke"
+          ],
+          "fullName": "Jan Paul van Hecke"
+        },
+        {
+          "id": "joao-de-souza-menezes",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "João de Souza Menezes",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736549,
+          "role": "player",
+          "aliases": [
+            "João de Souza Menezes",
+            "João Victor de Souza Menezes",
+            "de Souza Menezes"
+          ],
+          "fullName": "João Victor de Souza Menezes"
+        },
+        {
+          "id": "kevin-danso",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Kevin Danso",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736552,
+          "role": "player",
+          "aliases": [
+            "Kevin Danso",
+            "Danso"
+          ],
+          "fullName": "Kevin Danso"
+        },
+        {
+          "id": "kota-takai",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Kota Takai",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736577,
+          "role": "player",
+          "aliases": [
+            "Kota Takai",
+            "Takai"
+          ],
+          "fullName": "Kota Takai"
+        },
+        {
+          "id": "luca-williams-barnett",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Luca Williams-Barnett",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736547,
+          "role": "player",
+          "aliases": [
+            "Luca Williams-Barnett",
+            "Luca James Williams-Barnett",
+            "Williams-Barnett"
+          ],
+          "fullName": "Luca James Williams-Barnett"
+        },
+        {
+          "id": "lucas-bergvall",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Lucas Bergvall",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736559,
+          "role": "player",
+          "aliases": [
+            "Lucas Bergvall",
+            "Lucas Erik Holger Bergvall",
+            "Bergvall"
+          ],
+          "fullName": "Lucas Erik Holger Bergvall"
+        },
+        {
+          "id": "marcos-senesi",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Marcos Senesi",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736563,
+          "role": "player",
+          "aliases": [
+            "Marcos Senesi",
+            "Marcos Nicolás Senesi Barón",
+            "Senesi Barón"
+          ],
+          "fullName": "Marcos Nicolás Senesi Barón"
+        },
+        {
+          "id": "martin-dubravka",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Martin Dúbravka",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736561,
+          "role": "player",
+          "aliases": [
+            "Martin Dúbravka",
+            "Dúbravka"
+          ],
+          "fullName": "Martin Dúbravka"
+        },
+        {
+          "id": "mateus-fernandes",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Mateus Fernandes",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736574,
+          "role": "player",
+          "aliases": [
+            "Mateus Fernandes",
+            "Mateus Gonçalo Espanha Fernandes",
+            "Espanha Fernandes"
+          ],
+          "fullName": "Mateus Gonçalo Espanha Fernandes"
+        },
+        {
+          "id": "mathys-tel",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Mathys Tel",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736573,
+          "role": "player",
+          "aliases": [
+            "Mathys Tel",
+            "Mathys Henri Tel",
+            "Tel"
+          ],
+          "fullName": "Mathys Henri Tel"
+        },
+        {
+          "id": "micky-van-de-ven",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Micky van de Ven",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736576,
+          "role": "player",
+          "aliases": [
+            "Micky van de Ven",
+            "van de Ven"
+          ],
+          "fullName": "Micky van de Ven"
+        },
+        {
+          "id": "mikey-moore",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Mikey Moore",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736551,
+          "role": "player",
+          "aliases": [
+            "Mikey Moore",
+            "Mikey Steven Danny Moore",
+            "Moore"
+          ],
+          "fullName": "Mikey Steven Danny Moore"
+        },
+        {
+          "id": "kudus",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Mohammed Kudus",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736581,
+          "role": "player",
+          "aliases": [
+            "Mohammed Kudus",
+            "Kudus",
+            "Mo Kudus"
+          ],
+          "fullName": "Mohammed Kudus"
+        },
+        {
+          "id": "mykhailo-mudryk",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Mykhailo Mudryk",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736567,
+          "role": "player",
+          "aliases": [
+            "Mykhailo Mudryk",
+            "Mudryk"
+          ],
+          "fullName": "Mykhailo Mudryk"
+        },
+        {
+          "id": "omar-marmoush",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Omar Marmoush",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736568,
+          "role": "player",
+          "aliases": [
+            "Omar Marmoush",
+            "Omar Khaled Mohamed Abdelsalam Marmoush",
+            "Marmoush"
+          ],
+          "fullName": "Omar Khaled Mohamed Abdelsalam Marmoush"
+        },
+        {
+          "id": "pape-sarr",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Pape Sarr",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736569,
+          "role": "player",
+          "aliases": [
+            "Pape Sarr",
+            "Pape Matar Sarr",
+            "Sarr"
+          ],
+          "fullName": "Pape Matar Sarr"
+        },
+        {
+          "id": "pedro-porro-sauceda",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Pedro Porro Sauceda",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736558,
+          "role": "player",
+          "aliases": [
+            "Pedro Porro Sauceda",
+            "Pedro Antonio Porro Sauceda",
+            "Porro Sauceda"
+          ],
+          "fullName": "Pedro Antonio Porro Sauceda"
+        },
+        {
+          "id": "richarlison-de-andrade",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Richarlison de Andrade",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736571,
+          "role": "player",
+          "aliases": [
+            "Richarlison de Andrade",
+            "de Andrade"
+          ],
+          "fullName": "Richarlison de Andrade"
+        },
+        {
+          "id": "rodrigo-bentancur",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Rodrigo Bentancur",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736550,
+          "role": "player",
+          "aliases": [
+            "Rodrigo Bentancur",
+            "Rodrigo Bentancur Colmán",
+            "Bentancur Colmán"
+          ],
+          "fullName": "Rodrigo Bentancur Colmán"
+        },
+        {
+          "id": "sandro-tonali",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Sandro Tonali",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736565,
+          "role": "player",
+          "aliases": [
+            "Sandro Tonali",
+            "Tonali"
+          ],
+          "fullName": "Sandro Tonali"
+        },
+        {
+          "id": "savio",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Sávio",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736557,
+          "role": "player",
+          "aliases": [
+            "Sávio",
+            "Sávio Moreira de Oliveira",
+            "Moreira de Oliveira"
+          ],
+          "fullName": "Sávio Moreira de Oliveira"
+        },
+        {
+          "id": "tosin-adarabioyo",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Tosin Adarabioyo",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736556,
+          "role": "player",
+          "aliases": [
+            "Tosin Adarabioyo",
+            "Abdul-Nasir Oluwatosin Oluwadoyinsolami Adarabioyo",
+            "Adarabioyo"
+          ],
+          "fullName": "Abdul-Nasir Oluwatosin Oluwadoyinsolami Adarabioyo"
+        },
+        {
+          "id": "wilson-odobert",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Wilson Odobert",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736564,
+          "role": "player",
+          "aliases": [
+            "Wilson Odobert",
+            "Wilson Serge Eric Odobert",
+            "Odobert"
+          ],
+          "fullName": "Wilson Serge Eric Odobert"
+        },
+        {
+          "id": "xavi-simons",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Xavi Simons",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736579,
+          "role": "player",
+          "aliases": [
+            "Xavi Simons",
+            "Xavi Quentin Shay Simons",
+            "Simons"
+          ],
+          "fullName": "Xavi Quentin Shay Simons"
+        },
+        {
+          "id": "roberto-de-zerbi",
+          "orgKey": "tottenham-hotspur",
+          "displayName": "Roberto De Zerbi",
+          "sport": "soccer",
+          "scoreplayPlayerId": 736553,
+          "role": "staff",
+          "aliases": [
+            "Roberto De Zerbi",
+            "De Zerbi"
+          ],
+          "fullName": "Roberto De Zerbi"
+        }
+      ]
+    },
+    {
+      "orgKey": "san-antonio-spurs",
+      "team": "San Antonio Spurs",
+      "sport": "basketball",
+      "teamSeasonId": 72210,
+      "scorePlayRecords": 25,
+      "linkedToLeagueData": 25,
+      "unlinkedNotUsed": 0,
+      "players": [
+        {
+          "id": "billy-donovan",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Billy Donovan",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736601,
+          "role": "player",
+          "aliases": [
+            "Billy Donovan",
+            "Donovan"
+          ],
+          "fullName": "Billy Donovan"
+        },
+        {
+          "id": "carter-bryant",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Carter Bryant",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736591,
+          "role": "player",
+          "aliases": [
+            "Carter Bryant",
+            "Bryant"
+          ],
+          "fullName": "Carter Bryant"
+        },
+        {
+          "id": "corliss-williamson",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Corliss Williamson",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736602,
+          "role": "player",
+          "aliases": [
+            "Corliss Williamson",
+            "Williamson"
+          ],
+          "fullName": "Corliss Williamson"
+        },
+        {
+          "id": "david-garcia",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "David Garcia",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736597,
+          "role": "player",
+          "aliases": [
+            "David Garcia",
+            "Garcia"
+          ],
+          "fullName": "David Garcia"
+        },
+        {
+          "id": "fox",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "De'Aaron Fox",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736586,
+          "role": "player",
+          "aliases": [
+            "De'Aaron Fox",
+            "Fox"
+          ],
+          "fullName": "De'Aaron Fox"
+        },
+        {
+          "id": "devin-vassell",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Devin Vassell",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736596,
+          "role": "player",
+          "aliases": [
+            "Devin Vassell",
+            "Vassell"
+          ],
+          "fullName": "Devin Vassell"
+        },
+        {
+          "id": "harper",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Dylan Harper",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736584,
+          "role": "player",
+          "aliases": [
+            "Dylan Harper",
+            "Harper"
+          ],
+          "fullName": "Dylan Harper"
+        },
+        {
+          "id": "harrison-barnes",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Harrison Barnes",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736599,
+          "role": "player",
+          "aliases": [
+            "Harrison Barnes",
+            "Barnes"
+          ],
+          "fullName": "Harrison Barnes"
+        },
+        {
+          "id": "ja-kobi-gillespie",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Ja'Kobi Gillespie",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736593,
+          "role": "player",
+          "aliases": [
+            "Ja'Kobi Gillespie",
+            "Gillespie"
+          ],
+          "fullName": "Ja'Kobi Gillespie"
+        },
+        {
+          "id": "jayden-quaintance",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Jayden Quaintance",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736594,
+          "role": "player",
+          "aliases": [
+            "Jayden Quaintance",
+            "Quaintance"
+          ],
+          "fullName": "Jayden Quaintance"
+        },
+        {
+          "id": "jordan-mclaughlin",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Jordan McLaughlin",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736582,
+          "role": "player",
+          "aliases": [
+            "Jordan McLaughlin",
+            "McLaughlin"
+          ],
+          "fullName": "Jordan McLaughlin"
+        },
+        {
+          "id": "julian-champagnie",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Julian Champagnie",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736598,
+          "role": "player",
+          "aliases": [
+            "Julian Champagnie",
+            "Champagnie"
+          ],
+          "fullName": "Julian Champagnie"
+        },
+        {
+          "id": "keldon-johnson",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Keldon Johnson",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736585,
+          "role": "player",
+          "aliases": [
+            "Keldon Johnson",
+            "Johnson"
+          ],
+          "fullName": "Keldon Johnson"
+        },
+        {
+          "id": "kendall-brown",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Kendall Brown",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736590,
+          "role": "player",
+          "aliases": [
+            "Kendall Brown",
+            "Brown"
+          ],
+          "fullName": "Kendall Brown"
+        },
+        {
+          "id": "luke-kornet",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Luke Kornet",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736588,
+          "role": "player",
+          "aliases": [
+            "Luke Kornet",
+            "Kornet"
+          ],
+          "fullName": "Luke Kornet"
+        },
+        {
+          "id": "maliq-brown",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Maliq Brown",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736592,
+          "role": "player",
+          "aliases": [
+            "Maliq Brown",
+            "Brown"
+          ],
+          "fullName": "Maliq Brown"
+        },
+        {
+          "id": "matt-nielsen",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Matt Nielsen",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736603,
+          "role": "player",
+          "aliases": [
+            "Matt Nielsen",
+            "Nielsen"
+          ],
+          "fullName": "Matt Nielsen"
+        },
+        {
+          "id": "mike-noyes",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Mike Noyes",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736605,
+          "role": "player",
+          "aliases": [
+            "Mike Noyes",
+            "Noyes"
+          ],
+          "fullName": "Mike Noyes"
+        },
+        {
+          "id": "scott-king",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Scott King",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736604,
+          "role": "player",
+          "aliases": [
+            "Scott King",
+            "King"
+          ],
+          "fullName": "Scott King"
+        },
+        {
+          "id": "stephon-castle",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Stephon Castle",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736587,
+          "role": "player",
+          "aliases": [
+            "Stephon Castle",
+            "Castle"
+          ],
+          "fullName": "Stephon Castle"
+        },
+        {
+          "id": "tarris-reed-jr",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Tarris Reed Jr.",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736589,
+          "role": "player",
+          "aliases": [
+            "Tarris Reed Jr.",
+            "Tarris Jr.",
+            "Jr."
+          ],
+          "fullName": "Tarris Jr."
+        },
+        {
+          "id": "tobias-harris",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Tobias Harris",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736595,
+          "role": "player",
+          "aliases": [
+            "Tobias Harris",
+            "Harris"
+          ],
+          "fullName": "Tobias Harris"
+        },
+        {
+          "id": "wembanyama",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Victor Wembanyama",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736583,
+          "role": "player",
+          "aliases": [
+            "Victor Wembanyama",
+            "Wembanyama",
+            "Wemby"
+          ],
+          "fullName": "Victor Wembanyama"
+        },
+        {
+          "id": "will-sevening",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Will Sevening",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736606,
+          "role": "player",
+          "aliases": [
+            "Will Sevening",
+            "Sevening"
+          ],
+          "fullName": "Will Sevening"
+        },
+        {
+          "id": "mitch-johnson",
+          "orgKey": "san-antonio-spurs",
+          "displayName": "Mitch Johnson",
+          "sport": "basketball",
+          "scoreplayPlayerId": 736600,
+          "role": "staff",
+          "aliases": [
+            "Mitch Johnson",
+            "Johnson"
+          ],
+          "fullName": "Mitch Johnson"
+        }
+      ]
+    }
+  ]
+}

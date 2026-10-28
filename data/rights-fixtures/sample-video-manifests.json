@@ -1,0 +1,59 @@
+{
+  "asset_spurs_goal_001": {
+    "assetId": "asset_spurs_goal_001",
+    "summary": "A Tottenham player scores a late equalizer. Broadcast overlay and kit sponsor are visible. Crowd faces are visible in close-up cutaway. Stadium music is faintly audible after the goal.",
+    "moments": [
+      {"start": 4.2, "end": 16.8, "label": "goal", "confidence": 0.94},
+      {"start": 17.0, "end": 26.5, "label": "player celebration", "confidence": 0.89},
+      {"start": 27.0, "end": 34.0, "label": "crowd reaction", "confidence": 0.82}
+    ],
+    "detectedSponsors": [
+      {"name": "Kit Sponsor", "category": "apparel", "confidence": 0.91},
+      {"name": "Broadcast Partner Overlay", "category": "media", "confidence": 0.84}
+    ],
+    "identifiablePeople": [
+      {"type": "player", "label": "home player #10", "confidence": 0.88}
+    ],
+    "competitionMarkings": ["Premier League broadcast overlay"],
+    "crowdPrivacy": {"facesVisible": true, "closeUps": true},
+    "audioRisks": [{"type": "stadium_music", "confidence": 0.71}],
+    "suggestedUse": "Fast-turnaround goal recap for owned social channels with rights restrictions attached."
+  },
+  "asset_spurs_training_002": {
+    "assetId": "asset_spurs_training_002",
+    "summary": "Training ground finishing drill with players and coaches. No broadcast overlay. Club-controlled environment. No crowd visible. No music detected.",
+    "moments": [
+      {"start": 3.0, "end": 14.0, "label": "finishing drill", "confidence": 0.92},
+      {"start": 15.0, "end": 24.5, "label": "coach instruction", "confidence": 0.79}
+    ],
+    "detectedSponsors": [
+      {"name": "Training Kit Partner", "category": "apparel", "confidence": 0.86}
+    ],
+    "identifiablePeople": [
+      {"type": "player", "label": "training group", "confidence": 0.75}
+    ],
+    "competitionMarkings": [],
+    "crowdPrivacy": {"facesVisible": false, "closeUps": false},
+    "audioRisks": [],
+    "suggestedUse": "Behind-the-scenes training clip for global social channels."
+  },
+  "asset_saspurs_partner_003": {
+    "assetId": "asset_saspurs_partner_003",
+    "summary": "Arena fan cam sequence with visible courtside signage. Fans are identifiable. Partner signage from beverage and competing telecom categories appear together.",
+    "moments": [
+      {"start": 2.0, "end": 20.0, "label": "fan cam", "confidence": 0.91},
+      {"start": 21.0, "end": 33.0, "label": "courtside signage pan", "confidence": 0.83}
+    ],
+    "detectedSponsors": [
+      {"name": "Beverage Partner", "category": "beverage", "confidence": 0.90},
+      {"name": "Competing Telecom Signage", "category": "telecom", "confidence": 0.78}
+    ],
+    "identifiablePeople": [
+      {"type": "fan", "label": "courtside fans", "confidence": 0.80}
+    ],
+    "competitionMarkings": ["NBA arena signage"],
+    "crowdPrivacy": {"facesVisible": true, "closeUps": true},
+    "audioRisks": [],
+    "suggestedUse": "Fan engagement clip; requires privacy and sponsor-context review before partner distribution."
+  }
+}

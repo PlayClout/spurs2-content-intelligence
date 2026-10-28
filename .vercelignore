@@ -1,0 +1,16 @@
+# Vercel upload excludes for the spurs2 hosted demo (CLI deploy from repo root, rootDirectory=web).
+# Keep: web/, shared/, pipeline/, data/ (footage maps), web/public/renders (bundled demo clips).
+.git
+node_modules
+web/node_modules
+.next
+web/.next
+out
+submission
+sketches
+scripts
+drizzle
+*.log
+.env
+.env.*
+.DS_Store

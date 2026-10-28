@@ -1,0 +1,39 @@
+<!-- @dsCard group="Brand" viewport="700x200" name="Accessibility" subtitle="Measured contrast on the dark canvas + hard requirements" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>
+  body{margin:0;background:var(--bg-canvas);color:var(--fg-default);font-family:var(--font-body);padding:20px 26px;display:grid;grid-template-columns:1.15fr 1fr;gap:26px}
+  .hd{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-accent);margin-bottom:10px}
+  .r{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:12px}
+  .sw{width:76px;font-weight:600;flex:none}
+  .ratio{font-size:11px;color:var(--fg-muted);font-variant-numeric:tabular-nums;width:46px;text-align:right;flex:none}
+  .pass{font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 6px;border-radius:99px;background:var(--success-subtle);color:var(--success-fg)}
+  .warn{font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 6px;border-radius:99px;background:var(--warning-subtle);color:var(--warning-fg)}
+  ul{margin:0;padding-left:16px;font-size:11px;color:var(--fg-secondary);line-height:1.75}
+  li b{color:var(--fg-default)}
+</style></head><body>
+<div>
+  <div class="hd">Contrast on #050811</div>
+  <div class="r"><span class="sw" style="color:var(--fg-default)">Default</span><span class="ratio">17.9:1</span><span class="pass">AAA</span></div>
+  <div class="r"><span class="sw" style="color:var(--fg-secondary)">Secondary</span><span class="ratio">7.0:1</span><span class="pass">AA</span></div>
+  <div class="r"><span class="sw" style="color:var(--fg-muted)">Muted</span><span class="ratio">3.9:1</span><span class="warn">Large only</span></div>
+  <div class="r"><span class="sw" style="color:var(--accent-bright)">Accent</span><span class="ratio">7.4:1</span><span class="pass">AA</span></div>
+  <div class="r"><span class="sw" style="color:var(--success-fg)">Success</span><span class="ratio">9.6:1</span><span class="pass">AA</span></div>
+  <div class="r"><span class="sw" style="color:var(--danger-fg)">Danger</span><span class="ratio">7.2:1</span><span class="pass">AA</span></div>
+  <div class="r"><span class="sw" style="color:var(--clout-pink)">Pink</span><span class="ratio">4.0:1</span><span class="warn">≥24px only</span></div>
+</div>
+<div>
+  <div class="hd">Hard requirements</div>
+  <ul>
+    <li>Touch targets <b>≥48px</b>, ≥8px apart</li>
+    <li>Status = <b>icon + text + color</b>, never color alone</li>
+    <li><b>Focus ring always visible</b> — 3px, 2px offset</li>
+    <li>Icon-only controls carry <b>aria-label</b></li>
+    <li>Errors set <b>aria-invalid</b> + role="alert"</li>
+    <li>Dialogs trap focus, Esc closes, focus restores</li>
+    <li>Body copy <b>≥15px</b> mobile / 16px web</li>
+    <li>Reflow at <b>320px / 200% zoom</b>, no h-scroll</li>
+    <li><b>prefers-reduced-motion</b> honoured</li>
+  </ul>
+</div>
+</body></html>

@@ -1,0 +1,20 @@
+{
+  "$comment": "REAL footage: Man United 1-1 Tottenham, Premier League Week 6, from the team's ScorePlay workspace (spurs2-hack-12), mapped to the official TwelveLabs index via data/footage-map.json. Game and fan-reaction triggers are SIMULATED feeds over real clips (labeled). The watch-list runs a live TwelveLabs search over the watched clips and surfaces a moment no feed logged. Event at 18s re-reports the 5s goal: it MERGES into the existing cards (no new analysis). Windows come from TwelveLabs Marengo search on each clip (scripts/build-footage-map.ts + search, 2026-10-22).",
+  "name": "Man United 1-1 Tottenham (real footage)",
+  "indexId": "6ad90f31960d8ea7bdd040ab",
+  "manifestFixture": "data/fallback-assets/fixtures/twelvelabs-manifest.json",
+  "footage": {
+    "solanke-goal": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 130849867, "twelvelabsAssetId": "6ad90e129c038876f3589de8", "twelvelabsVideoId": "6ad90f5a65b4aff96dc7afe5", "teamSeasonId": 72209 },
+    "savio-chance": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 130849865, "twelvelabsAssetId": "6ad90e122cc348c0bd1fffb3", "twelvelabsVideoId": "6ad90f58960d8ea7bdd041ab", "teamSeasonId": 72209 },
+    "fans-clap": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 130849743, "twelvelabsAssetId": "6ad90e1d5411fa6e602f3377", "twelvelabsVideoId": "6ad90f37960d8ea7bdd040d2", "teamSeasonId": 72209 },
+    "archie-tackle": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 130849847, "twelvelabsAssetId": "6ad90e16968fe117efe6f3c1", "twelvelabsVideoId": "6ad90f4d960d8ea7bdd04163", "teamSeasonId": 72209 },
+    "kudus-chance": { "orgKey": "tottenham-hotspur", "competition": "Premier League", "scorePlayMediaId": 130849848, "twelvelabsAssetId": "6ad90e1565b4aff96dc7a8b8", "twelvelabsVideoId": "6ad90f4e500e82756f2ea907", "teamSeasonId": 72209 }
+  },
+  "events": [
+    { "at": 5, "clock": "88'", "kind": "game_event", "footage": "solanke-goal", "start": 2, "end": 11, "text": "Goal, Solanke equalises late", "headline": "Solanke rescues a point", "kicker": "Man United 1 · Spurs 1 · 88'", "statLine": "Late equaliser at Old Trafford · SIMULATED game data" },
+    { "at": 18, "clock": "89'", "kind": "social_reaction", "footage": "solanke-goal", "start": 3, "end": 11, "text": "Mentions of Solanke up 11x in 2 minutes", "headline": "Solanke rescues a point" },
+    { "at": 30, "clock": "62'", "kind": "game_event", "footage": "savio-chance", "start": 4, "end": 13.5, "text": "Big chance, Sávio breaks and cuts back, keeper saves", "headline": "So close from Sávio", "kicker": "Man United 1 · Spurs 0 · 62'", "statLine": "Break, cut-back, saved · SIMULATED game data" },
+    { "at": 42, "clock": "FT", "kind": "social_reaction", "footage": "fans-clap", "start": 22.8, "end": 30.0, "text": "Away end trending: 'proud of this team'", "headline": "The away end, at full time", "kicker": "Man United 1 · Spurs 1 · FT", "statLine": "Players thank the travelling fans · SIMULATED fan signal" },
+    { "at": 55, "clock": "71'", "kind": "ai_watchlist", "footage": ["kudus-chance", "archie-tackle"], "query": "shot on goal", "headline": "The chance nobody logged", "kicker": "Man United 1 · Spurs 0 · 71'", "statLine": "Found by TwelveLabs, not in the match feed" }
+  ]
+}

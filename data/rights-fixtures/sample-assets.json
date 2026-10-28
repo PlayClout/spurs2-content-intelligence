@@ -1,0 +1,47 @@
+[
+  {
+    "id": "asset_spurs_goal_001",
+    "source": "scoreplay_mock",
+    "title": "Late equalizer clip — home match",
+    "assetType": "video",
+    "durationSeconds": 42,
+    "competition": "Premier League",
+    "club": "Tottenham Hotspur",
+    "eventDate": "2026-10-18",
+    "territoriesRequested": ["UK", "US", "EU"],
+    "platformsRequested": ["instagram", "youtube", "partner_site"],
+    "existingTags": ["goal", "first-team", "matchday"],
+    "thumbnailUrl": "https://example.com/mock/spurs-goal-thumb.jpg",
+    "mediaUrl": "https://example.com/mock/spurs-goal.mp4"
+  },
+  {
+    "id": "asset_spurs_training_002",
+    "source": "scoreplay_mock",
+    "title": "Training ground finishing drill",
+    "assetType": "video",
+    "durationSeconds": 28,
+    "competition": "Training",
+    "club": "Tottenham Hotspur",
+    "eventDate": "2026-10-20",
+    "territoriesRequested": ["Global"],
+    "platformsRequested": ["instagram", "tiktok", "youtube"],
+    "existingTags": ["training", "behind-the-scenes"],
+    "thumbnailUrl": "https://example.com/mock/training-thumb.jpg",
+    "mediaUrl": "https://example.com/mock/training.mp4"
+  },
+  {
+    "id": "asset_saspurs_partner_003",
+    "source": "scoreplay_mock",
+    "title": "Arena fan cam with courtside signage",
+    "assetType": "video",
+    "durationSeconds": 35,
+    "competition": "NBA Regular Season",
+    "club": "San Antonio Spurs",
+    "eventDate": "2026-10-19",
+    "territoriesRequested": ["US", "Mexico", "Global"],
+    "platformsRequested": ["instagram", "partner_site"],
+    "existingTags": ["fan-cam", "arena", "sponsor"],
+    "thumbnailUrl": "https://example.com/mock/saspurs-fancam-thumb.jpg",
+    "mediaUrl": "https://example.com/mock/saspurs-fancam.mp4"
+  }
+]
